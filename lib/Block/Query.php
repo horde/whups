@@ -1,17 +1,18 @@
 <?php
-
-$block_name = _("Query Results");
-
 /**
- * Horde_Block_Whups_query:: Display the results of a saved Query in a
- * block.
- *
- * @package Horde_Block
+ * Display the results of a saved Query in a block.
  */
-class Horde_Block_Whups_query extends Horde_Block
+class Whups_Block_Query extends Horde_Block
 {
-    protected $_app = 'whups';
+    /**
+     */
+    public function getName()
+    {
+        return _("Query Results");
+    }
 
+    /**
+     */
     protected function _params()
     {
         require_once WHUPS_BASE . '/lib/Query.php';
@@ -26,16 +27,17 @@ class Horde_Block_Whups_query extends Horde_Block
             $qType = 'error';
         }
 
-        return array('query' => array('type' => $qType,
-                                      'name' => _("Query to run"),
-                                      'default' => $qDefault,
-                                      'values' => $qParams));
+        return array(
+            'query' => array(
+                'type' => $qType,
+                'name' => _("Query to run"),
+                'default' => $qDefault,
+                'values' => $qParams
+            )
+        );
     }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string The title text.
      */
     protected function _title()
     {
@@ -44,13 +46,10 @@ class Horde_Block_Whups_query extends Horde_Block
                 . htmlspecialchars($query->name) . '</a>';
         }
 
-        return _("Query Results");
+        return $this->getName();
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string The content.
      */
     protected function _content()
     {
@@ -62,7 +61,7 @@ class Horde_Block_Whups_query extends Horde_Block
 
         $vars = Horde_Variables::getDefaultVariables();
         $tickets = $whups_driver->executeQuery($query, $vars);
-        if (is_a($tickets, 'PEAR_Error')) {
+        if ($tickets instanceof PEAR_Error) {
             return $tickets;
         }
 
@@ -88,6 +87,8 @@ class Horde_Block_Whups_query extends Horde_Block
         return '<table id="whups_block_query_' . $query->id . '" cellspacing="0" class="tickets striped sortable">' . $html . '</tbody></table>';
     }
 
+    /**
+     */
     private function _getQuery()
     {
         if (empty($this->_params['query'])) {
@@ -98,7 +99,7 @@ class Horde_Block_Whups_query extends Horde_Block
 
         $qManager = new Whups_QueryManager();
         $query = $qManager->getQuery($this->_params['query']);
-        if (is_a($query, 'PEAR_Error')) {
+        if ($query instanceof PEAR_Error) {
             return false;
         }
         if (!$query->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::READ)) {

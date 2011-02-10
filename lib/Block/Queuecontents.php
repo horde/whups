@@ -1,16 +1,18 @@
 <?php
-
-$block_name = _("Queue Contents");
-
 /**
- * Horde_Block_Whups_queuecontents:: Show the open tickets in a queue.
- *
- * @package Horde_Block
+ * Show the open tickets in a queue.
  */
-class Horde_Block_Whups_queuecontents extends Horde_Block
+class Whups_Block_Queuecontents extends Horde_Block
 {
-    protected $_app = 'whups';
+    /**
+     */
+    public function getName()
+    {
+        return _("Queue Contents");
+    }
 
+    /**
+     */
     protected function _params()
     {
         global $whups_driver;
@@ -25,31 +27,28 @@ class Horde_Block_Whups_queuecontents extends Horde_Block
             $qType = 'enum';
         }
 
-        return array('queue' => array('type' => $qType,
-                                      'name' => _("Queue"),
-                                      'default' => $qDefault,
-                                      'values' => $qParams,
-                                      ),
-                    );
+        return array(
+            'queue' => array(
+                'type' => $qType,
+                'name' => _("Queue"),
+                'default' => $qDefault,
+                'values' => $qParams,
+            )
+        );
     }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
         if ($queue = $this->_getQueue()) {
             return sprintf(_("Open Tickets in %s"), htmlspecialchars($queue['name']));
         }
-        return _("Queue Contents");
+
+        return $this->getName();
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {
@@ -92,6 +91,8 @@ class Horde_Block_Whups_queuecontents extends Horde_Block
         return '<table id="whups_block_queue_' . htmlspecialchars($this->_params['queue']) . '" cellspacing="0" class="tickets striped sortable">' . $html . '</tbody></table>';
     }
 
+    /**
+     */
     private function _getQueue()
     {
         global $whups_driver;
@@ -103,11 +104,10 @@ class Horde_Block_Whups_queuecontents extends Horde_Block
             return false;
         }
         $queue = $whups_driver->getQueue($this->_params['queue']);
-        if (is_a($queue, 'PEAR_Error')) {
-            return false;
-        }
 
-        return $queue;
+        return ($queue instanceof PEAR_Error)
+            ? false
+            : $queue;
     }
 
 }

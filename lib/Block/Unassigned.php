@@ -1,31 +1,24 @@
 <?php
-
-$block_name = _("Unassigned Tickets");
-
 /**
- * Horde_Block_Whups_unassigned:: Implementation of the Horde_Block API
- * to display a summary of unassigned tickets.
- *
- * @package Horde_Block
+ * Display a summary of unassigned tickets.
  */
-class Horde_Block_Whups_unassigned extends Horde_Block
+class Whups_Block_Unassigned extends Horde_Block
 {
-    protected $_app = 'whups';
-
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
-    protected function _title()
+    public function getName()
     {
         return _("Unassigned Tickets");
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
      */
     protected function _content()
     {
@@ -36,7 +29,7 @@ class Horde_Block_Whups_unassigned extends Horde_Block
                       'nores' => true,
                       'queue' => $queue_ids);
         $unassigned = $whups_driver->getTicketsByProperties($info);
-        if (is_a($unassigned, 'PEAR_Error')) {
+        if ($unassigned instanceof PEAR_Error) {
             return $unassigned;
         }
 

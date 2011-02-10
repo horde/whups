@@ -1,31 +1,24 @@
 <?php
-
-$block_name = _("My Requests");
-
 /**
- * Horde_Block_Whups_myrequests:: Implementation of the Horde_Block API
- * to display a summary of the current user's requested tickets.
- *
- * @package Horde_Block
+ * Display a summary of the current user's requested tickets.
  */
-class Horde_Block_Whups_myrequests extends Horde_Block
+class Whups_Block_Myrequests extends Horde_Block
 {
-    protected $_app = 'whups';
-
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
-    protected function _title()
+    public function getName()
     {
         return _("My Requests");
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
      */
     protected function _content()
     {
@@ -37,7 +30,7 @@ class Horde_Block_Whups_myrequests extends Horde_Block
                       'nores' => true,
                       'queue' => $queue_ids);
         $requests = $whups_driver->getTicketsByProperties($info);
-        if (is_a($requests, 'PEAR_Error')) {
+        if ($requests instanceof PEAR_Error) {
             return $requests;
         }
 

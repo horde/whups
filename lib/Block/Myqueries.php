@@ -1,31 +1,24 @@
 <?php
-
-$block_name = _("My Queries");
-
 /**
- * Horde_Block_Whups_myqueries:: Implementation of the Horde_Block API
- * to show the current user's queries.
- *
- * @package Horde_Block
+ * Show the current user's queries.
  */
-class Horde_Block_Whups_myqueries extends Horde_Block
+class Whups_Block_Myqueries extends Horde_Block
 {
-    protected $_app = 'whups';
-
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
-    protected function _title()
+    public function getName()
     {
         return _("My Queries");
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
      */
     protected function _content()
     {
@@ -33,7 +26,7 @@ class Horde_Block_Whups_myqueries extends Horde_Block
 
         $qManager = new Whups_QueryManager();
         $queries = $qManager->listQueries($GLOBALS['registry']->getAuth(), true);
-        if (is_a($queries, 'PEAR_Error')) {
+        if ($queries instanceof PEAR_Error) {
             return $queries;
         }
         $myqueries = Whups_View::factory('SavedQueries',

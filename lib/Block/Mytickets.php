@@ -1,31 +1,24 @@
 <?php
-
-$block_name = _("My Tickets");
-
 /**
- * Horde_Block_Whups_mytickets:: Implementation of the Horde_Block API
- * to display a summary of the current user's assigned tickets.
- *
- * @package Horde_Block
+ * Display a summary of the current user's assigned tickets.
  */
-class Horde_Block_Whups_mytickets extends Horde_Block
+class Whups_Block_Mytickets extends Horde_Block
 {
-    protected $_app = 'whups';
-
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
-    protected function _title()
+    public function getName()
     {
         return _("My Tickets");
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
      */
     protected function _content()
     {
@@ -36,7 +29,7 @@ class Horde_Block_Whups_mytickets extends Horde_Block
                       'nores' => true,
                       'queue' => $queue_ids);
         $assigned = $whups_driver->getTicketsByProperties($info);
-        if (is_a($assigned, 'PEAR_Error')) {
+        if ($assigned instanceof PEAR_Error) {
             return $assigned;
         }
 

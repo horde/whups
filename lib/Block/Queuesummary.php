@@ -1,31 +1,24 @@
 <?php
-
-$block_name = _("Queue Summary");
-
 /**
- * Horde_Block_Whups_queuesummary:: Show a summary of all available queues
- * and their number of open tickets.
- *
- * @package Horde_Block
+ * Show a summary of all available queues and their number of open tickets.
  */
-class Horde_Block_Whups_queuesummary extends Horde_Block
+class Whups_Block_Queuesummary extends Horde_Block
 {
-    protected $_app = 'whups';
-
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
-    protected function _title()
+    public function getName()
     {
         return _("Queue Summary");
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
      */
     protected function _content()
     {
@@ -33,7 +26,7 @@ class Horde_Block_Whups_queuesummary extends Horde_Block
 
         $queues = Whups::permissionsFilter($whups_driver->getQueues(), 'queue', Horde_Perms::READ);
         $qsummary = $whups_driver->getQueueSummary(array_keys($queues));
-        if (is_a($qsummary, 'PEAR_Error')) {
+        if ($qsummary instanceof PEAR_Error) {
             return $qsummary;
         }
 
