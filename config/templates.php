@@ -2,6 +2,10 @@
 /**
  * This file defines the templates used in various parts of Whups.
  *
+ * IMPORTANT: Local overrides should be placed in templates.local.php, or
+ * templates-servername.php if the 'vhosts' setting has been enabled in Horde's
+ * configuration.
+ *
  * Hopefully this will all migrate to a database in the future, but
  * for now, this is it.
  *
@@ -54,4 +58,9 @@ if (!function_exists('_csvQuote')) {
             $data = '"' . str_replace('"', '\"', $data) . '"';
         }
     }
+}
+
+/* Local overrides. */
+if (file_exists(dirname(__FILE__) . '/templates.local.php')) {
+    include dirname(__FILE__) . '/templates.local.php';
 }

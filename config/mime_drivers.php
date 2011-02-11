@@ -6,7 +6,9 @@
  * All drivers configured in that file, but not configured here, will also
  * be used to display MIME content.
  *
- * $Id$
+ * IMPORTANT: Local overrides should be placed in mime_drivers.local.php, or
+ * mime_drivers-servername.php if the 'vhosts' setting has been enabled in
+ * Horde's configuration.
  */
 
 $mime_drivers = array(
@@ -23,3 +25,8 @@ $mime_drivers = array(
         )
     )
 );
+
+/* Local overrides. */
+if (file_exists(dirname(__FILE__) . '/mime_drivers.local.php')) {
+    include dirname(__FILE__) . '/mime_drivers.local.php';
+}

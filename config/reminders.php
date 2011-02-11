@@ -3,6 +3,10 @@
  * This file defines reminders sent automatically by Whups (if you
  * schedule scripts/reminders.php in your crontab).
  *
+ * IMPORTANT: Local overrides should be placed in reminders.local.php, or
+ * reminders-servername.php if the 'vhosts' setting has been enabled in Horde's
+ * configuration.
+ *
  * Hopefully rule definition will migrate to a database in the future,
  * for easy configuration through the web interface.
  *
@@ -42,3 +46,8 @@ $reminders[] = array('frequency' => '* 0 5 1-31&Mon *',
                      'queue' => 1,
                      'unassigned' => false,
                      'category' => array('unconfirmed', 'new', 'assigned'));
+
+/* Local overrides. */
+if (file_exists(dirname(__FILE__) . '/reminders.local.php')) {
+    include dirname(__FILE__) . '/reminders.local.php';
+}
