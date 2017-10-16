@@ -16,7 +16,7 @@
   <email>jan@horde.org</email>
   <active>yes</active>
  </lead>
- <date>2017-10-13</date>
+ <date>2017-10-16</date>
  <version>
   <release>4.0.0</release>
   <api>4.0.0</api>
@@ -485,7 +485,7 @@
    <file name="mybugs.php" role="horde" />
    <file name="mybugs_edit.php" role="horde" />
    <file name="opensearch.php" role="horde" />
-   <file name="README" role="doc" />
+   <file name="README.rst" role="doc" />
    <file name="reports.php" role="horde" />
    <file name="search.php" role="horde" />
    <file name="view.php" role="horde" />
@@ -682,7 +682,7 @@
    <install as="whups/mybugs.php" name="mybugs.php" />
    <install as="whups/mybugs_edit.php" name="mybugs_edit.php" />
    <install as="whups/opensearch.php" name="opensearch.php" />
-   <install as="README" name="README" />
+   <install as="README.rst" name="README.rst" />
    <install as="whups/reports.php" name="reports.php" />
    <install as="whups/search.php" name="search.php" />
    <install as="whups/view.php" name="view.php" />
@@ -1308,7 +1308,7 @@
    <stability>
     <release>beta</release>
     <api>beta</api></stability>
-   <date>2017-10-13</date>
+   <date>2017-10-16</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
 * [jan] Add download of ticket history to an HTML file.
