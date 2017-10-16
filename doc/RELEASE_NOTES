@@ -13,10 +13,10 @@ anything else that needs to track a set of requests and their status. For more
 information on Whups, visit http://www.horde.org/apps/whups.
 
 For upgrading instructions, please see
-http://www.horde.org/apps/whups/docs/UPGRADING
+http://www.horde.org/apps/whups/doc/UPGRADING
 
 For detailed installation and configuration instructions, please see
-http://www.horde.org/apps/whups/docs/INSTALL
+http://www.horde.org/apps/whups/doc/INSTALL
 
 The major changes compared to the Whups H4 versions are:
     * Compatible with Horde 5.

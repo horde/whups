@@ -16,7 +16,7 @@
   <email>jan@horde.org</email>
   <active>yes</active>
  </lead>
- <date>2016-11-09</date>
+ <date>2017-10-13</date>
  <version>
   <release>4.0.0</release>
   <api>4.0.0</api>
@@ -90,7 +90,7 @@
     <file name="reminder_email.plain.php" role="horde" />
     <file name="templates.php" role="horde" />
    </dir> <!-- /config -->
-   <dir name="docs">
+   <dir name="doc">
     <file name="CHANGES" role="doc" />
     <file name="CREDITS" role="doc" />
     <file name="INSTALL" role="doc" />
@@ -98,7 +98,7 @@
     <file name="RELEASE_NOTES" role="doc" />
     <file name="TODO" role="doc" />
     <file name="UPGRADING" role="doc" />
-   </dir> <!-- /docs -->
+   </dir> <!-- /doc -->
    <dir name="js">
     <file name="results.js" role="horde" />
    </dir> <!-- /js -->
@@ -463,7 +463,7 @@
      </dir> <!-- /themes/default/graphics -->
      <file name="screen.css" role="horde" />
     </dir> <!-- /themes/default -->
-    </dir> <!-- /themes -->
+   </dir> <!-- /themes -->
    <dir name="ticket">
     <file name=".htaccess" role="horde" />
     <file name="attachments.php" role="horde" />
@@ -481,7 +481,7 @@
     <file name="watch.php" role="horde" />
    </dir> <!-- /ticket -->
    <file name="index.php" role="horde" />
-   <file name="LICENSE" role="horde" />
+   <file name="LICENSE" role="doc" />
    <file name="mybugs.php" role="horde" />
    <file name="mybugs_edit.php" role="horde" />
    <file name="opensearch.php" role="horde" />
@@ -678,7 +678,7 @@
  <phprelease>
   <filelist>
    <install as="whups/index.php" name="index.php" />
-   <install as="whups/LICENSE" name="LICENSE" />
+   <install as="LICENSE" name="LICENSE" />
    <install as="whups/mybugs.php" name="mybugs.php" />
    <install as="whups/mybugs_edit.php" name="mybugs_edit.php" />
    <install as="whups/opensearch.php" name="opensearch.php" />
@@ -710,13 +710,13 @@
    <install as="whups/config/reminders.php" name="config/reminders.php" />
    <install as="whups/config/reminder_email.plain.php" name="config/reminder_email.plain.php" />
    <install as="whups/config/templates.php" name="config/templates.php" />
-   <install as="CHANGES" name="docs/CHANGES" />
-   <install as="CREDITS" name="docs/CREDITS" />
-   <install as="INSTALL" name="docs/INSTALL" />
-   <install as="lighttpd-whups.conf" name="docs/lighttpd-whups.conf" />
-   <install as="RELEASE_NOTES" name="docs/RELEASE_NOTES" />
-   <install as="TODO" name="docs/TODO" />
-   <install as="UPGRADING" name="docs/UPGRADING" />
+   <install as="CHANGES" name="doc/CHANGES" />
+   <install as="CREDITS" name="doc/CREDITS" />
+   <install as="INSTALL" name="doc/INSTALL" />
+   <install as="lighttpd-whups.conf" name="doc/lighttpd-whups.conf" />
+   <install as="RELEASE_NOTES" name="doc/RELEASE_NOTES" />
+   <install as="TODO" name="doc/TODO" />
+   <install as="UPGRADING" name="doc/UPGRADING" />
    <install as="whups/js/results.js" name="js/results.js" />
    <install as="whups/lib/.htaccess" name="lib/.htaccess" />
    <install as="whups/lib/Api.php" name="lib/Api.php" />
@@ -1308,7 +1308,7 @@
    <stability>
     <release>beta</release>
     <api>beta</api></stability>
-   <date>2016-11-09</date>
+   <date>2017-10-13</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
 * [jan] Add download of ticket history to an HTML file.
