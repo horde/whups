@@ -8,3 +8,56 @@ description: >
   anything else that needs to track a set of requests and their status.
 list: horde
 type: application
+homepage: https://www.horde.org/apps/whups
+authors:
+  -
+    name: Chuck Hagenbuch
+    user: chuck
+    email: chuck@horde.org
+    active: true
+    role: lead
+  -
+    name: Jan Schneider
+    user: jan
+    email: jan@horde.org
+    active: true
+    role: lead
+version:
+  release: 3.0.13
+  api: 3.0.0
+state:
+  release: stable
+  api: stable
+license:
+  identifier: BSD-2-Clause
+  uri: http://www.horde.org/licenses/bsdl.php
+dependencies:
+  required:
+    php: ^5.3 || ^7
+    pear:
+      pear.horde.org/horde: ^5
+      pear.horde.org/Horde_Auth: ^2
+      pear.horde.org/Horde_Autoloader: ^2
+      pear.horde.org/Horde_Compress: ^2
+      pear.horde.org/Horde_Core: ^2.30
+      pear.horde.org/Horde_Date: ^2
+      pear.horde.org/Horde_Db: ^2
+      pear.horde.org/Horde_Exception: ^2
+      pear.horde.org/Horde_Form: ^2
+      pear.horde.org/Horde_Group: ^2
+      pear.horde.org/Horde_Mail: ^2
+      pear.horde.org/Horde_Mime: ^2.5
+      pear.horde.org/Horde_Mime_Viewer: ^2
+      pear.horde.org/Horde_Notification: ^2
+      pear.horde.org/Horde_Perms: ^2
+      pear.horde.org/Horde_Prefs: ^2
+      pear.horde.org/Horde_Scheduler: ^2
+      pear.horde.org/Horde_Share: ^2
+      pear.horde.org/Horde_Support: ^2
+      pear.horde.org/Horde_Text_Filter: ^2
+      pear.horde.org/Horde_Util: ^2
+      pear.horde.org/Horde_Vfs: ^2
+      pear.horde.org/Horde_View: ^2
+    ext:
+      gettext: '*'
+      json: '*'
