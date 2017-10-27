@@ -938,6 +938,19 @@
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
 * First alpha release for Horde 4.
+* [jan] Fix automatic linking of bug numbers inside URLs (Bug #7081).
+* [jan] Don&apos;t search for all states if no states have been selected.
+* [jan] Add templates for delete and reminder notifications.
+* [jan] Add message template variable for recipient role.
+* [jan] Convert notification message templates to Horde_View.
+* [jan] Send notification when deleting tickets.
+* [jan] Fix determining whether to send updates without comments.
+* [jan] Send uploaded attachments with notification messages (Request #7615).
+* [mjr] Correctly set ticket version when changing queues (Bug #9645).
+* [jan] Add listSlugs API method.
+* [jan] Convert HTML messages to plain text when processing mail messages.
+* [jan] Fix creating temporary files with open_basedir restrictions.
+* [jan] Provide default configuration files instead of .dist versions.
    </notes>
   </release>
   <release>
