@@ -21,12 +21,22 @@
     [jan] Add option to not obfuscate email addresses (horde@iotti.biz, Request #13848).
     [jan] Allow to set new due date through API (Karim Geiger <me@karim-geiger.de>).
     [jan] Add ticket_create hook.
+3.0.13:
+  api: 3.0.0
+  state:
+    release: stable
+    api: stable
+  date: 2017-09-19
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes:
 3.0.12:
   api: 3.0.0
   state:
     release: stable
     api: stable
-  date: 2017-08-01
+  date: 2017-09-19
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
