@@ -16,7 +16,7 @@
   <email>jan@horde.org</email>
   <active>yes</active>
  </lead>
- <date>2017-10-17</date>
+ <date>2017-11-11</date>
  <version>
   <release>4.0.0</release>
   <api>4.0.0</api>
@@ -1321,7 +1321,7 @@
    <stability>
     <release>beta</release>
     <api>beta</api></stability>
-   <date>2017-10-17</date>
+   <date>2017-11-11</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
 * [jan] Add download of ticket history to an HTML file.

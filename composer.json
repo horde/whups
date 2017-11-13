@@ -1,8 +1,8 @@
 {
     "name": "horde/whups",
     "description": "Ticket-tracking application",
-    "type": "library",
-    "homepage": "https://pear.horde.org",
+    "type": "project",
+    "homepage": "https://www.horde.org/apps/whups",
     "license": "BSD-2-Clause",
     "authors": [
         {
@@ -17,7 +17,7 @@
         }
     ],
     "version": "4.0.0",
-    "time": "2017-10-17",
+    "time": "2017-11-11",
     "repositories": [
         {
             "type": "pear",
