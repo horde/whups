@@ -1,23 +1,23 @@
 {
     "name": "horde/whups",
     "description": "Ticket-tracking application",
-    "type": "library",
-    "homepage": "https://pear.horde.org",
+    "type": "project",
+    "homepage": "https://www.horde.org/apps/whups",
     "license": "BSD-2-Clause",
     "authors": [
-        {
-            "name": "Chuck Hagenbuch",
-            "email": "chuck@horde.org",
-            "role": "lead"
-        },
         {
             "name": "Jan Schneider",
             "email": "jan@horde.org",
             "role": "lead"
+        },
+        {
+            "name": "Chuck Hagenbuch",
+            "email": "chuck@horde.org",
+            "role": "lead"
         }
     ],
     "version": "3.0.13",
-    "time": "2017-09-19",
+    "time": "2017-11-14",
     "repositories": [
         {
             "type": "pear",

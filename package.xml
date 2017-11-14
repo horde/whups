@@ -5,18 +5,18 @@
  <summary>Ticket-tracking application</summary>
  <description>Whups is a Horde ticket-tracking application. It is very flexible in design, and can be used for help-desk requests, tracking software development, and anything else that needs to track a set of requests and their status.</description>
  <lead>
-  <name>Chuck Hagenbuch</name>
-  <user>chuck</user>
-  <email>chuck@horde.org</email>
-  <active>yes</active>
- </lead>
- <lead>
   <name>Jan Schneider</name>
   <user>jan</user>
   <email>jan@horde.org</email>
   <active>yes</active>
  </lead>
- <date>2017-09-19</date>
+ <lead>
+  <name>Chuck Hagenbuch</name>
+  <user>chuck</user>
+  <email>chuck@horde.org</email>
+  <active>no</active>
+ </lead>
+ <date>2017-11-14</date>
  <version>
   <release>3.0.13</release>
   <api>3.0.0</api>
@@ -1298,7 +1298,7 @@
    <stability>
     <release>stable</release>
     <api>stable</api></stability>
-   <date>2017-09-19</date>
+   <date>2017-11-14</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
 * 
