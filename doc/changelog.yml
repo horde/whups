@@ -384,13 +384,13 @@
     [cjh] Ensure the DB library is explicitly loaded (Bug #7647).
     [jan] Add Turkish translation (Akif Dinc <akif@dinc.org>).
     [jan] Fix linking to queries if URL rewriting is turned off.
-1.0:
+1.0.0:
   notes: |
     [jan] Change group field in shares table to work with LDAP groups (Bug #6883).
     [jan] Fix rendering attribute criteria in the query tree.
     [jan] Generate a valid Message-ID.
     [mjr] Fix an issue with searching on installations with a single queue that was causing all existing tickets in the queue to be displayed on entering the search page.
-1.0-RC2:
+1.0.0RC2:
   notes: |
     [jan] Add date search criteria (Duck <duck@obala.net>, Request #7274).
     [cjh] Add an RSS feed of search results (Duck <duck@obala.net>, Request #7259).
@@ -401,7 +401,7 @@
     [jan] Add query slugs and RSS feeds (Request #5924).
     [jan] Implement editing of query elements.
     [mjr] Fix saving of queries.
-1.0-RC1:
+1.0.0RC1:
   notes: |
     [jan] Remove attributes hooks.
     [jan] Add form replies.
