@@ -10,7 +10,6 @@
     uri: http://www.horde.org/licenses/bsdl.php
   notes: |
     [jan] Don't send ticket notifications if the original message was a bulk message.
-    [jan] Don't send ticket notifications if the original message was a bulk message.
     [jan] Add download of ticket history to an HTML file.
     [jan] Add saved queries to sidebar menu.
     [jan] Store incoming email messages separately from attachments.

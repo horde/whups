@@ -1,7 +1,9 @@
-----------
-v4.0.0-git
-----------
+------
+v4.0.0
+------
 
+[jan] Don't send ticket notifications if the original message was a bulk
+      message.
 [jan] Add download of ticket history to an HTML file.
 [jan] Add saved queries to sidebar menu.
 [jan] Store incoming email messages separately from attachments.
@@ -297,9 +299,9 @@ v1.0.1
 [jan] Fix linking to queries if URL rewriting is turned off.
 
 
-----
-v1.0
-----
+------
+v1.0.0
+------
 
 [jan] Change group field in shares table to work with LDAP groups (Bug #6883).
 [jan] Fix rendering attribute criteria in the query tree.
@@ -309,9 +311,9 @@ v1.0
       search page.
 
 
---------
-v1.0-RC2
---------
+---------
+v1.0.0RC2
+---------
 
 [jan] Add date search criteria (Duck <duck@obala.net>, Request #7274).
 [cjh] Add an RSS feed of search results (Duck <duck@obala.net>, Request #7259).
@@ -325,9 +327,9 @@ v1.0-RC2
 [mjr] Fix saving of queries.
 
 
---------
-v1.0-RC1
---------
+---------
+v1.0.0RC1
+---------
 
 [jan] Remove attributes hooks.
 [jan] Add form replies.

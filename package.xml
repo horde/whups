@@ -27,6 +27,7 @@
  </stability>
  <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
  <notes>
+* [jan] Don&apos;t send ticket notifications if the original message was a bulk message.
 * [jan] Add download of ticket history to an HTML file.
 * [jan] Add saved queries to sidebar menu.
 * [jan] Store incoming email messages separately from attachments.
@@ -1324,6 +1325,7 @@
    <date>2017-11-11</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
+* [jan] Don&apos;t send ticket notifications if the original message was a bulk message.
 * [jan] Add download of ticket history to an HTML file.
 * [jan] Add saved queries to sidebar menu.
 * [jan] Store incoming email messages separately from attachments.
