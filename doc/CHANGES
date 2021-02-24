@@ -1,6 +1,6 @@
-------
-v4.0.0
-------
+------------
+v4.0.0alpha1
+------------
 
 [jan] Don't send ticket notifications if the original message was a bulk
       message.

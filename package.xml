@@ -5,25 +5,25 @@
  <summary>Ticket-tracking application</summary>
  <description>Whups is a Horde ticket-tracking application. It is very flexible in design, and can be used for help-desk requests, tracking software development, and anything else that needs to track a set of requests and their status.</description>
  <lead>
-  <name>Chuck Hagenbuch</name>
-  <user>chuck</user>
-  <email>chuck@horde.org</email>
-  <active>yes</active>
- </lead>
- <lead>
   <name>Jan Schneider</name>
   <user>jan</user>
   <email>jan@horde.org</email>
   <active>yes</active>
  </lead>
- <date>2017-11-11</date>
+ <lead>
+  <name>Chuck Hagenbuch</name>
+  <user>chuck</user>
+  <email>chuck@horde.org</email>
+  <active>no</active>
+ </lead>
+ <date>2021-02-24</date>
  <version>
-  <release>4.0.0</release>
-  <api>4.0.0</api>
+  <release>4.0.0alpha1</release>
+  <api>4.0.0alpha1</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>alpha</release>
+  <api>alpha</api>
  </stability>
  <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
  <notes>
@@ -1317,12 +1317,12 @@
   </release>
   <release>
    <version>
-    <release>4.0.0</release>
-    <api>4.0.0</api></version>
+    <release>4.0.0alpha1</release>
+    <api>4.0.0alpha1</api></version>
    <stability>
-    <release>beta</release>
-    <api>beta</api></stability>
-   <date>2017-11-11</date>
+    <release>alpha</release>
+    <api>alpha</api></stability>
+   <date>2021-02-24</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
 * [jan] Don&apos;t send ticket notifications if the original message was a bulk message.
