@@ -33,31 +33,31 @@ license:
   uri: http://www.horde.org/licenses/bsdl.php
 dependencies:
   required:
-    php: ^5.3 || ^7
-    pear:
-      pear.horde.org/horde: ^5
-      pear.horde.org/Horde_Auth: ^2
-      pear.horde.org/Horde_Autoloader: ^2
-      pear.horde.org/Horde_Compress: ^2
-      pear.horde.org/Horde_Core: ^2.30
-      pear.horde.org/Horde_Date: ^2
-      pear.horde.org/Horde_Db: ^2
-      pear.horde.org/Horde_Exception: ^2
-      pear.horde.org/Horde_Form: ^2
-      pear.horde.org/Horde_Group: ^2
-      pear.horde.org/Horde_Mail: ^2
-      pear.horde.org/Horde_Mime: ^2.10
-      pear.horde.org/Horde_Mime_Viewer: ^2
-      pear.horde.org/Horde_Notification: ^2
-      pear.horde.org/Horde_Perms: ^2
-      pear.horde.org/Horde_Prefs: ^2
-      pear.horde.org/Horde_Scheduler: ^2
-      pear.horde.org/Horde_Share: ^2
-      pear.horde.org/Horde_Support: ^2
-      pear.horde.org/Horde_Text_Filter: ^2
-      pear.horde.org/Horde_Util: ^2
-      pear.horde.org/Horde_Vfs: ^2
-      pear.horde.org/Horde_View: ^2
+    php: ^7
+    composer:
+      horde/horde: ^6
+      horde/auth: ^3
+      horde/autoloader: ^3
+      horde/compress: ^3
+      horde/core: ^3
+      horde/date: ^3
+      horde/db: ^3
+      horde/exception: ^3
+      horde/form: ^3
+      horde/group: ^3
+      horde/mail: ^3
+      horde/mime: ^3
+      horde/mime_viewer: ^3
+      horde/notification: ^3
+      horde/perms: ^3
+      horde/prefs: ^3
+      horde/scheduler: ^3
+      horde/share: ^3
+      horde/support: ^3
+      horde/text_filter: ^3
+      horde/util: ^3
+      horde/vfs: ^3
+      horde/view: ^3
     ext:
       gettext: '*'
       json: '*'
