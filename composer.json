@@ -57,9 +57,6 @@
     "autoload": {
         "psr-0": {
             "Whups": "lib/"
-        },
-        "psr-4": {
-            "Horde\\Whups\\": "src/"
         }
     },
     "bin": [
