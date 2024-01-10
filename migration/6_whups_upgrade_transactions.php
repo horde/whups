@@ -59,23 +59,25 @@ class WhupsUpgradeTransactions extends Horde_Db_Migration_Base
                 if ($this->selectValue('SELECT count(*) FROM whups_transactions WHERE transaction_id = ?', array($row['transaction_id'])) > 0) {
                     continue;
                 }
-                $this->insert($insert,
-                              array($row['transaction_id'],
+                $this->insert(
+                    $insert,
+                    array($row['transaction_id'],
                                     $row['log_timestamp'],
                                     $row['user_id']),
-                              null,
-                              'transaction_id',
-                              $row['transaction_id']);
+                    null,
+                    'transaction_id',
+                    $row['transaction_id']
+                );
             }
         } catch (Horde_Db_Exception $e) {
             $this->rollbackDbTransaction();
             throw $e;
         }
+        $this->commitDbTransaction();
 
         $this->removeColumn('whups_logs', 'user_id');
         $this->removeColumn('whups_logs', 'log_timestamp');
 
-        $this->commitDbTransaction();
     }
 
     /**
@@ -97,7 +99,8 @@ class WhupsUpgradeTransactions extends Horde_Db_Migration_Base
                     array(
                         $row['transaction_user_id'],
                         $row['transaction_timestamp'],
-                        $row['transaction_id']));
+                        $row['transaction_id'])
+                );
             }
         } catch (Horde_Db_Exception $e) {
             $this->rollbackDbTransaction();
