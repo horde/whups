@@ -37,7 +37,7 @@ class Whups_Form_Query_ChooseNameForSave extends Horde_Form
         $v->setDefault($GLOBALS['whups_query']->slug);
     }
 
-    public function execute(&$vars)
+    public function execute($vars = null)
     {
         $GLOBALS['whups_query']->name = $vars->get('name');
         $GLOBALS['whups_query']->slug = $vars->get('slug');

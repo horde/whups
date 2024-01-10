@@ -207,7 +207,7 @@ class Whups_Form_Ticket_Edit extends Horde_Form
         }
     }
 
-    public function validate(&$vars)
+    public function validate(&$vars = null)
     {
         if (!$GLOBALS['registry']->getAuth()) {
             $this->setError('_auth', _("Permission Denied."));

@@ -47,7 +47,7 @@ class Whups_Form_AddComment extends Horde_Form
         }
     }
 
-    public function validate(&$vars, $canAutoFill = false)
+    public function validate(&$vars = null, $canAutoFill = false)
     {
         global $conf;
 

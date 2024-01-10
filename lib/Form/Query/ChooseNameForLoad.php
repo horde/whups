@@ -43,7 +43,7 @@ class Whups_Form_Query_ChooseNameForLoad extends Horde_Form
         $this->addVariable(_("Name"), 'name', $qType, true, false, null, array($qParams));
     }
 
-    public function execute(&$vars)
+    public function execute($vars = null)
     {
         $qManager = new Whups_Query_Manager();
         try {
