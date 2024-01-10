@@ -858,7 +858,7 @@ class Whups
         if ($value == 'timestamp' || $value == 'due' ||
             substr($value, 0, 5) == 'date_') {
             require_once 'Horde/Form/Type.php';
-            $thevalue = Horde_Form_Type_date::getFormattedTime(
+            $thevalue = (new Horde_Form_Type_date)->getFormattedTime(
                 $thevalue,
                 $GLOBALS['prefs']->getValue('report_time_format'),
                 false);
