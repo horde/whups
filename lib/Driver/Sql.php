@@ -874,7 +874,7 @@ class Whups_Driver_Sql extends Whups_Driver
     public function getTicketsByProperties(
         array $info, $munge = true, $perowner = false, $format_name = true)
     {
-        if (isset($info['queue']) && !count($info['queue'])) {
+        if (isset($info['queue']) && is_array($info['queue']) && !count($info['queue'])) {
             return array();
         }
 
