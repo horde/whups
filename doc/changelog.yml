@@ -4,12 +4,13 @@
   state:
     release: alpha
     api: alpha
-  date: 2021-03-13
+  date: 2024-01-10
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |+
-    
+  notes: |
+    [rla] Mark compatible with PHP 8.
+    |+
 4.0.0alpha3:
   api: 4.0.0alpha1
   state:
