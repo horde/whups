@@ -72,7 +72,7 @@ class Whups_Form_Query_PropertyCriterion extends Horde_Form
             array($priorities, _("Any")));
     }
 
-    public function execute($vars)
+    public function execute($vars = null)
     {
         $path = $vars->get('path');
 
