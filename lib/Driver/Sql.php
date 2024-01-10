@@ -1080,7 +1080,7 @@ class Whups_Driver_Sql extends Whups_Driver
             throw new Whups_Exception($e);
         }
 
-        if (!count($info)) {
+        if (!$info->columnCount()) {
             return array();
         }
 
