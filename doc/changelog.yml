@@ -8,8 +8,9 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |+
-    
+  notes: |
+    [rla] Fix multiple incompatibilities with PHP 8.2.
+    |+
 4.0.0alpha4:
   api: 4.0.0alpha1
   state:

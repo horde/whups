@@ -27,7 +27,8 @@
  </stability>
  <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
  <notes>
-* 
+* [rla] Fix multiple incompatibilities with PHP 8.2.
+* |+
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -38,6 +39,9 @@
      <file name="update-satis.yml" role="horde" />
     </dir> <!-- /.github/workflows -->
    </dir> <!-- /.github -->
+   <dir name=".phive">
+    <file name="phars.xml" role="horde" />
+   </dir> <!-- /.phive -->
    <dir name="admin">
     <file name="index.php" role="horde" />
    </dir> <!-- /admin -->
@@ -526,6 +530,7 @@
    <install as="whups/.github/workflows/ci.yml" name=".github/workflows/ci.yml" />
    <install as="whups/.github/workflows/phpdoc.yml" name=".github/workflows/phpdoc.yml" />
    <install as="whups/.github/workflows/update-satis.yml" name=".github/workflows/update-satis.yml" />
+   <install as="whups/.phive/phars.xml" name=".phive/phars.xml" />
    <install as="whups/admin/index.php" name="admin/index.php" />
    <install as="whups-bugzilla-import" name="bin/whups-bugzilla-import" />
    <install as="whups-convert-datatree-shares-to-sql" name="bin/whups-convert-datatree-shares-to-sql" />
@@ -763,39 +768,6 @@
   </filelist>
  </phprelease>
  <changelog>
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
   <release>
    <version>
     <release>1.0.0RC1</release>
@@ -1617,7 +1589,8 @@
    <date>2024-01-10</date>
    <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
    <notes>
-* 
+* [rla] Fix multiple incompatibilities with PHP 8.2.
+* |+
    </notes>
   </release>
  </changelog>

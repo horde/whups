@@ -2,7 +2,8 @@
 v4.0.0alpha5
 ------------
 
-
+[rla] Fix multiple incompatibilities with PHP 8.2.
+|+
 
 
 ------------
