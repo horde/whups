@@ -1,4 +1,15 @@
 ---
+4.0.0alpha5:
+  api: 4.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2024-01-10
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |+
+    
 4.0.0alpha4:
   api: 4.0.0alpha1
   state:
