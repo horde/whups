@@ -31,7 +31,7 @@ class Whups_Form_Ticket_Delete extends Horde_Form
         ));
     }
 
-    public function validate(&$vars = null)
+    public function validate($vars = null, $canAutoFill = false)
     {
         if (Whups::hasPermission($this->_queue, 'queue', Horde_Perms::DELETE)) {
             $this->_warn->setDefault(
