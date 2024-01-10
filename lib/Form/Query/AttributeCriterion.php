@@ -69,7 +69,7 @@ class Whups_Form_Query_AttributeCriterion extends Horde_Form
         }
     }
 
-    public function execute(&$vars)
+    public function execute($vars = null)
     {
         $path = $vars->get('path');
         $text = $vars->get('text');

@@ -71,7 +71,7 @@ class Whups_Form_Query_DateCriterion extends Horde_Form
             array(date('Y') - 10));
     }
 
-    public function execute(&$vars)
+    public function execute($vars = null)
     {
         $path = $vars->get('path');
         $parent = false;

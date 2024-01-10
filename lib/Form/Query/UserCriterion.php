@@ -43,7 +43,7 @@ class Whups_Form_Query_UserCriterion extends Horde_Form
         $this->addVariable(_("Search Comments"), 'comments', 'boolean', false);
     }
 
-    public function execute($vars)
+    public function execute($vars = null)
     {
         $path = $vars->get('path');
         $user = $vars->get('user');

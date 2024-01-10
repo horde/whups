@@ -53,7 +53,7 @@ class Whups_Form_Query_GroupCriterion extends Horde_Form
         }
     }
 
-    public function execute(&$vars)
+    public function execute($vars = null)
     {
         $path = $vars->get('path');
         $groups = $vars->get('groups');

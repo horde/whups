@@ -42,7 +42,7 @@ class Whups_Form_Query_TextCriterion extends Horde_Form
         $this->addVariable(_("Search Comments"), 'comments', 'boolean', false);
     }
 
-    public function execute($vars)
+    public function execute($vars = null)
     {
         $path = $vars->get('path');
         $text = $vars->get('text');

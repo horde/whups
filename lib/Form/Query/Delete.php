@@ -37,7 +37,7 @@ class Whups_Form_Query_Delete extends Horde_Form
         $this->setButtons(array(array('class' => 'horde-delete', 'value' => _("Delete Query"))));
     }
 
-    public function execute($vars)
+    public function execute($vars = null)
     {
         global $notification;
 
