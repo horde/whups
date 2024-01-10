@@ -18,7 +18,7 @@
  </lead>
  <date>2024-01-10</date>
  <version>
-  <release>4.0.0alpha5</release>
+  <release>4.0.0alpha6</release>
   <api>4.0.0alpha1</api>
  </version>
  <stability>
@@ -27,8 +27,7 @@
  </stability>
  <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
  <notes>
-* [rla] Fix multiple incompatibilities with PHP 8.2.
-* |+
+* 
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -768,6 +767,40 @@
   </filelist>
  </phprelease>
  <changelog>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   <release>
    <version>
     <release>1.0.0RC1</release>
@@ -1591,6 +1624,21 @@
    <notes>
 * [rla] Fix multiple incompatibilities with PHP 8.2.
 * |+
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>4.0.0alpha6</release>
+    <api>4.0.0alpha1</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2024-01-10</date>
+   <license uri="http://www.horde.org/licenses/bsdl.php">BSD-2-Clause</license>
+   <notes>
+* 
    </notes>
   </release>
  </changelog>
