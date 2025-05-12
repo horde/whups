@@ -1,16 +1,16 @@
 ---
-4.0.0alpha6:
-  api: 4.0.0alpha1
+4.0.0-alpha6:
+  api: 4.0.0-alpha1
   state:
-    release: alpha
-    api: alpha
-  date: 2024-01-10
+    release: true
+    api: true
+  date: 2025-05-12
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |+
-    
-4.0.0alpha5:
+  notes: |
+    fix: Use classmap autoloader. Whups is not strictly PSR-0
+4.0.0-alpha5:
   api: 4.0.0alpha1
   state:
     release: alpha
@@ -20,9 +20,10 @@
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
   notes: |
+    Original version string was 4.0.0alpha5
     [rla] Fix multiple incompatibilities with PHP 8.2.
     |+
-4.0.0alpha4:
+4.0.0-alpha4:
   api: 4.0.0alpha1
   state:
     release: alpha
@@ -32,9 +33,10 @@
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
   notes: |
+    Original version string was 4.0.0alpha4
     [rla] Mark compatible with PHP 8.
     |+
-4.0.0alpha3:
+4.0.0-alpha3:
   api: 4.0.0alpha1
   state:
     release: alpha
@@ -43,8 +45,10 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |+
-4.0.0alpha2:
+  notes: |-
+    Original version string was 4.0.0alpha3
+    |+
+4.0.0-alpha2:
   api: 4.0.0alpha1
   state:
     release: alpha
@@ -53,8 +57,10 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |+
-4.0.0alpha1:
+  notes: |-
+    Original version string was 4.0.0alpha2
+    |+
+4.0.0-alpha1:
   api: 4.0.0alpha1
   state:
     release: beta
@@ -64,6 +70,7 @@
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
   notes: |
+    Original version string was 4.0.0alpha1
     [jan] Don't send ticket notifications if the original message was a bulk message.
     [jan] Add download of ticket history to an HTML file.
     [jan] Add saved queries to sidebar menu.
@@ -235,6 +242,71 @@
     [jan] Fix CSS styling of comment text.
     [jan] Prefix ticket number exported via tasks API.
     [mms] Fix whups-mail-filter binary.
+3.0.0-beta1:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-06-19
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    Original version string was 3.0.0beta1
+    [jan] Fix deleting attributes.
+    [jan] Add configuration option to include raw processed message.
+    [jan] Add due date to ticket columns (Request #10986).
+    [jan] Make columns of portal block configurable (Request #10986).
+3.0.0-RC3:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-11-19
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    Original version string was 3.0.0RC3
+    [jan] Fix empty notifications for assignees on ticket creation (Bug #12683).
+    [jan] Fix displaying of ticket tabs (Bug #12744).
+    [mjr] Fix sourceselect preference handling (Bug #12718).
+    [jan] Hide citings in comments by default.
+    [jan] Move attachments list to separate ticket tab.
+3.0.0-RC2:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-08-22
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    Original version string was 3.0.0RC2
+    [jan] Fix sorting tickets by date.
+    [jan] Fix setting ticket sort order.
+    [jan] Fix autocompletion for requester field.
+    [jan] Fix table header of query results.
+3.0.0-RC1:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-07-17
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    Original version string was 3.0.0RC1
+    [jan] Set assign and update dates when creating new tickets (Bug #12414).
+    [jan] Fix counting of responsible users (Bug #12406).
+    [jan] Never send empty messages.
+    [jan] Don't send reply messages to guests if disabled in preferences.
+    [jan] Fix downloading of attachments.
+    [jan] Add more tests to filter out bounces and auto-replies in the mail parser.
+    [jan] Hide topbar and sidebar when displaying attachments.
+    [jan] Fix displaying of multiple owners (Bug #12051).
 3.0.0:
   api: 3.0.0
   state:
@@ -249,67 +321,6 @@
     [jan] Add Swedish translation (Arne Nordmark <nordmark@mech.kth.se>).
     [jan] Make shares table compatible with Oracle.
     [jan] Add "show" API link.
-3.0.0RC3:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-11-19
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix empty notifications for assignees on ticket creation (Bug #12683).
-    [jan] Fix displaying of ticket tabs (Bug #12744).
-    [mjr] Fix sourceselect preference handling (Bug #12718).
-    [jan] Hide citings in comments by default.
-    [jan] Move attachments list to separate ticket tab.
-3.0.0RC2:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-08-22
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix sorting tickets by date.
-    [jan] Fix setting ticket sort order.
-    [jan] Fix autocompletion for requester field.
-    [jan] Fix table header of query results.
-3.0.0RC1:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-07-17
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Set assign and update dates when creating new tickets (Bug #12414).
-    [jan] Fix counting of responsible users (Bug #12406).
-    [jan] Never send empty messages.
-    [jan] Don't send reply messages to guests if disabled in preferences.
-    [jan] Fix downloading of attachments.
-    [jan] Add more tests to filter out bounces and auto-replies in the mail parser.
-    [jan] Hide topbar and sidebar when displaying attachments.
-    [jan] Fix displaying of multiple owners (Bug #12051).
-3.0.0beta1:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-06-19
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix deleting attributes.
-    [jan] Add configuration option to include raw processed message.
-    [jan] Add due date to ticket columns (Request #10986).
-    [jan] Make columns of portal block configurable (Request #10986).
 2.0.3:
   api: 2.0.0
   state:
@@ -355,51 +366,7 @@
     [jan] Add setting to use different addresses for Return-Path: and From: headers.
     [jan] Fix whups-reminders script (Bug #10783).
     [jan] Add Latvian translation (Jānis Eisaks).
-2.0.0:
-  api: 2.0.0
-  state:
-    release: stable
-    api: stable
-  date: 2011-10-27
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix rendering of attributes if a ticket's type has changed.
-2.0.0RC2:
-  api: 2.0.0RC2
-  state:
-    release: beta
-    api: beta
-  date: 2011-10-18
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Support more complex attributes types (Bug #9947).
-    [jan] Fix displaying form errors from updating tickets.
-    [jan] Allow to create private comments during ticket creation (Request #8312).
-    [jan] Fix addTicket API method.
-    [jan] Add missing default value for whups_priorities.priority_default column (Bug #10631).
-2.0.0RC1:
-  api: 2.0.0RC1
-  state:
-    release: beta
-    api: beta
-  date: 2011-10-11
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Don't create stray update and assign permission (Bug #10624).
-    [jan] Add script to convert backends to UTF-8.
-    [jan] Fix executing queries on non-UTF-8 backends.
-    [jan] Add index to whups_attributes table.
-    [jan] Fix using custom SQL configurations.
-    [jan] Fix fatal error when updating address book preferences (Bug #10567).
-    [jan] Don't access protected properties in the addTicket/updateTicket API methods (Bug #10566).
-    [jan] Fix adding comments as a guest (Bug #10559).
-2.0.0alpha1:
+2.0.0-alpha1:
   api: 2.0.0alpha1
   state:
     release: alpha
@@ -409,6 +376,7 @@
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
   notes: |
+    Original version string was 2.0.0alpha1
     First alpha release for Horde 4.
     [jan] Fix automatic linking of bug numbers inside URLs (Bug #7081).
     [jan] Don't search for all states if no states have been selected.
@@ -423,6 +391,52 @@
     [jan] Convert HTML messages to plain text when processing mail messages.
     [jan] Fix creating temporary files with open_basedir restrictions.
     [jan] Provide default configuration files instead of .dist versions.
+2.0.0-RC2:
+  api: 2.0.0RC2
+  state:
+    release: beta
+    api: beta
+  date: 2011-10-18
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    Original version string was 2.0.0RC2
+    [jan] Support more complex attributes types (Bug #9947).
+    [jan] Fix displaying form errors from updating tickets.
+    [jan] Allow to create private comments during ticket creation (Request #8312).
+    [jan] Fix addTicket API method.
+    [jan] Add missing default value for whups_priorities.priority_default column (Bug #10631).
+2.0.0-RC1:
+  api: 2.0.0RC1
+  state:
+    release: beta
+    api: beta
+  date: 2011-10-11
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    Original version string was 2.0.0RC1
+    [jan] Don't create stray update and assign permission (Bug #10624).
+    [jan] Add script to convert backends to UTF-8.
+    [jan] Fix executing queries on non-UTF-8 backends.
+    [jan] Add index to whups_attributes table.
+    [jan] Fix using custom SQL configurations.
+    [jan] Fix fatal error when updating address book preferences (Bug #10567).
+    [jan] Don't access protected properties in the addTicket/updateTicket API methods (Bug #10566).
+    [jan] Fix adding comments as a guest (Bug #10559).
+2.0.0:
+  api: 2.0.0
+  state:
+    release: stable
+    api: stable
+  date: 2011-10-27
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    [jan] Fix rendering of attributes if a ticket's type has changed.
 1.0.1:
   notes: |
     [jan] Fix Oracle SQL scripts.
@@ -440,14 +454,9 @@
     [cjh] Ensure the DB library is explicitly loaded (Bug #7647).
     [jan] Add Turkish translation (Akif Dinc <akif@dinc.org>).
     [jan] Fix linking to queries if URL rewriting is turned off.
-1.0.0:
+1.0.0-RC2:
   notes: |
-    [jan] Change group field in shares table to work with LDAP groups (Bug #6883).
-    [jan] Fix rendering attribute criteria in the query tree.
-    [jan] Generate a valid Message-ID.
-    [mjr] Fix an issue with searching on installations with a single queue that was causing all existing tickets in the queue to be displayed on entering the search page.
-1.0.0RC2:
-  notes: |
+    Original version string was 1.0.0RC2
     [jan] Add date search criteria (Duck <duck@obala.net>, Request #7274).
     [cjh] Add an RSS feed of search results (Duck <duck@obala.net>, Request #7259).
     [jan] Group statistics by ticket type.
@@ -457,8 +466,9 @@
     [jan] Add query slugs and RSS feeds (Request #5924).
     [jan] Implement editing of query elements.
     [mjr] Fix saving of queries.
-1.0.0RC1:
+1.0.0-RC1:
   notes: |
+    Original version string was 1.0.0RC1
     [jan] Remove attributes hooks.
     [jan] Add form replies.
     [jan] Add support for queue-specific notification messages.
@@ -664,3 +674,9 @@
     [cjh] Convert short tags (<?) to <?php.
     [cjh] Make all copyright notices refer to BSD license.
     [cjh] Added initial CHANGES file.
+1.0.0:
+  notes: |
+    [jan] Change group field in shares table to work with LDAP groups (Bug #6883).
+    [jan] Fix rendering attribute criteria in the query tree.
+    [jan] Generate a valid Message-ID.
+    [mjr] Fix an issue with searching on installations with a single queue that was causing all existing tickets in the queue to be displayed on entering the search page.
