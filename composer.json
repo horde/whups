@@ -16,7 +16,7 @@
             "role": "lead"
         }
     ],
-    "time": "2024-01-10",
+    "time": "2025-05-12",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^2",
@@ -50,11 +50,14 @@
     "require-dev": {},
     "suggest": {},
     "autoload": {
-        "psr-0": {
-            "Whups": "lib/"
+        "classmap": [
+            "lib/"
+        ],
+        "psr-4": {
+            "Horde\\Whups\\": "/src"
         }
     },
-    "autoload-dev": [],
+    "autoload-dev": {},
     "bin": [
         "bin/whups-bugzilla-import",
         "bin/whups-convert-datatree-shares-to-sql",

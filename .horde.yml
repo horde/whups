@@ -61,3 +61,8 @@ dependencies:
     ext:
       gettext: '*'
       json: '*'
+autoload:
+  classmap:
+    - lib/
+  psr-4:
+    Horde\Whups\: /src
