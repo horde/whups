@@ -13,7 +13,7 @@
 
 class Whups_Form_Admin_AddPriority extends Horde_Form
 {
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         parent::__construct($vars, _("Add Priority"));
 

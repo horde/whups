@@ -53,7 +53,7 @@ $_templates['csv'] = array(
 );
 
 if (!function_exists('_csvQuote')) {
-    function _csvQuote(&$data, $key)
+    function _csvQuote($data, $key)
     {
         if (strpos($data, ',') !== false) {
             $data = '"' . str_replace('"', '\"', $data) . '"';

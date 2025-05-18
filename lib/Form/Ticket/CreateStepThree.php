@@ -17,7 +17,7 @@
  */
 class Whups_Form_Ticket_CreateStepThree extends Horde_Form
 {
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         global $whups_driver, $conf;
 

@@ -14,7 +14,7 @@
 class Whups_Form_Admin_EditVersionStepOne extends Horde_Form
 {
 
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         global $whups_driver;
 

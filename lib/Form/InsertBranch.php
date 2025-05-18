@@ -14,7 +14,7 @@
  */
 class Whups_Form_InsertBranch extends Horde_Form
 {
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         parent::__construct($vars, _("Insert Branch"));
 

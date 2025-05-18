@@ -13,7 +13,7 @@
 
 class Whups_Form_Admin_EditStateStepOne extends Horde_Form
 {
-    function __construct(&$vars)
+    function __construct($vars)
     {
         parent::__construct($vars, _("Edit or Delete States"));
         $this->setButtons(array(_("Edit State"), array('class' => 'horde-delete', 'value' => _("Delete State"))));

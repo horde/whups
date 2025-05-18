@@ -7,7 +7,7 @@
  */
 class Whups_Form_Ticket_Edit extends Horde_Form
 {
-    public function __construct(&$vars, &$ticket, $title = '')
+    public function __construct($vars, $ticket, $title = '')
     {
         global $whups_driver;
 

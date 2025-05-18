@@ -5,7 +5,7 @@
 class Whups_Form_AddComment extends Horde_Form
 {
 
-    public function __construct(&$vars, $title = '')
+    public function __construct($vars, $title = '')
     {
         global $conf;
 

@@ -9,7 +9,7 @@
 
 class Whups_Form_AddListener extends Horde_Form
 {
-    public function __construct(&$vars, $title = '')
+    public function __construct($vars, $title = '')
     {
         parent::__construct($vars, $title);
 

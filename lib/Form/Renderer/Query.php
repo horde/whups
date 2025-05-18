@@ -13,7 +13,7 @@
 
 /*class Horde_Form_Renderer_QuerySetCurrentType extends Horde_Form_Renderer {
 
-    function _renderForm(&$form, &$vars, $isActive)
+    function _renderForm($form, $vars, $isActive)
     {
         global $whups_driver;
 
@@ -47,7 +47,7 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
     /**
      * @TODO: this is public because the parent:: method is public
      */
-    public function _renderForm(&$query, &$vars, $active)
+    public function _renderForm($query, $vars, $active)
     {
         $this->currentRow = 1;
         $this->isActive = $active;
@@ -58,7 +58,7 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
         $this->_renderEnd();
     }
 
-    public function edit(&$operations, $formname, $id)
+    public function edit($operations, $formname, $id)
     {
         include WHUPS_TEMPLATES . '/renderer/query/edit.inc';
     }
@@ -66,7 +66,7 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
     /**
      * @TODO: This must be public, but method name has underscore.
      */
-    public function _renderRow(&$more, &$path, $type, $criterion, $cvalue, $operator, $value)
+    public function _renderRow($more, $path, $type, $criterion, $cvalue, $operator, $value)
     {
         global $whups_driver, $registry;
 

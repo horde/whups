@@ -10,7 +10,7 @@
 
 class Whups_Form_SetTypeStepTwo extends Horde_Form
 {
-    public function __construct(&$vars, $title = '')
+    public function __construct($vars, $title = '')
     {
         global $whups_driver;
 

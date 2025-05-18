@@ -9,7 +9,7 @@ class Whups_Form_Search extends Horde_Form
 {
     protected $_useFormToken = false;
 
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         parent::__construct($vars);
 
@@ -100,7 +100,7 @@ class Whups_Form_Search extends Horde_Form
      * @param array           $info  Array to be filled with the submitted field
      *                               values.
      */
-    public function getInfo($vars, &$info)
+    public function getInfo($vars, $info)
     {
         parent::getInfo($vars, $info);
 

@@ -13,7 +13,7 @@
 
 class Whups_Form_Admin_EditAttributeStepOne extends Horde_Form
 {
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         parent::__construct($vars, _("Edit or Delete Attributes"));
         $this->setButtons(array(_("Edit Attribute"), array('class' => 'horde-delete', 'value' => _("Delete Attribute"))));

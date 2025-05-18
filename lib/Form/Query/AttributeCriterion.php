@@ -31,7 +31,7 @@ class Whups_Form_Query_AttributeCriterion extends Horde_Form
      */
     public $attribs = array();
 
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         global $whups_driver;
 

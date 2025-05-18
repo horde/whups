@@ -19,7 +19,7 @@ class Whups_Form_Ticket_CreateStepTwo extends Horde_Form
 {
     protected $_useFormToken = false;
 
-    public function __construct(&$vars)
+    public function __construct($vars)
     {
         global $whups_driver;
 

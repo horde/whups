@@ -11,7 +11,7 @@ class Whups_Form_Ticket_Delete extends Horde_Form
     protected $_queue;
     protected $_warn;
 
-    public function __construct(&$vars, $title = '')
+    public function __construct($vars, $title = '')
     {
         parent::__construct($vars, $title);
 
