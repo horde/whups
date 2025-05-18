@@ -1259,9 +1259,11 @@ class Whups
                  * usefully. */
                 if (in_array($field_type, $blacklist)) {
                     continue;
-                }
-                self::$_fieldTypes[$field_type] = @call_user_func(
-                    array('Horde_Form_Type_' . $field_type, 'about'));
+		}
+		// TODO: Ensure proper PSR autoloader class name
+		$className = 'Horde_Form_Type_' . $field_type;
+		$typeObject = new $className;
+		self::$_fieldTypes[$field_type] = $typeObject->about();
             }
         }
 
