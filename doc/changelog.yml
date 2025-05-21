@@ -1,4 +1,18 @@
 ---
+4.0.0-alpha7:
+  api: 4.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-21
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    fix: Make example hook only load if not yet loaded. Users should follow this example
+    fix: Use return value rather than pass-by-reference
+    fix: Bug #15187 https://bugs.horde.org/ticket/15187 Whups 'Edit Types' fails due to static/non-static clash
+    fix: Remove reference from signatures.
 4.0.0-alpha6:
   api: 4.0.0-alpha1
   state:
