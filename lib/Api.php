@@ -171,9 +171,9 @@ class Whups_Api extends Horde_Registry_Api
             throw new Whups_Exception("Invalid arguments ($f3)");
         }
 
-        $form1->getInfo($vars, $info);
-        $form2->getInfo($vars, $info);
-        $form3->getInfo($vars, $info);
+        $info = $form1->getInfo($vars, $info);
+        $info = $form2->getInfo($vars, $info);
+        $info = $form3->getInfo($vars, $info);
 
         // More checks if we're assigning the ticket at create-time.
         if ($GLOBALS['registry']->getAuth() && $whups_driver->isCategory('assigned', $vars->get('state'))) {
@@ -183,7 +183,7 @@ class Whups_Api extends Horde_Registry_Api
                 throw new Whups_Exception('Invalid arguments (' . var_export($form4->getErrors(), true) . ')');
             }
 
-            $form4->getInfo($vars, $info);
+            $info = $form4->getInfo($vars, $info);
         }
 
         $ticket = Whups_Ticket::newTicket($info, $GLOBALS['registry']->getAuth());
@@ -235,7 +235,7 @@ class Whups_Api extends Horde_Registry_Api
              throw new Whups_Exception(sprintf(_("Invalid ticket data supplied: %s"), $form_errors));
         }
 
-        $editform->getInfo($vars, $info);
+        $info = $editform->getInfo($vars, $info);
 
         $ticket->change('summary', $info['summary']);
         $ticket->change('state', $info['state']);

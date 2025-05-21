@@ -26,7 +26,7 @@ $delform = new Whups_Form_DeleteListener($vars, _("Remove Watcher"));
 
 if ($vars->get('formname') == 'whups_form_addlistener' &&
     $addform->validate($vars)) {
-    $addform->getInfo($vars, $info);
+    $info = $addform->getInfo($vars, $info);
     try {
         $whups_driver->addListener($id, '**' . $info['add_listener']);
         $ticket->notify(

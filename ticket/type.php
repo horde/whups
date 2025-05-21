@@ -44,7 +44,7 @@ if ($form == 'whups_form_settypestepone') {
 if ($form == 'whups_form_settypesteptwo') {
     $settypeform = new Whups_Form_SetTypeStepTwo($vars);
     if ($settypeform->validate($vars)) {
-        $settypeform->getInfo($vars, $info);
+        $info = $settypeform->getInfo($vars, $info);
 
         $ticket->change('type', $info['type']);
         $ticket->change('state', $info['state']);

@@ -38,11 +38,11 @@ if ($valid1 && $valid2 && $valid3 &&
     // Don't validate the assignment form if it isn't being used.
     (!$doAssignForm || $valid4)) {
 
-    $form1->getInfo($vars, $info);
-    $form2->getInfo($vars, $info);
-    $form3->getInfo($vars, $info);
+    $info = $form1->getInfo($vars, $info);
+    $info = $form2->getInfo($vars, $info);
+    $info = $form3->getInfo($vars, $info);
     if ($doAssignForm) {
-        $form4->getInfo($vars, $info);
+        $info = $form4->getInfo($vars, $info);
     }
 
     try {
@@ -90,7 +90,7 @@ if ($valid3 && $valid2 && $valid1) {
     echo '<br />';
 
     // Preserve an uploaded file if there was one.
-    $form3->getInfo($vars, $info);
+    $info = $form3->getInfo($vars, $info);
     if (!empty($info['newattachment']['name'])) {
         $file_name = $info['newattachment']['name'];
 

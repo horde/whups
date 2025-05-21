@@ -16,7 +16,7 @@ $limit = (int)$vars->get('limit');
 $form = new Whups_Form_Search($vars);
 
 if ($form->validate($vars, true)) {
-    $form->getInfo($vars, $info);
+    $info = $form->getInfo($vars, $info);
     $tickets = $whups_driver->getTicketsByProperties($info);
     Whups::sortTickets($tickets, 'date_updated', 'desc');
 } else {

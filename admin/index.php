@@ -928,7 +928,7 @@ case 'whups_form_admin_editattributesteptwo_reload':
     $vars->set('action', 'type');
     if ($vars->get('formname') == 'whups_form_admin_editattributesteptwo' &&
         $form->validate($vars)) {
-        $form->getInfo($vars, $info);
+        $info = $form->getInfo($vars, $info);
         try {
             $whups_driver->updateAttributeDesc(
                 $info['attribute'],

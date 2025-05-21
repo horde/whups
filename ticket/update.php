@@ -52,7 +52,7 @@ $title = '[#' . $id . '] ' . $ticket->get('summary');
 $editform = new Whups_Form_Ticket_Edit($vars, $ticket, sprintf(_("Update %s"), $title));
 if ($vars->get('formname') == 'whups_form_ticket_edit') {
     if ($editform->validate($vars)) {
-        $editform->getInfo($vars, $info);
+        $info = $editform->getInfo($vars, $info);
 
         $ticket->change('summary', $info['summary']);
         $ticket->change('state', $info['state']);
