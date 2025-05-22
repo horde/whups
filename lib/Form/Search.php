@@ -100,9 +100,9 @@ class Whups_Form_Search extends Horde_Form
      * @param array           $info  Array to be filled with the submitted field
      *                               values.
      */
-    public function getInfo($vars, $info)
+    public function getInfo($vars = null, $info = [])
     {
-        parent::getInfo($vars, $info);
+        $info = parent::getInfo($vars, $info);
 
         if (empty($info['queue'])) {
             $info['queue'] = array_keys(
@@ -148,5 +148,6 @@ class Whups_Form_Search extends Horde_Form
             }
         }
         $info['queue'] = array_intersect($info['queue'], $queues);
+        return $info;
     }
 }
