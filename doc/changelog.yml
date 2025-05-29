@@ -1,4 +1,16 @@
 ---
+4.0.0-alpha8:
+  api: 4.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-05-29
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    ci: Update php-cs-fixer rules
+    fix: Signature of getInfo method in Search form.
 4.0.0-alpha7:
   api: 4.0.0-alpha1
   state:
