@@ -35,4 +35,4 @@ run-tests.log
 /config/menu.php
 /config/*.local.php
 /config/*-*.php
-
+.php-cs-fixer.cache
