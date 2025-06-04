@@ -1,4 +1,16 @@
 ---
+4.0.0-alpha9:
+  api: 4.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-06-04
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: |
+    feat: Stub of custom config form
+    style: Apply php-cs-fixer php 8.3 ruleset
 4.0.0-alpha8:
   api: 4.0.0-alpha1
   state:
