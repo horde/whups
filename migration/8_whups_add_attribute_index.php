@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author   Jan Schneider <jan@horde.org>
  * @category Horde
@@ -26,7 +27,7 @@ class WhupsAddAttributeIndex extends Horde_Db_Migration_Base
      */
     public function up()
     {
-        $this->addPrimaryKey('whups_attributes', array('ticket_id', 'attribute_id'));
+        $this->addPrimaryKey('whups_attributes', ['ticket_id', 'attribute_id']);
     }
 
     /**

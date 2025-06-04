@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Change columns to autoincrement.
  *
@@ -31,6 +32,6 @@ class WhupsAutoIncrementShares extends Horde_Db_Migration_Base
      */
     public function down()
     {
-        $this->changeColumn('whups_shares', 'share_id', 'integer', array('null' => false));
+        $this->changeColumn('whups_shares', 'share_id', 'integer', ['null' => false]);
     }
 }

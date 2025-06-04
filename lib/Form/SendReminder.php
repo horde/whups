@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains any general Horde_Form classes for administration
  * purposes that don't have have their own file in the Admin/ subdirectory.
@@ -21,17 +22,24 @@ class Whups_Form_SendReminder extends Horde_Form
         parent::__construct($vars, _("Send Reminders"));
 
         $queues = Whups::permissionsFilter(
-            $whups_driver->getQueues(), 'queue', Horde_Perms::EDIT);
+            $whups_driver->getQueues(),
+            'queue',
+            Horde_Perms::EDIT
+        );
         if (count($queues)) {
             $modtype = 'enum';
-            $type_params = array($queues);
+            $type_params = [$queues];
         } else {
             $modtype = 'invalid';
-            $type_params = array(_("There are no queues available."));
+            $type_params = [_("There are no queues available.")];
         }
 
         $this->addVariable(
-            _("Send only for this list of ticket ids"), 'id', 'intlist', false);
+            _("Send only for this list of ticket ids"),
+            'id',
+            'intlist',
+            false
+        );
         $this->addVariable(
             _("For tickets from these queues"),
             'queue',
@@ -39,13 +47,21 @@ class Whups_Form_SendReminder extends Horde_Form
             false,
             false,
             null,
-            $type_params);
+            $type_params
+        );
 
         $cats = $whups_driver->getCategories();
         unset($cats['resolved']);
         $categories = $this->addVariable(
-            _("For tickets which are"), 'category', 'multienum', false, false, null, array($cats, 3));
-        $categories->setDefault(array('assigned'));
+            _("For tickets which are"),
+            'category',
+            'multienum',
+            false,
+            false,
+            null,
+            [$cats, 3]
+        );
+        $categories->setDefault(['assigned']);
 
         $this->addVariable(
             _("Unassigned tickets"),
@@ -53,7 +69,8 @@ class Whups_Form_SendReminder extends Horde_Form
             'email',
             false,
             false,
-            _("If you select any tickets that do not have an owner, who should we send email to?"));
+            _("If you select any tickets that do not have an owner, who should we send email to?")
+        );
     }
 
 }

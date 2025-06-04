@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Step One in creating new tickets.
  *
@@ -26,11 +27,20 @@ class Whups_Form_Ticket_CreateStepOne extends Horde_Form
         parent::__construct($vars, _("Create Ticket - Step 1"));
 
         $queues = Whups::permissionsFilter(
-            $whups_driver->getQueues(), 'queue', Horde_Perms::EDIT);
+            $whups_driver->getQueues(),
+            'queue',
+            Horde_Perms::EDIT
+        );
         if (!$queues) {
             $this->addVariable(
-                _("Queue Name"), 'queue', 'invalid', true, false, null,
-                array(_("There are no queues which you can create tickets in.")));
+                _("Queue Name"),
+                'queue',
+                'invalid',
+                true,
+                false,
+                null,
+                [_("There are no queues which you can create tickets in.")]
+            );
         } else {
             foreach (array_keys($queues) as $queue_id) {
                 $info = $whups_driver->getQueue($queue_id);
@@ -45,8 +55,14 @@ class Whups_Form_Ticket_CreateStepOne extends Horde_Form
             }
 
             $queues = $this->addVariable(
-                _("Queue Name"), 'queue', 'enum', true, false, null,
-                array($queues, _("Choose:")));
+                _("Queue Name"),
+                'queue',
+                'enum',
+                true,
+                false,
+                null,
+                [$queues, _("Choose:")]
+            );
             $queues->setAction(Horde_Form_Action::factory('submit'));
         }
     }

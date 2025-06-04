@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes to create a new ticket.
  *
@@ -35,12 +36,12 @@ class Whups_Form_Ticket_CreateStepFour extends Horde_Form
         asort($mygroups);
 
         $users = $whups_driver->getQueueUsers($vars->get('queue'));
-        $f_users = array();
+        $f_users = [];
         foreach ($users as $user) {
             $f_users['user:' . $user] = Whups::formatUser($user);
         }
 
-        $f_groups = array();
+        $f_groups = [];
         if (count($mygroups)) {
             foreach ($mygroups as $id => $group) {
                 $f_groups['group:' . $id] = $group;
@@ -49,23 +50,42 @@ class Whups_Form_Ticket_CreateStepFour extends Horde_Form
 
         if (count($f_users)) {
             asort($f_users);
-            $owners = $this->addVariable(_("Owners"), 'owners', 'multienum',
-                                          false, false, null, array($f_users));
+            $owners = $this->addVariable(
+                _("Owners"),
+                'owners',
+                'multienum',
+                false,
+                false,
+                null,
+                [$f_users]
+            );
         }
 
         if (count($f_groups)) {
             asort($f_groups);
-            $group_owners = $this->addVariable(_("Group Owners"),
-                                                'group_owners', 'multienum',
-                                                false, false, null,
-                                                array($f_groups));
+            $group_owners = $this->addVariable(
+                _("Group Owners"),
+                'group_owners',
+                'multienum',
+                false,
+                false,
+                null,
+                [$f_groups]
+            );
         }
 
         if (!count($f_users) && !count($f_groups)) {
-            $owner_params = array(
-                _("There are no users to which this ticket can be assigned."));
-            $this->addVariable(_("Owners"), 'owners', 'invalid', false, false,
-                               null, $owner_params);
+            $owner_params = [
+                _("There are no users to which this ticket can be assigned.")];
+            $this->addVariable(
+                _("Owners"),
+                'owners',
+                'invalid',
+                false,
+                false,
+                null,
+                $owner_params
+            );
         }
     }
 

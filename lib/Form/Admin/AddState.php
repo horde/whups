@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for ticket state administration.
  *
@@ -20,7 +21,7 @@ class Whups_Form_Admin_AddState extends Horde_Form
         $this->addHidden('', 'type', 'int', true, true);
         $this->addVariable(_("State Name"), 'name', 'text', true);
         $this->addVariable(_("State Description"), 'description', 'text', true);
-        $this->addVariable(_("State Category"), 'category', 'enum', false, false, null, array($GLOBALS['whups_driver']->getCategories()));
+        $this->addVariable(_("State Category"), 'category', 'enum', false, false, null, [$GLOBALS['whups_driver']->getCategories()]);
     }
 
 }

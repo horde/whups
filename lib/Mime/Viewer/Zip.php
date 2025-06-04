@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Whups_Mime_Viewer_Zip class renders out the contents of ZIP files
  * in HTML format and allows downloading of extractable files.
@@ -28,7 +29,7 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
     protected function _render()
     {
         if (!($zip_atc = Horde_Util::getFormData('zip_attachment'))) {
-            $this->_callback = array($this, '_whupsCallback');
+            $this->_callback = [$this, '_whupsCallback'];
             return parent::_render();
         }
 
@@ -42,31 +43,31 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
         }
 
         $fileKey = $zip_atc - 1;
-        $zipInfo = $zip->decompress($data, array(
-            'action' => Horde_Compress_Zip::ZIP_LIST
-        ));
+        $zipInfo = $zip->decompress($data, [
+            'action' => Horde_Compress_Zip::ZIP_LIST,
+        ]);
 
         /* Verify that the requested file exists. */
         if (isset($zipInfo[$fileKey])) {
-            $text = $zip->decompress($data, array(
+            $text = $zip->decompress($data, [
                 'action' => Horde_Compress_Zip::ZIP_DATA,
                 'info' => &$zipInfo,
-                'key' => $fileKey
-            ));
+                'key' => $fileKey,
+            ]);
             if (!empty($text)) {
-                return array(
-                    $this->_mimepart->getMimeId() => array(
+                return [
+                    $this->_mimepart->getMimeId() => [
                         'data' => $text,
                         'name' => basename($zipInfo[$fileKey]['name']),
-                        'status' => array(),
-                        'type' => 'application/octet-stream'
-                    )
-                );
+                        'status' => [],
+                        'type' => 'application/octet-stream',
+                    ],
+                ];
             }
         }
 
         // TODO: Error reporting
-        return array();
+        return [];
     }
 
     /**
@@ -76,7 +77,7 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
      */
     protected function _renderInfo()
     {
-        $this->_callback = array($this, '_whupsCallback');
+        $this->_callback = [$this, '_whupsCallback'];
         return parent::_renderInfo();
     }
 
@@ -97,7 +98,7 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
              ($val['method'] == 0x0))) {
             $mime_part = $this->_mimepart;
             $mime_part->setName(basename($name));
-            $val['name'] = str_replace($name, Horde::url('view.php')->add(array('actionID' => 'view_file', 'type' => Horde_Util::getFormData('type'), 'file' => Horde_Util::getFormData('file'), 'ticket' => Horde_Util::getFormData('ticket'), 'zip_attachment' => $key + 1))->link() . $name . '</a>', $val['name']);
+            $val['name'] = str_replace($name, Horde::url('view.php')->add(['actionID' => 'view_file', 'type' => Horde_Util::getFormData('type'), 'file' => Horde_Util::getFormData('file'), 'ticket' => Horde_Util::getFormData('ticket'), 'zip_attachment' => $key + 1])->link() . $name . '</a>', $val['name']);
         }
 
         return $val;

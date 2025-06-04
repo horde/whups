@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
  *
@@ -34,17 +35,31 @@ class Whups_Form_Admin_DeleteAttribute extends Horde_Form
         $this->addHidden('', 'type', 'int', true, true);
         $this->addHidden('', 'attribute', 'int', true, true);
         $pname = $this->addVariable(
-            _("Attribute Name"), 'attribute_name', 'text', false, true);
+            _("Attribute Name"),
+            'attribute_name',
+            'text',
+            false,
+            true
+        );
         $pname->setDefault($info['name']);
         $pdesc = $this->addVariable(
-            _("Attribute Description"), 'attribute_description', 'text', false,
-            true);
+            _("Attribute Description"),
+            'attribute_description',
+            'text',
+            false,
+            true
+        );
         $pdesc->setDefault($info['description']);
         $this->addVariable(
             _("Really delete this attribute? This may cause data problems!"),
-            'yesno', 'enum', true, false, null,
-            array(array(0 => _("No"), 1 => _("Yes"))));
+            'yesno',
+            'enum',
+            true,
+            false,
+            null,
+            [[0 => _("No"), 1 => _("Yes")]]
+        );
 
-        $this->setButtons(array(array('class' => 'horde-delete', 'value' => _("Delete Attribute"))));
+        $this->setButtons([['class' => 'horde-delete', 'value' => _("Delete Attribute")]]);
     }
 }

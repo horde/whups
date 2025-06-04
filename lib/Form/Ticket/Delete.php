@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -25,10 +26,10 @@ class Whups_Form_Ticket_Delete extends Horde_Form
             . '</span>'
         );
 
-        $this->setButtons(array(
-            array('class' => 'horde-delete', 'value' => _("Delete")),
-            array('class' => 'horde-cancel', 'value' => _("Cancel")),
-        ));
+        $this->setButtons([
+            ['class' => 'horde-delete', 'value' => _("Delete")],
+            ['class' => 'horde-cancel', 'value' => _("Cancel")],
+        ]);
     }
 
     public function validate($vars = null, $canAutoFill = false)

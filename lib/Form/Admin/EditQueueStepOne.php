@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for queue administration.
  *
@@ -19,24 +20,34 @@ class Whups_Form_Admin_EditQueueStepOne extends Horde_Form
 
         if ($registry->hasMethod('tickets/listQueues') == $registry->getApp()) {
             parent::__construct($vars, _("Edit or Delete Queues"));
-            $this->setButtons(array(_("Edit Queue"), array('class' => 'horde-delete', 'value' => _("Delete Queue"))));
+            $this->setButtons([_("Edit Queue"), ['class' => 'horde-delete', 'value' => _("Delete Queue")]]);
         } else {
             parent::__construct($vars, _("Edit Queues"));
-            $this->setButtons(array(_("Edit Queue")));
+            $this->setButtons([_("Edit Queue")]);
         }
 
         $queues = Whups::permissionsFilter(
-            $whups_driver->getQueues(), 'queue', Horde_Perms::EDIT);
+            $whups_driver->getQueues(),
+            'queue',
+            Horde_Perms::EDIT
+        );
         if ($queues) {
             $modtype = 'enum';
-            $type_params = array($queues);
+            $type_params = [$queues];
         } else {
             $modtype = 'invalid';
-            $type_params = array(_("There are no queues to edit"));
+            $type_params = [_("There are no queues to edit")];
         }
 
         $this->addVariable(
-            _("Queue Name"), 'queue', $modtype, true, false, null, $type_params);
+            _("Queue Name"),
+            'queue',
+            $modtype,
+            true,
+            false,
+            null,
+            $type_params
+        );
     }
 
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Attach the contact autocompleter to a HTML element.
  *
@@ -20,7 +21,7 @@ class Whups_Ajax_Imple_ContactAutoCompleter extends Horde_Core_Ajax_Imple_Contac
     {
         $params = Whups::getAddressbookSearchParams();
 
-        $ob = new stdClass;
+        $ob = new stdClass();
         $ob->fields = $params['fields'];
         $ob->sources = $params['sources'];
 

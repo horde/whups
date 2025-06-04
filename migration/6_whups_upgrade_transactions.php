@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Normalize Whups Transactions
  *
@@ -19,11 +20,11 @@ class WhupsUpgradeTransactions extends Horde_Db_Migration_Base
      */
     public function up()
     {
-        $t = $this->createTable('whups_transactions', array('autoincrementKey' => false));
-        $t->column('transaction_id', 'integer', array('null' => false));
-        $t->column('transaction_timestamp', 'integer', array('null' => false));
-        $t->column('transaction_user_id', 'string', array('limit' => 255, 'null' => false));
-        $t->primaryKey(array('transaction_id'));
+        $t = $this->createTable('whups_transactions', ['autoincrementKey' => false]);
+        $t->column('transaction_id', 'integer', ['null' => false]);
+        $t->column('transaction_timestamp', 'integer', ['null' => false]);
+        $t->column('transaction_user_id', 'string', ['limit' => 255, 'null' => false]);
+        $t->primaryKey(['transaction_id']);
         $t->end();
 
         $this->_normalize();
@@ -56,14 +57,14 @@ class WhupsUpgradeTransactions extends Horde_Db_Migration_Base
                 // timestamps, so the above query won't filter out *all* the
                 // duplicate transaction_ids, need to check to avoid
                 // constraint violations.
-                if ($this->selectValue('SELECT count(*) FROM whups_transactions WHERE transaction_id = ?', array($row['transaction_id'])) > 0) {
+                if ($this->selectValue('SELECT count(*) FROM whups_transactions WHERE transaction_id = ?', [$row['transaction_id']]) > 0) {
                     continue;
                 }
                 $this->insert(
                     $insert,
-                    array($row['transaction_id'],
-                                    $row['log_timestamp'],
-                                    $row['user_id']),
+                    [$row['transaction_id'],
+                        $row['log_timestamp'],
+                        $row['user_id']],
                     null,
                     'transaction_id',
                     $row['transaction_id']
@@ -85,8 +86,8 @@ class WhupsUpgradeTransactions extends Horde_Db_Migration_Base
      */
     protected function _denormalize()
     {
-        $this->addColumn('whups_logs', 'user_id', 'string', array('limit' => 255, 'null' => false));
-        $this->addColumn('whups_logs', 'log_timestamp', 'integer', array('null' => false));
+        $this->addColumn('whups_logs', 'user_id', 'string', ['limit' => 255, 'null' => false]);
+        $this->addColumn('whups_logs', 'log_timestamp', 'integer', ['null' => false]);
 
         $sql = 'SELECT * FROM whups_transactions';
         $rows = $this->select($sql);
@@ -96,10 +97,10 @@ class WhupsUpgradeTransactions extends Horde_Db_Migration_Base
             foreach ($rows as $row) {
                 $this->update(
                     $sql,
-                    array(
+                    [
                         $row['transaction_user_id'],
                         $row['transaction_timestamp'],
-                        $row['transaction_id'])
+                        $row['transaction_id']]
                 );
             }
         } catch (Horde_Db_Exception $e) {

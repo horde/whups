@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -23,10 +24,10 @@ $title = '[#' . $ticket->getId() . '] ' . $ticket->get('summary');
 Whups::addTopbarSearch();
 Whups::addFeedLink();
 $page_output->addLinkTag($ticket->feedLink());
-$page_output->header(array(
-    'title' => $title
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => $title,
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 
 $tabs = Whups::getTicketTabs($vars, $ticket->getId());
@@ -47,8 +48,9 @@ $comment->begin(_("History"));
 $history = Whups::permissionsFilter(
     $whups_driver->getHistory($ticket->getId(), $form),
     'comment',
-    Horde_Perms::READ);
-$chtml = array();
+    Horde_Perms::READ
+);
+$chtml = [];
 foreach ($history as $transaction => $comment_values) {
     $chtml[] = $comment->render($transaction, new Horde_Variables($comment_values));
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The whups query manager.
  *
@@ -64,8 +65,9 @@ class Whups_Query_Manager
         try {
             $shares = $this->_shareManager->listShares(
                 $GLOBALS['registry']->getAuth(),
-                array('perm' => Horde_Perms::READ,
-                      'attributes' => array('slug' => $slug)));
+                ['perm' => Horde_Perms::READ,
+                    'attributes' => ['slug' => $slug]]
+            );
         } catch (Horde_Share_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -125,11 +127,11 @@ class Whups_Query_Manager
             throw new Whups_Exception($e);
         }
 
-        $queries = array();
+        $queries = [];
         foreach ($shares as $share) {
             $queries[$share->getId()] = $return_slugs
-                ? array('name' => $share->get('name'),
-                        'slug' => $share->get('slug'))
+                ? ['name' => $share->get('name'),
+                    'slug' => $share->get('slug')]
                 : $share->get('name');
         }
 
@@ -167,7 +169,7 @@ class Whups_Query_Manager
             }
         } else {
             // Create a new share for the query.
-            $share = $this->_shareManager->newShare($GLOBALS['registry']->getAuth(), (string)new Horde_Support_Uuid(), $query->name);
+            $share = $this->_shareManager->newShare($GLOBALS['registry']->getAuth(), (string) new Horde_Support_Uuid(), $query->name);
             $share->set('slug', $query->slug);
             try {
                 $this->_shareManager->addShare($share);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for attribute administration.
  *
@@ -20,18 +21,34 @@ class Whups_Form_Admin_AddAttribute extends Horde_Form
         $this->addHidden('', 'type', 'int', true, true);
         $this->addVariable(_("Attribute Name"), 'attribute_name', 'text', true);
         $this->addVariable(
-          _("Attribute Description"), 'attribute_description', 'text', false);
+            _("Attribute Description"),
+            'attribute_description',
+            'text',
+            false
+        );
         $this->addVariable(
-          _("Required Attribute?"), 'attribute_required', 'boolean', false);
+            _("Required Attribute?"),
+            'attribute_required',
+            'boolean',
+            false
+        );
 
         $v = $this->addVariable(
-          _("Attribute Type"), 'attribute_type', 'enum', true, false, null,
-          array(Whups::fieldTypeNames()));
+            _("Attribute Type"),
+            'attribute_type',
+            'enum',
+            true,
+            false,
+            null,
+            [Whups::fieldTypeNames()]
+        );
         $v->setDefault('text');
         $v->setAction(
-          Horde_Form_Action::factory(
-            array('whups', 'whups_reload'),
-            array('formname' => 'whups_form_admin_addattribute_reload')));
+            Horde_Form_Action::factory(
+                ['whups', 'whups_reload'],
+                ['formname' => 'whups_form_admin_addattribute_reload']
+            )
+        );
 
         $type = $vars->get('attribute_type');
         if (empty($type)) {
@@ -39,8 +56,11 @@ class Whups_Form_Admin_AddAttribute extends Horde_Form
         }
         foreach (Whups::fieldTypeParams($type) as $param => $info) {
             $this->addVariable(
-              $info['label'], 'attribute_params[' . $param . ']', $info['type'],
-              false);
+                $info['label'],
+                'attribute_params[' . $param . ']',
+                $info['type'],
+                false
+            );
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Send reminders for tickets based on the reminders configuration file.
  *

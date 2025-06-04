@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -73,8 +74,8 @@ if ($whups_query->id) {
 $title = $whups_query->name ? $whups_query->name : _("Query Results");
 Whups::addFeedLink();
 $page_output->ajax = true;
-$page_output->header(array('title' => $title));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header(['title' => $title]);
+$notification->notify(['listeners' => 'status']);
 
 echo $tabs->render($vars->get('action') ? $vars->get('action') : 'run');
 
@@ -83,19 +84,22 @@ if (!is_null($tickets)) {
     $subscription = null;
     if (isset($whups_query->id)) {
         $params = empty($whups_query->slug)
-            ? array('id' => $whups_query->id)
-            : array('slug' => $whups_query->slug);
-        $subscription = Horde::link(Whups::urlFor('query_rss', $params, true, -1),
-                                    _("Subscribe to this query"))
+            ? ['id' => $whups_query->id]
+            : ['slug' => $whups_query->slug];
+        $subscription = Horde::link(
+            Whups::urlFor('query_rss', $params, true, -1),
+            _("Subscribe to this query")
+        )
             . Horde::img('feed.png', _("Subscribe to this query"))
             . '</a>';
     }
     $results = new Whups_View_Results(
-        array('title' => $title,
-              'results' => $tickets,
-              'extra' => $subscription,
-              'values' => Whups::getSearchResultColumns(),
-              'url' => Horde::url('query/run.php')));
+        ['title' => $title,
+            'results' => $tickets,
+            'extra' => $subscription,
+            'values' => Whups::getSearchResultColumns(),
+            'url' => Horde::url('query/run.php')]
+    );
 
     $results->html();
 } else {

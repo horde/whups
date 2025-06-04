@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
@@ -10,7 +11,6 @@
 
 class Whups_Form_Queue_StepThree extends Horde_Form
 {
-
     public function __construct($vars, $title = '')
     {
         global $whups_driver;
@@ -31,8 +31,8 @@ class Whups_Form_Queue_StepThree extends Horde_Form
         /* Give user an opportunity to check that state and priority
          * are still valid. */
         $type = $vars->get('type');
-        $this->addVariable(_("State"), 'state', 'enum', true, false, null, array($whups_driver->getStates($type)));
-        $this->addVariable(_("Priority"), 'priority', 'enum', true, false, null, array($whups_driver->getPriorities($type)));
+        $this->addVariable(_("State"), 'state', 'enum', true, false, null, [$whups_driver->getStates($type)]);
+        $this->addVariable(_("Priority"), 'priority', 'enum', true, false, null, [$whups_driver->getPriorities($type)]);
     }
 
 }

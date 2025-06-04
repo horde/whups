@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes to create a new ticket.
  *
@@ -31,7 +32,9 @@ class Whups_Form_Ticket_CreateStepThree extends Horde_Form
 
         if ($GLOBALS['registry']->getAuth()) {
             $states2 = $whups_driver->getStates(
-                $vars->get('type'), array('new', 'assigned'));
+                $vars->get('type'),
+                ['new', 'assigned']
+            );
             if (is_array($states2)) {
                 $states = $states + $states2;
             }
@@ -39,17 +42,30 @@ class Whups_Form_Ticket_CreateStepThree extends Horde_Form
 
         if (Whups::hasPermission($queue, 'queue', 'requester')) {
             $test = $this->addVariable(
-                _("The Requester's Email Address"), 'user_email',
-                'whups:whupsemail', false);
+                _("The Requester's Email Address"),
+                'user_email',
+                'whups:whupsemail',
+                false
+            );
         } elseif (!$GLOBALS['registry']->getAuth()) {
             $this->addVariable(
-                _("Your Email Address"), 'user_email', 'email', true);
+                _("Your Email Address"),
+                'user_email',
+                'email',
+                true
+            );
             if (!empty($conf['guests']['captcha'])) {
                 $this->addVariable(
-                    _("Spam protection"), 'captcha', 'figlet', true, null, null,
-                    array(
+                    _("Spam protection"),
+                    'captcha',
+                    'figlet',
+                    true,
+                    null,
+                    null,
+                    [
                         Whups::getCAPTCHA(!$this->isSubmitted()),
-                        $conf['guests']['figlet_font']));
+                        $conf['guests']['figlet_font']]
+                );
             }
         }
 
@@ -57,19 +73,41 @@ class Whups_Form_Ticket_CreateStepThree extends Horde_Form
         if (count($states) == 1) {
             $vars->set('state', reset(array_keys($states)));
             $f_state = &$this->addHidden(
-                _("Ticket State"), 'state', 'enum', true, false, null, array($states));
+                _("Ticket State"),
+                'state',
+                'enum',
+                true,
+                false,
+                null,
+                [$states]
+            );
         } else {
             $f_state = $this->addVariable(
-                _("Ticket State"), 'state', 'enum', true, false, null, array($states));
+                _("Ticket State"),
+                'state',
+                'enum',
+                true,
+                false,
+                null,
+                [$states]
+            );
             $f_state->setDefault(
-                $whups_driver->getDefaultState($vars->get('type')));
+                $whups_driver->getDefaultState($vars->get('type'))
+            );
         }
 
         $f_priority = $this->addVariable(
-            _("Priority"), 'priority', 'enum', true, false, null,
-            array($whups_driver->getPriorities($vars->get('type'))));
+            _("Priority"),
+            'priority',
+            'enum',
+            true,
+            false,
+            null,
+            [$whups_driver->getPriorities($vars->get('type'))]
+        );
         $f_priority->setDefault(
-            $whups_driver->getDefaultPriority($vars->get('type')));
+            $whups_driver->getDefaultPriority($vars->get('type'))
+        );
         $this->addVariable(_("Due Date"), 'due', 'datetime', false, false);
         $this->addVariable(_("Summary"), 'summary', 'text', true, false);
         $this->addVariable(_("Attachment"), 'newattachment', 'file', false);
@@ -82,17 +120,24 @@ class Whups_Form_Ticket_CreateStepThree extends Horde_Form
                 $attribute_value['required'],
                 $attribute_value['readonly'],
                 $attribute_value['desc'],
-                $attribute_value['params']);
+                $attribute_value['params']
+            );
         }
 
         /* Comment permissions. */
         $groups = $GLOBALS['injector']->getInstance('Horde_Group');
         $mygroups = $groups->listGroups($GLOBALS['registry']->getAuth());
         if ($mygroups) {
-            $mygroups = array(0 => _("This comment is visible to everyone")) + $mygroups;
+            $mygroups = [0 => _("This comment is visible to everyone")] + $mygroups;
             $v = $this->addVariable(
-                _("Make this comment visible only to members of a group?"), 'group',
-                'enum', false, false, null, array($mygroups));
+                _("Make this comment visible only to members of a group?"),
+                'group',
+                'enum',
+                false,
+                false,
+                null,
+                [$mygroups]
+            );
             $v->setDefault(0);
         }
     }
@@ -106,10 +151,16 @@ class Whups_Form_Ticket_CreateStepThree extends Horde_Form
                 $vars->remove('captcha');
                 $this->removeVariable($varname = 'captcha');
                 $this->insertVariableBefore(
-                    'state', _("Spam protection"), 'captcha', 'figlet', true,
-                    null, null,
-                    array(Whups::getCAPTCHA(true),
-                          $conf['guests']['figlet_font']));
+                    'state',
+                    _("Spam protection"),
+                    'captcha',
+                    'figlet',
+                    true,
+                    null,
+                    null,
+                    [Whups::getCAPTCHA(true),
+                        $conf['guests']['figlet_font']]
+                );
             }
             return false;
         }

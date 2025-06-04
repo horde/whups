@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2016-2017 Horde LLC (http://www.horde.org/)
  *
@@ -22,8 +23,7 @@
  * @license  http://www.horde.org/licenses/bsdl.php BSDL
  * @package  Whups
  */
-class Whups_LoginTasks_SystemTask_UpgradeAdmin
-extends Horde_Core_LoginTasks_SystemTask_Upgrade
+class Whups_LoginTasks_SystemTask_UpgradeAdmin extends Horde_Core_LoginTasks_SystemTask_Upgrade
 {
     /**
      */
@@ -31,9 +31,9 @@ extends Horde_Core_LoginTasks_SystemTask_Upgrade
 
     /**
      */
-    protected $_versions = array(
-        '4.0'
-    );
+    protected $_versions = [
+        '4.0',
+    ];
 
     /**
      * Constructor.
@@ -55,12 +55,12 @@ extends Horde_Core_LoginTasks_SystemTask_Upgrade
     protected function _upgrade($version)
     {
         switch ($version) {
-        case '4.0':
-            try {
-                $this->_upgradeVfs();
-            } catch (Horde_Exception $e) {
-            }
-            break;
+            case '4.0':
+                try {
+                    $this->_upgradeVfs();
+                } catch (Horde_Exception $e) {
+                }
+                break;
         }
     }
 
@@ -102,13 +102,13 @@ extends Horde_Core_LoginTasks_SystemTask_Upgrade
                 $db->update(
                     'UPDATE whups_logs SET log_type = ?, log_value = ? '
                     . 'WHERE ticket_id = ? AND log_type = ? AND log_value = ?',
-                    array(
+                    [
                         'message',
-                        (string)$id,
-                        (int)$ticket,
+                        (string) $id,
+                        (int) $ticket,
                         'attachment',
-                        $attachment
-                    )
+                        $attachment,
+                    ]
                 );
             }
         }

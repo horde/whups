@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -20,13 +21,16 @@ if (!$ticket) {
 $details = $whups_driver->getTicketDetails($ticket);
 
 // Check permissions on this ticket.
-if (!count(Whups::permissionsFilter(array($details['queue'] => ''), 'queue', Horde_Perms::READ))) {
+if (!count(Whups::permissionsFilter([$details['queue'] => ''], 'queue', Horde_Perms::READ))) {
     exit;
 }
 
-$history = Whups::permissionsFilter($whups_driver->getHistory($ticket),
-                                    'comment', Horde_Perms::READ);
-$items = array();
+$history = Whups::permissionsFilter(
+    $whups_driver->getHistory($ticket),
+    'comment',
+    Horde_Perms::READ
+);
+$items = [];
 $self = Whups::urlFor('ticket', $ticket, true, -1);
 foreach (array_keys($history) as $i) {
     if (!isset($history[$i]['comment_text'])) {
@@ -47,6 +51,9 @@ $template->set('url', Whups::urlFor('ticket', $ticket, true));
 $template->set('rss_url', Whups::urlFor('ticket_rss', $ticket, true));
 $template->set('description', htmlspecialchars($details['summary']));
 
-$browser->downloadHeaders($details['summary'] . '.rss',
-                          'text/xml', true);
+$browser->downloadHeaders(
+    $details['summary'] . '.rss',
+    'text/xml',
+    true
+);
 echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');

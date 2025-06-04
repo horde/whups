@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for ticket state administration.
  *
@@ -17,22 +18,30 @@ class Whups_Form_Admin_DefaultState extends Horde_Form
     {
         parent::__construct($vars, _("Set Default State"));
 
-        $this->setButtons(array(_("Set Default State")));
+        $this->setButtons([_("Set Default State")]);
 
         $states = $GLOBALS['whups_driver']->getStates(
             $vars->get('type'),
-            array('unconfirmed', 'new', 'assigned'));
+            ['unconfirmed', 'new', 'assigned']
+        );
         if ($states) {
             $stype = 'enum';
-            $type_params = array($states);
+            $type_params = [$states];
         } else {
             $stype = 'invalid';
-            $type_params = array(_("There are no states to edit"));
+            $type_params = [_("There are no states to edit")];
         }
 
         $this->addHidden('', 'type', 'int', true, true);
         $var = $this->addVariable(
-            _("State Name"), 'state', $stype, false, false, null, $type_params);
+            _("State Name"),
+            'state',
+            $stype,
+            false,
+            false,
+            null,
+            $type_params
+        );
         $var->setDefault($GLOBALS['whups_driver']->getDefaultState($vars->get('type')));
     }
 

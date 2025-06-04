@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -25,8 +26,11 @@ $vars = Horde_Variables::getDefaultVariables();
 $ticket->setDetails($vars, true);
 $id = $vars->id;
 if ($tid = $vars->get('transaction')) {
-    $history = Whups::permissionsFilter($whups_driver->getHistory($ticket->getId()),
-                                        'comment', Horde_Perms::READ);
+    $history = Whups::permissionsFilter(
+        $whups_driver->getHistory($ticket->getId()),
+        'comment',
+        Horde_Perms::READ
+    );
     if (!empty($history[$tid]['comment'])) {
         // If this was a restricted comment, load the group_id it was
         // restricted to and default to keeping that restriction on
@@ -67,8 +71,10 @@ if ($vars->get('formname') == 'whups_form_ticket_edit') {
 
         // Update user and group assignments.
         if (Whups::hasPermission($vars->get('queue'), 'queue', 'assign')) {
-            $ticket->change('owners', array_merge(isset($info['owners']) ? $info['owners'] : array(),
-                                                  isset($info['group_owners']) ? $info['group_owners'] : array()));
+            $ticket->change('owners', array_merge(
+                $info['owners'] ?? [],
+                $info['group_owners'] ?? []
+            ));
         }
 
         // Update attributes.
@@ -76,8 +82,8 @@ if ($vars->get('formname') == 'whups_form_ticket_edit') {
 
         // Add attachment if one was uploaded.
         if (!empty($info['newattachment']['name'])) {
-            $ticket->change('attachment', array('name' => $info['newattachment']['name'],
-                                                'tmp_name' => $info['newattachment']['tmp_name']));
+            $ticket->change('attachment', ['name' => $info['newattachment']['name'],
+                'tmp_name' => $info['newattachment']['tmp_name']]);
         }
 
         // If there was a new comment and permissions were specified
@@ -95,10 +101,10 @@ if ($vars->get('formname') == 'whups_form_ticket_edit') {
     }
 }
 
-$page_output->header(array(
-    'title' => $title
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => $title,
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 
 echo Whups::getTicketTabs($vars, $id)->render('update');

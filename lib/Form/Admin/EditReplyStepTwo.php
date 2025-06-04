@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for form reply administration.
  *
@@ -23,18 +24,26 @@ class Whups_Form_Admin_EditReplyStepTwo extends Horde_Form
         $this->addHidden('', 'type', 'int', true, true);
         $this->addHidden('', 'reply', 'int', true, true);
         $pname = $this->addVariable(
-            _("Form Reply Name"), 'reply_name', 'text', true);
+            _("Form Reply Name"),
+            'reply_name',
+            'text',
+            true
+        );
         $pname->setDefault($info['reply_name']);
         $ptext = $this->addVariable(
-            _("Form Reply Text"), 'reply_text', 'longtext', true);
+            _("Form Reply Text"),
+            'reply_text',
+            'longtext',
+            true
+        );
         $ptext->setDefault($info['reply_text']);
 
         /* Permissions link. */
-        if ($GLOBALS['registry']->isAdmin(array('permission' => 'whups:admin', 'permlevel' => Horde_Perms::EDIT))) {
-            $permslink = array(
+        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin', 'permlevel' => Horde_Perms::EDIT])) {
+            $permslink = [
                 'text' => _("Edit the permissions on this form reply"),
-                'url' => Horde::url($GLOBALS['registry']->get('webroot', 'horde') . '/admin/perms/edit.php')->add(array('category' => "whups:replies:$reply", 'autocreate' => '1')));
-            $this->addVariable('', 'link', 'link', false, true, null, array($permslink));
+                'url' => Horde::url($GLOBALS['registry']->get('webroot', 'horde') . '/admin/perms/edit.php')->add(['category' => "whups:replies:$reply", 'autocreate' => '1'])];
+            $this->addVariable('', 'link', 'link', false, true, null, [$permslink]);
         }
     }
 

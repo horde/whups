@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2014-2017 Horde LLC (http://www.horde.org/)
  *
@@ -26,8 +27,8 @@ class WhupsUpgradeParents extends Horde_Db_Migration_Base
      */
     public function up()
     {
-        $this->changeColumn('whups_shares', 'share_parents', 'string', array('limit' => 4000));
-        $this->changeColumn('whups_sharesng', 'share_parents', 'string', array('limit' => 4000));
+        $this->changeColumn('whups_shares', 'share_parents', 'string', ['limit' => 4000]);
+        $this->changeColumn('whups_sharesng', 'share_parents', 'string', ['limit' => 4000]);
     }
 
     /**

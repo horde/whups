@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Adds tables for the Sqlng share driver.
  *
@@ -19,72 +20,72 @@ class WhupsUpgradeSqlng extends Horde_Db_Migration_Base
      */
     public function up()
     {
-        $t = $this->createTable('whups_sharesng', array('autoincrementKey' => 'share_id'));
-        $t->column('share_name', 'string', array('limit' => 255, 'null' => false));
-        $t->column('share_owner', 'string', array('limit' => 255));
-        $t->column('share_flags', 'integer', array('default' => 0, 'null' => false));
-        $t->column('perm_creator_' . Horde_Perms::SHOW, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_creator_' . Horde_Perms::READ, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_creator_' . Horde_Perms::EDIT, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_creator_' . Horde_Perms::DELETE, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_default_' . Horde_Perms::SHOW, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_default_' . Horde_Perms::READ, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_default_' . Horde_Perms::EDIT, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_default_' . Horde_Perms::DELETE, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_guest_' . Horde_Perms::SHOW, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_guest_' . Horde_Perms::READ, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_guest_' . Horde_Perms::EDIT, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_guest_' . Horde_Perms::DELETE, 'boolean', array('default' => false, 'null' => false));
-        $t->column('attribute_name', 'string', array('limit' => 255, 'null' => false));
-        $t->column('attribute_slug', 'string', array('limit' => 255));
+        $t = $this->createTable('whups_sharesng', ['autoincrementKey' => 'share_id']);
+        $t->column('share_name', 'string', ['limit' => 255, 'null' => false]);
+        $t->column('share_owner', 'string', ['limit' => 255]);
+        $t->column('share_flags', 'integer', ['default' => 0, 'null' => false]);
+        $t->column('perm_creator_' . Horde_Perms::SHOW, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_creator_' . Horde_Perms::READ, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_creator_' . Horde_Perms::EDIT, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_creator_' . Horde_Perms::DELETE, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_default_' . Horde_Perms::SHOW, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_default_' . Horde_Perms::READ, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_default_' . Horde_Perms::EDIT, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_default_' . Horde_Perms::DELETE, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_guest_' . Horde_Perms::SHOW, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_guest_' . Horde_Perms::READ, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_guest_' . Horde_Perms::EDIT, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_guest_' . Horde_Perms::DELETE, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('attribute_name', 'string', ['limit' => 255, 'null' => false]);
+        $t->column('attribute_slug', 'string', ['limit' => 255]);
         $t->end();
 
-        $this->addIndex('whups_sharesng', array('share_name'));
-        $this->addIndex('whups_sharesng', array('share_owner'));
-        $this->addIndex('whups_sharesng', array('perm_creator_' . Horde_Perms::SHOW));
-        $this->addIndex('whups_sharesng', array('perm_creator_' . Horde_Perms::READ));
-        $this->addIndex('whups_sharesng', array('perm_creator_' . Horde_Perms::EDIT));
-        $this->addIndex('whups_sharesng', array('perm_creator_' . Horde_Perms::DELETE));
-        $this->addIndex('whups_sharesng', array('perm_default_' . Horde_Perms::SHOW));
-        $this->addIndex('whups_sharesng', array('perm_default_' . Horde_Perms::READ));
-        $this->addIndex('whups_sharesng', array('perm_default_' . Horde_Perms::EDIT));
-        $this->addIndex('whups_sharesng', array('perm_default_' . Horde_Perms::DELETE));
-        $this->addIndex('whups_sharesng', array('perm_guest_' . Horde_Perms::SHOW));
-        $this->addIndex('whups_sharesng', array('perm_guest_' . Horde_Perms::READ));
-        $this->addIndex('whups_sharesng', array('perm_guest_' . Horde_Perms::EDIT));
-        $this->addIndex('whups_sharesng', array('perm_guest_' . Horde_Perms::DELETE));
+        $this->addIndex('whups_sharesng', ['share_name']);
+        $this->addIndex('whups_sharesng', ['share_owner']);
+        $this->addIndex('whups_sharesng', ['perm_creator_' . Horde_Perms::SHOW]);
+        $this->addIndex('whups_sharesng', ['perm_creator_' . Horde_Perms::READ]);
+        $this->addIndex('whups_sharesng', ['perm_creator_' . Horde_Perms::EDIT]);
+        $this->addIndex('whups_sharesng', ['perm_creator_' . Horde_Perms::DELETE]);
+        $this->addIndex('whups_sharesng', ['perm_default_' . Horde_Perms::SHOW]);
+        $this->addIndex('whups_sharesng', ['perm_default_' . Horde_Perms::READ]);
+        $this->addIndex('whups_sharesng', ['perm_default_' . Horde_Perms::EDIT]);
+        $this->addIndex('whups_sharesng', ['perm_default_' . Horde_Perms::DELETE]);
+        $this->addIndex('whups_sharesng', ['perm_guest_' . Horde_Perms::SHOW]);
+        $this->addIndex('whups_sharesng', ['perm_guest_' . Horde_Perms::READ]);
+        $this->addIndex('whups_sharesng', ['perm_guest_' . Horde_Perms::EDIT]);
+        $this->addIndex('whups_sharesng', ['perm_guest_' . Horde_Perms::DELETE]);
 
-        $t = $this->createTable('whups_sharesng_groups', array('autoincrementKey' => false));
-        $t->column('share_id', 'integer', array('null' => false));
-        $t->column('group_uid', 'string', array('limit' => 255, 'null' => false));
-        $t->column('perm_' . Horde_Perms::SHOW, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_' . Horde_Perms::READ, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_' . Horde_Perms::EDIT, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_' . Horde_Perms::DELETE, 'boolean', array('default' => false, 'null' => false));
+        $t = $this->createTable('whups_sharesng_groups', ['autoincrementKey' => false]);
+        $t->column('share_id', 'integer', ['null' => false]);
+        $t->column('group_uid', 'string', ['limit' => 255, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::SHOW, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::READ, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::EDIT, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::DELETE, 'boolean', ['default' => false, 'null' => false]);
         $t->end();
 
-        $this->addIndex('whups_sharesng_groups', array('share_id'));
-        $this->addIndex('whups_sharesng_groups', array('group_uid'));
-        $this->addIndex('whups_sharesng_groups', array('perm_' . Horde_Perms::SHOW));
-        $this->addIndex('whups_sharesng_groups', array('perm_' . Horde_Perms::READ));
-        $this->addIndex('whups_sharesng_groups', array('perm_' . Horde_Perms::EDIT));
-        $this->addIndex('whups_sharesng_groups', array('perm_' . Horde_Perms::DELETE));
+        $this->addIndex('whups_sharesng_groups', ['share_id']);
+        $this->addIndex('whups_sharesng_groups', ['group_uid']);
+        $this->addIndex('whups_sharesng_groups', ['perm_' . Horde_Perms::SHOW]);
+        $this->addIndex('whups_sharesng_groups', ['perm_' . Horde_Perms::READ]);
+        $this->addIndex('whups_sharesng_groups', ['perm_' . Horde_Perms::EDIT]);
+        $this->addIndex('whups_sharesng_groups', ['perm_' . Horde_Perms::DELETE]);
 
-        $t = $this->createTable('whups_sharesng_users', array('autoincrementKey' => false));
-        $t->column('share_id', 'integer', array('null' => false));
-        $t->column('user_uid', 'string', array('limit' => 255, 'null' => false));
-        $t->column('perm_' . Horde_Perms::SHOW, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_' . Horde_Perms::READ, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_' . Horde_Perms::EDIT, 'boolean', array('default' => false, 'null' => false));
-        $t->column('perm_' . Horde_Perms::DELETE, 'boolean', array('default' => false, 'null' => false));
+        $t = $this->createTable('whups_sharesng_users', ['autoincrementKey' => false]);
+        $t->column('share_id', 'integer', ['null' => false]);
+        $t->column('user_uid', 'string', ['limit' => 255, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::SHOW, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::READ, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::EDIT, 'boolean', ['default' => false, 'null' => false]);
+        $t->column('perm_' . Horde_Perms::DELETE, 'boolean', ['default' => false, 'null' => false]);
         $t->end();
 
-        $this->addIndex('whups_sharesng_users', array('share_id'));
-        $this->addIndex('whups_sharesng_users', array('user_uid'));
-        $this->addIndex('whups_sharesng_users', array('perm_' . Horde_Perms::SHOW));
-        $this->addIndex('whups_sharesng_users', array('perm_' . Horde_Perms::READ));
-        $this->addIndex('whups_sharesng_users', array('perm_' . Horde_Perms::EDIT));
-        $this->addIndex('whups_sharesng_users', array('perm_' . Horde_Perms::DELETE));
+        $this->addIndex('whups_sharesng_users', ['share_id']);
+        $this->addIndex('whups_sharesng_users', ['user_uid']);
+        $this->addIndex('whups_sharesng_users', ['perm_' . Horde_Perms::SHOW]);
+        $this->addIndex('whups_sharesng_users', ['perm_' . Horde_Perms::READ]);
+        $this->addIndex('whups_sharesng_users', ['perm_' . Horde_Perms::EDIT]);
+        $this->addIndex('whups_sharesng_users', ['perm_' . Horde_Perms::DELETE]);
 
         $this->dataUp();
     }
@@ -101,11 +102,11 @@ class WhupsUpgradeSqlng extends Horde_Db_Migration_Base
 
     public function dataUp()
     {
-        $whos = array('creator', 'default', 'guest');
-        $perms = array(Horde_Perms::SHOW,
-                       Horde_Perms::READ,
-                       Horde_Perms::EDIT,
-                       Horde_Perms::DELETE);
+        $whos = ['creator', 'default', 'guest'];
+        $perms = [Horde_Perms::SHOW,
+            Horde_Perms::READ,
+            Horde_Perms::EDIT,
+            Horde_Perms::DELETE];
 
         $sql = 'INSERT INTO whups_sharesng (share_id, share_name, share_owner, share_flags, attribute_name, attribute_slug';
         $count = 0;
@@ -118,21 +119,21 @@ class WhupsUpgradeSqlng extends Horde_Db_Migration_Base
         $sql .= ') VALUES (?, ?, ?, ?, ?, ?' . str_repeat(', ?', $count) . ')';
 
         foreach ($this->select('SELECT * FROM whups_shares') as $share) {
-            $values = array($share['share_id'],
-                            $share['share_name'],
-                            $share['share_owner'],
-                            $share['share_flags'],
-                            $share['attribute_name'],
-                            $share['attribute_slug']);
+            $values = [$share['share_id'],
+                $share['share_name'],
+                $share['share_owner'],
+                $share['share_flags'],
+                $share['attribute_name'],
+                $share['attribute_slug']];
             foreach ($whos as $who) {
                 foreach ($perms as $perm) {
-                    $values[] = (bool)($share['perm_' . $who] & $perm);
+                    $values[] = (bool) ($share['perm_' . $who] & $perm);
                 }
             }
             $this->insert($sql, $values, null, 'share_id', $share['share_id']);
         }
 
-        foreach (array('user', 'group') as $what) {
+        foreach (['user', 'group'] as $what) {
             $sql = 'INSERT INTO whups_sharesng_' . $what . 's (share_id, ' . $what . '_uid';
             $count = 0;
             foreach ($perms as $perm) {
@@ -142,10 +143,10 @@ class WhupsUpgradeSqlng extends Horde_Db_Migration_Base
             $sql .= ') VALUES (?, ?' . str_repeat(', ?', $count) . ')';
 
             foreach ($this->select('SELECT * FROM whups_shares_' . $what . 's') as $share) {
-                $values = array($share['share_id'],
-                                $share[$what . '_uid']);
+                $values = [$share['share_id'],
+                    $share[$what . '_uid']];
                 foreach ($perms as $perm) {
-                    $values[] = (bool)($share['perm'] & $perm);
+                    $values[] = (bool) ($share['perm'] & $perm);
                 }
                 $this->insert($sql, $values);
             }

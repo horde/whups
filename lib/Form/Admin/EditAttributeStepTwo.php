@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for attribute administration.
  *
@@ -24,22 +25,42 @@ class Whups_Form_Admin_EditAttributeStepTwo extends Horde_Form
         $this->addHidden('', 'type', 'int', true, true);
         $this->addHidden('', 'attribute', 'int', true, true);
         $pname = $this->addVariable(
-            _("Attribute Name"), 'attribute_name', 'text', true);
+            _("Attribute Name"),
+            'attribute_name',
+            'text',
+            true
+        );
         $pname->setDefault($info['name']);
         $pdesc = $this->addVariable(
-            _("Attribute Description"), 'attribute_description', 'text', false);
+            _("Attribute Description"),
+            'attribute_description',
+            'text',
+            false
+        );
         $pdesc->setDefault($info['description']);
         $preq = $this->addVariable(
-            _("Required Attribute?"), 'attribute_required', 'boolean', false);
+            _("Required Attribute?"),
+            'attribute_required',
+            'boolean',
+            false
+        );
         $preq->setDefault($info['required']);
 
         $ptype = $this->addVariable(
-            _("Attribute Type"), 'attribute_type', 'enum', true, false, null,
-            array(Whups::fieldTypeNames()));
+            _("Attribute Type"),
+            'attribute_type',
+            'enum',
+            true,
+            false,
+            null,
+            [Whups::fieldTypeNames()]
+        );
         $ptype->setAction(
             Horde_Form_Action::factory(
-                array('whups', 'whups_reload'),
-                array('formname' => 'whups_form_admin_editattributesteptwo_reload')));
+                ['whups', 'whups_reload'],
+                ['formname' => 'whups_form_admin_editattributesteptwo_reload']
+            )
+        );
         $ptype->setDefault($info['type']);
 
         $type = $vars->get('attribute_type');
@@ -51,7 +72,8 @@ class Whups_Form_Admin_EditAttributeStepTwo extends Horde_Form
                 $param_info['label'],
                 'attribute_params[' . $param . ']',
                 $param_info['type'],
-                false);
+                false
+            );
             if (isset($info['params'][$param])) {
                 $pparam->setDefault($info['params'][$param]);
             }

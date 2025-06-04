@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for version administration.
  *

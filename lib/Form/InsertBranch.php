@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Form for adding a new query branch
  *
@@ -18,14 +19,21 @@ class Whups_Form_InsertBranch extends Horde_Form
     {
         parent::__construct($vars, _("Insert Branch"));
 
-        $branchtypes = array(
+        $branchtypes = [
             Whups_Query::TYPE_AND => _("And"),
             Whups_Query::TYPE_OR  => _("Or"),
-            Whups_Query::TYPE_NOT => _("Not"));
+            Whups_Query::TYPE_NOT => _("Not")];
 
         $this->addHidden(null, 'path', 'text', false, true);
         $this->addVariable(
-            _("Branch Type"), 'type', 'enum', true, false, null, array($branchtypes));
+            _("Branch Type"),
+            'type',
+            'enum',
+            true,
+            false,
+            null,
+            [$branchtypes]
+        );
     }
 
 }

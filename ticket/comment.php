@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -21,8 +22,11 @@ foreach ($ticket->getDetails() as $varname => $value) {
     $vars->add($varname, $value);
 }
 if ($tid = $vars->get('transaction')) {
-    $history = Whups::permissionsFilter($whups_driver->getHistory($ticket->getId()),
-                                        'comment', Horde_Perms::READ);
+    $history = Whups::permissionsFilter(
+        $whups_driver->getHistory($ticket->getId()),
+        'comment',
+        Horde_Perms::READ
+    );
     if (!empty($history[$tid]['comment'])) {
         $private = false;
         foreach ($history[$tid]['changes'] as $change) {
@@ -58,8 +62,8 @@ if ($vars->get('formname') == 'whups_form_addcomment' &&
 
     // Add attachment if one was uploaded.
     if (!empty($info['newattachment']['name'])) {
-        $ticket->change('attachment', array('name' => $info['newattachment']['name'],
-                                            'tmp_name' => $info['newattachment']['tmp_name']));
+        $ticket->change('attachment', ['name' => $info['newattachment']['name'],
+            'tmp_name' => $info['newattachment']['tmp_name']]);
     }
 
     // Add watch
@@ -82,10 +86,10 @@ if ($vars->get('formname') == 'whups_form_addcomment' &&
     }
 }
 
-$page_output->header(array(
-    'title' => $title
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => $title,
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 
 $tabs = Whups::getTicketTabs($vars, $id);

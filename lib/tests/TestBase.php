@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base class for Whups test cases
  *
@@ -7,13 +8,14 @@
  * @author     Michael J. Rubinsky <mrubinsk@horde.org>
  * @package    Whups
  * @subpackage UnitTests
+ * @coversNothing
  */
-class Whups_TestBase extends PHPUnit_Framework_TestCase {
-
-    function setUp()
+class Whups_TestBase extends PHPUnit_Framework_TestCase
+{
+    public function setUp()
     {
         require_once __DIR__ . '/../Application.php';
-        Horde_Registry::appInit('whups', array('cli' => true));
+        Horde_Registry::appInit('whups', ['cli' => true]);
     }
 
     /**
@@ -23,7 +25,7 @@ class Whups_TestBase extends PHPUnit_Framework_TestCase {
      * @param mixed $result  The value to check
      * @return boolean  Whether the assertion was successful
      */
-    function assertOk($result)
+    public function assertOk($result)
     {
         if (is_a($result, 'DB_Error')) {
             $this->fail($result->getDebugInfo());
@@ -38,24 +40,24 @@ class Whups_TestBase extends PHPUnit_Framework_TestCase {
 
 }
 
-class Whups_Driver_sql {
+class Whups_Driver_sql
+{
+    public $_queues = [
+        ['queue_id' => 1,
+            'queue_name' => 'queue one',
+            'queue_description' => 'queue one description',
+            'queue_versioned' => 1],
+        ['queue_id' => 3,
+            'queue_name' => 'queue three',
+            'queue_description' => 'queue three description',
+            'queue_versioned' => 0]];
 
-    var $_queues = array(
-        array('queue_id' => 1,
-              'queue_name' => 'queue one',
-              'queue_description' => 'queue one description',
-              'queue_versioned' => 1),
-        array('queue_id' => 3,
-              'queue_name' => 'queue three',
-              'queue_description' => 'queue three description',
-              'queue_versioned' => 0));
-
-    function initialise()
+    public function initialise()
     {
         return true;
     }
 
-    function getQueuesInternal()
+    public function getQueuesInternal()
     {
         foreach ($this->_queues as $queue) {
             $q[$queue['queue_id']] = $queue['queue_name'];
@@ -71,22 +73,21 @@ class Whups_Driver_sql {
  * Must instantiate it, then overwrite the global $perms object before calling
  * any method that needs to check permissions.
  */
-class Whups_Test_Perms {
-
-    function getPermissions($permission, $user = null, $creator = null)
+class Whups_Test_Perms
+{
+    public function getPermissions($permission, $user = null, $creator = null)
     {
         return true;
     }
 
-    function exists($permission)
+    public function exists($permission)
     {
         return true;
     }
 
-    function hasPermission($permission, $user, $perm, $creator = null)
+    public function hasPermission($permission, $user, $perm, $creator = null)
     {
         return true;
     }
 
 }
-

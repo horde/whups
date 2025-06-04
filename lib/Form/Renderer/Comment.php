@@ -15,7 +15,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
      *
      * @var array
      */
-    protected $_tokens = array();
+    protected $_tokens = [];
 
     public function begin($title)
     {
@@ -35,7 +35,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
 
         $comment = '';
         $private = false;
-        $changes = array();
+        $changes = [];
 
         $changelist = $vars->get('changes');
         if (!$changelist) {
@@ -46,119 +46,141 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
          * etc. */
         foreach ($changelist as $change) {
             switch ($change['type']) {
-            case 'summary':
-                $changes[] = sprintf(
-                    _("Summary &rArr; %s"), htmlspecialchars($change['value']));
-                break;
+                case 'summary':
+                    $changes[] = sprintf(
+                        _("Summary &rArr; %s"),
+                        htmlspecialchars($change['value'])
+                    );
+                    break;
 
-            case 'message':
-                $ticket = $vars->get('ticket_id');
-                try {
-                    if (Whups::hasMessage($ticket, $change['value'])) {
-                        $changes[] = implode(
-                            ' ',
-                            Whups::messageUrls(
-                                $ticket, $change['value'], $vars->get('queue')
-                            )
-                        );
+                case 'message':
+                    $ticket = $vars->get('ticket_id');
+                    try {
+                        if (Whups::hasMessage($ticket, $change['value'])) {
+                            $changes[] = implode(
+                                ' ',
+                                Whups::messageUrls(
+                                    $ticket,
+                                    $change['value'],
+                                    $vars->get('queue')
+                                )
+                            );
+                        }
+                    } catch (Whups_Exception $e) {
                     }
-                } catch (Whups_Exception $e) {
-                }
-                break;
+                    break;
 
-            case 'delete-attachment':
-                $changes[] = _("Deleted Original Message");
-                break;
+                case 'delete-attachment':
+                    $changes[] = _("Deleted Original Message");
+                    break;
 
-            case 'attachment':
-                $ticket = $vars->get('ticket_id');
-                try {
-                    if ($file = Whups::getAttachments($ticket, $change['value'])) {
+                case 'attachment':
+                    $ticket = $vars->get('ticket_id');
+                    try {
+                        if ($file = Whups::getAttachments($ticket, $change['value'])) {
+                            $changes[] = sprintf(
+                                _("New Attachment: %s"),
+                                implode(' ', Whups::attachmentUrl($ticket, $file, $vars->get('queue')))
+                            );
+                        } else {
+                            $changes[] = sprintf(
+                                _("New Attachment: %s"),
+                                htmlspecialchars($change['value'])
+                            );
+                        }
+                    } catch (Whups_Exception $e) {
                         $changes[] = sprintf(
                             _("New Attachment: %s"),
-                            implode(' ', Whups::attachmentUrl($ticket, $file, $vars->get('queue')))
+                            htmlspecialchars($change['value'])
                         );
-                    } else {
-                        $changes[] = sprintf(
-                            _("New Attachment: %s"),
-                            htmlspecialchars($change['value']));
                     }
-                } catch (Whups_Exception $e) {
+                    break;
+
+                case 'delete-attachment':
                     $changes[] = sprintf(
-                        _("New Attachment: %s"),
-                        htmlspecialchars($change['value']));
-                }
-                break;
+                        _("Deleted Attachment: %s"),
+                        htmlspecialchars($change['value'])
+                    );
+                    break;
 
-            case 'delete-attachment':
-                $changes[] = sprintf(
-                    _("Deleted Attachment: %s"),
-                    htmlspecialchars($change['value']));
-                break;
-
-            case 'assign':
-                $changes[] = sprintf(
-                    _("Assigned to %s"),
-                    Whups::formatUser($change['value'], false, true, true));
-                break;
-
-            case 'unassign':
-                $changes[] = sprintf(
-                    _("Taken from %s"),
-                    Whups::formatUser($change['value'], false, true, true));
-                break;
-
-            case 'comment':
-                $comment = $change['comment'];
-                $private = !empty($change['private']);
-                if ($comment) {
-                    $reply = Horde::link(
-                        Horde::url($canUpdate ? 'ticket/update.php' : 'ticket/comment.php')->add(array(
-                            'id' => $vars->get('ticket_id'),
-                            'transaction' => $transaction
-                        ))) . _("Reply to this comment") . '</a>';
-                }
-                break;
-
-            case 'queue':
-                $changes[] = sprintf(
-                    _("Queue &rArr; %s"), htmlspecialchars($change['label']));
-                break;
-
-            case 'version':
-                $changes[] = sprintf(
-                    _("Version &rArr; %s"), htmlspecialchars($change['label']));
-                break;
-
-            case 'type':
-                $changes[] = sprintf(
-                    _("Type &rArr; %s"), htmlspecialchars($change['label']));
-                break;
-
-            case 'state':
-                $changes[] = sprintf(
-                    _("State &rArr; %s"), htmlspecialchars($change['label']));
-                break;
-
-            case 'priority':
-                $changes[] = sprintf(
-                    _("Priority &rArr; %s"), htmlspecialchars($change['label']));
-                break;
-
-            case 'attribute':
-                $changes[] = sprintf(
-                    _("%s &rArr; %s"),
-                    htmlspecialchars($change['label']),
-                    htmlspecialchars($change['human']));
-                break;
-
-            case 'due':
-                if ($change['label']) {
+                case 'assign':
                     $changes[] = sprintf(
-                        _("Due &rArr; %s"),
-                        strftime($prefs->getValue('date_format'), $change['label']));
-                }
-                break;
+                        _("Assigned to %s"),
+                        Whups::formatUser($change['value'], false, true, true)
+                    );
+                    break;
+
+                case 'unassign':
+                    $changes[] = sprintf(
+                        _("Taken from %s"),
+                        Whups::formatUser($change['value'], false, true, true)
+                    );
+                    break;
+
+                case 'comment':
+                    $comment = $change['comment'];
+                    $private = !empty($change['private']);
+                    if ($comment) {
+                        $reply = Horde::link(
+                            Horde::url($canUpdate ? 'ticket/update.php' : 'ticket/comment.php')->add([
+                                'id' => $vars->get('ticket_id'),
+                                'transaction' => $transaction,
+                            ])
+                        ) . _("Reply to this comment") . '</a>';
+                    }
+                    break;
+
+                case 'queue':
+                    $changes[] = sprintf(
+                        _("Queue &rArr; %s"),
+                        htmlspecialchars($change['label'])
+                    );
+                    break;
+
+                case 'version':
+                    $changes[] = sprintf(
+                        _("Version &rArr; %s"),
+                        htmlspecialchars($change['label'])
+                    );
+                    break;
+
+                case 'type':
+                    $changes[] = sprintf(
+                        _("Type &rArr; %s"),
+                        htmlspecialchars($change['label'])
+                    );
+                    break;
+
+                case 'state':
+                    $changes[] = sprintf(
+                        _("State &rArr; %s"),
+                        htmlspecialchars($change['label'])
+                    );
+                    break;
+
+                case 'priority':
+                    $changes[] = sprintf(
+                        _("Priority &rArr; %s"),
+                        htmlspecialchars($change['label'])
+                    );
+                    break;
+
+                case 'attribute':
+                    $changes[] = sprintf(
+                        _("%s &rArr; %s"),
+                        htmlspecialchars($change['label']),
+                        htmlspecialchars($change['human'])
+                    );
+                    break;
+
+                case 'due':
+                    if ($change['label']) {
+                        $changes[] = sprintf(
+                            _("Due &rArr; %s"),
+                            strftime($prefs->getValue('date_format'), $change['label'])
+                        );
+                    }
+                    break;
             }
         }
 
@@ -170,21 +192,30 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                 ->getInstance('Horde_Core_Factory_TextFilter')
                 ->filter(
                     $comment,
-                    array('text2html', 'simplemarkup', 'highlightquotes'),
-                    array(
-                        array('parselevel' => Horde_Text_Filter_Text2html::MICRO),
-                        array('html' => true),
-                        array('hideBlocks' => true)));
+                    ['text2html', 'simplemarkup', 'highlightquotes'],
+                    [
+                        ['parselevel' => Horde_Text_Filter_Text2html::MICRO],
+                        ['html' => true],
+                        ['hideBlocks' => true]]
+                );
             if ($prefs->getValue('autolink_tickets') &&
                 $conf['prefs']['autolink_terms']) {
                 // Replace existing links by tokens to avoid double linking.
                 $comment = preg_replace_callback(
-                    '/<a.*?<\/a>/', array($this, '_writeTokens'), $comment);
+                    '/<a.*?<\/a>/',
+                    [$this, '_writeTokens'],
+                    $comment
+                );
                 $comment = preg_replace_callback(
                     '/(' . $conf['prefs']['autolink_terms'] . ')\s*#?(\d+)/i',
-                    array($this, '_autolink'), $comment);
+                    [$this, '_autolink'],
+                    $comment
+                );
                 $comment = preg_replace_callback(
-                    '/\0/', array($this, '_readTokens'), $comment);
+                    '/\0/',
+                    [$this, '_readTokens'],
+                    $comment
+                );
             }
 
             $comment_count++;
@@ -205,24 +236,26 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
             $delete_link = '';
             if (Whups::hasPermission($vars->get('queue'), 'queue', Horde_Perms::DELETE)) {
                 $delete_link = Horde::url('ticket/delete_history.php')
-                    ->add(array('transaction' => $transaction,
-                                'id' => $vars->get('ticket_id'),
-                                'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))))
-                    ->link(array('title' => _("Delete entry"), 'onclick' => 'return window.confirm(\'' . addslashes(_("Permanently delete entry?")) . '\');'))
+                    ->add(['transaction' => $transaction,
+                        'id' => $vars->get('ticket_id'),
+                        'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))])
+                    ->link(['title' => _("Delete entry"), 'onclick' => 'return window.confirm(\'' . addslashes(_("Permanently delete entry?")) . '\');'])
                     . Horde::img('delete.png', _("Delete entry"))
                     . '</a>';
             }
 
             Horde::startBuffer();
             $class = $private ? 'pc' : 'c';
-?>
-<div id="t<?php echo (int)$transaction ?>">
+            ?>
+<div id="t<?php echo (int) $transaction ?>">
 <table cellspacing="0" width="100%">
  <tr>
   <td width="20%" class="<?php echo $class ?>_l nowrap" valign="top"><?php echo strftime($prefs->getValue('date_format') . ' ' . $prefs->getValue('time_format'), $vars->get('timestamp')) ?></td>
   <td width="20%" class="<?php echo $class ?>_m" valign="top"><?php echo $vars->get('user_id') ? Whups::formatUser($vars->get('user_id'), false, true, true) : '&nbsp;' ?></td>
   <td width="30%" class="<?php echo $class ?>_m" valign="top"><?php echo implode('<br />', $changes) ?></td>
-  <td width="30%" class="<?php echo $class ?>_r rightAlign" valign="top"><?php if ($comment && !$private) echo $reply . ' '; echo $delete_link; ?></td>
+  <td width="30%" class="<?php echo $class ?>_r rightAlign" valign="top"><?php if ($comment && !$private) {
+      echo $reply . ' ';
+  } echo $delete_link; ?></td>
  </tr>
 <?php if ($comment): ?>
  <tr><td colspan="4" class="<?php echo $class ?>_b">

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde_Form_Action_whups_reload is a Horde_Form Action that reloads the
  * form with the current (not the original) value after the form element
@@ -12,11 +13,11 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Horde_Form
  */
-class Horde_Form_Action_whups_reload extends Horde_Form_Action {
+class Horde_Form_Action_whups_reload extends Horde_Form_Action
+{
+    public $_trigger = ['onchange'];
 
-    var $_trigger = array('onchange');
-
-    function getActionScript($form, $renderer, $varname)
+    public function getActionScript($form, $renderer, $varname)
     {
         global $page_output;
 

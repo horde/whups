@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde_Injector based factory for Kronolith_Driver
  */
@@ -9,7 +10,7 @@ class Whups_Factory_Driver extends Horde_Core_Factory_Base
      *
      * @var array
      */
-    private $_instances = array();
+    private $_instances = [];
 
     /**
      * Return the driver instance.
@@ -20,7 +21,7 @@ class Whups_Factory_Driver extends Horde_Core_Factory_Base
      * @return Kronolith_Driver
      * @throws Kronolith_Exception
      */
-    public function create($driver = null, $params = array())
+    public function create($driver = null, $params = [])
     {
         if (is_null($driver)) {
             $driver = $GLOBALS['conf']['tickets']['driver'];
@@ -36,9 +37,9 @@ class Whups_Factory_Driver extends Horde_Core_Factory_Base
             }
             $this->_instances[$driver] = new $class($params);
             switch ($driver) {
-            case 'Sql':
-                $this->_instances[$driver]
-                    ->setStorage($GLOBALS['injector']->getInstance('Horde_Core_Factory_Db')->create('whups', 'tickets'));
+                case 'Sql':
+                    $this->_instances[$driver]
+                        ->setStorage($GLOBALS['injector']->getInstance('Horde_Core_Factory_Db')->create('whups', 'tickets'));
             }
 
             return $this->_instances[$driver];

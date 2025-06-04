@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays and handles the form to delete an attachment from the ticket.
  *
@@ -23,7 +24,7 @@ $file = basename(Horde_Util::getFormData('file'));
 if ($file) {
     $ticket->change('delete-attachment', $file);
 } else {
-    $ticket->change('delete-message', (int)Horde_Util::getFormData('message'));
+    $ticket->change('delete-message', (int) Horde_Util::getFormData('message'));
 }
 try {
     $ticket->commit();

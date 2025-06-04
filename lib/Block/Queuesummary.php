@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Show a summary of all available queues and their number of open tickets.
  */
@@ -6,7 +7,7 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -25,7 +26,7 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
             return '<p class="horde-content"><em>' . _("There are no open tickets.") . '</em></p>';
         }
 
-        $summary = $types = array();
+        $summary = $types = [];
         foreach ($qsummary as $queue) {
             $types[$queue['type']] = $queue['type'];
             if (!isset($summary[$queue['id']])) {
@@ -36,7 +37,7 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
 
         $html = '<thead><tr>';
         $sortby = 'queue_name';
-        foreach (array_merge(array('queue_name' => _("Queue")), $types) as $column => $name) {
+        foreach (array_merge(['queue_name' => _("Queue")], $types) as $column => $name) {
             $html .= '<th' . ($sortby == $column ? ' class="sortdown"' : '') . '>' . $name . '</th>';
         }
         $html .= '</tr></thead><tbody>';
@@ -44,7 +45,7 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
         foreach ($summary as $queue) {
             $html .= '<tr><td>' . Horde::link(Whups::urlFor('queue', $queue, true), $queue['description']) . htmlspecialchars($queue['name']) . '</a></td>';
             foreach ($types as $type) {
-                $html .= '<td>' . (isset($queue[$type]) ? $queue[$type] : '&nbsp;') . '</td>';
+                $html .= '<td>' . ($queue[$type] ?? '&nbsp;') . '</td>';
             }
             $html .= '</tr>';
         }

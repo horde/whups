@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for priority administration.
  *
@@ -17,20 +18,27 @@ class Whups_Form_Admin_DefaultPriority extends Horde_Form
     {
         parent::__construct($vars, _("Set Default Priority"));
 
-        $this->setButtons(array(_("Set Default Priority")));
+        $this->setButtons([_("Set Default Priority")]);
 
         $priorities = $GLOBALS['whups_driver']->getPriorities($vars->get('type'));
         if ($priorities) {
             $stype = 'enum';
-            $type_params = array($priorities);
+            $type_params = [$priorities];
         } else {
             $stype = 'invalid';
-            $type_params = array(_("There are no priorities to edit"));
+            $type_params = [_("There are no priorities to edit")];
         }
 
         $this->addHidden('', 'type', 'int', true, true);
-        $var = $this->addVariable(_("Priority Name"), 'priority', $stype, false,
-                                   false, null, $type_params);
+        $var = $this->addVariable(
+            _("Priority Name"),
+            'priority',
+            $stype,
+            false,
+            false,
+            null,
+            $type_params
+        );
         $var->setDefault($GLOBALS['whups_driver']->getDefaultPriority($vars->get('type')));
     }
 

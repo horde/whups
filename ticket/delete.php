@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays and handles the form to delete a ticket.
  *
@@ -50,10 +51,10 @@ if ($vars->get('formname') == 'whups_form_ticket_delete' &&
     }
 }
 
-$page_output->header(array(
-    'title' => $title
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => $title,
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 
 $tabs = Whups::getTicketTabs($vars, $id);

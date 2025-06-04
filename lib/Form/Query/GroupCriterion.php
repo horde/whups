@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -31,7 +32,8 @@ class Whups_Form_Query_GroupCriterion extends Horde_Form
         parent::__construct(
             $vars,
             $vars->get('edit') ? _("Edit Group Criterion") : _("Add Group Criterion"),
-            'Whups_Form_Query_GroupCriterion');
+            'Whups_Form_Query_GroupCriterion'
+        );
 
         $this->addHidden('', 'edit', 'boolean', false);
 
@@ -40,16 +42,30 @@ class Whups_Form_Query_GroupCriterion extends Horde_Form
                 ->getInstance('Horde_Group')
                 ->listAll();
         } catch (Horde_Group_Exception $e) {
-            $grouplist = array();
+            $grouplist = [];
         }
 
         if (count($grouplist)) {
-            $type_params = array(_("Could not find any groups."));
+            $type_params = [_("Could not find any groups.")];
             $this->addVariable(
-                _("Groups"), 'groups', 'invalid', false, false, null, $type_params);
+                _("Groups"),
+                'groups',
+                'invalid',
+                false,
+                false,
+                null,
+                $type_params
+            );
         } else {
             $this->addVariable(
-                _("Groups"), 'groups', 'enum', true, false, null, array($grouplist));
+                _("Groups"),
+                'groups',
+                'enum',
+                true,
+                false,
+                null,
+                [$grouplist]
+            );
         }
     }
 
@@ -64,7 +80,8 @@ class Whups_Form_Query_GroupCriterion extends Horde_Form
                 Whups_Query::CRITERION_GROUPS,
                 null,
                 Whups_Query::OPERATOR_EQUAL,
-                $groups);
+                $groups
+            );
         }
 
         $this->unsetVars($vars);

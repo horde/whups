@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
  *
@@ -14,13 +15,15 @@ require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
 // Instantiate the blocks objects.
-$blocks = $injector->getInstance('Horde_Core_Factory_BlockCollection')->create(array('whups'), 'mybugs_layout');
+$blocks = $injector->getInstance('Horde_Core_Factory_BlockCollection')->create(['whups'], 'mybugs_layout');
 $layout = $blocks->getLayoutManager();
 
 // Handle requested actions.
-$layout->handle(Horde_Util::getFormData('action'),
-                (int)Horde_Util::getFormData('row'),
-                (int)Horde_Util::getFormData('col'));
+$layout->handle(
+    Horde_Util::getFormData('action'),
+    (int) Horde_Util::getFormData('row'),
+    (int) Horde_Util::getFormData('col')
+);
 if ($layout->updated()) {
     $prefs->setValue('mybugs_layout', $layout->serialize());
     if ($url = Horde::verifySignedUrl(Horde_Util::getFormData('url'))) {
@@ -31,9 +34,9 @@ if ($layout->updated()) {
 
 Whups::addTopbarSearch();
 
-$page_output->header(array(
-    'title' => sprintf(_("My %s :: Add Content"), $registry->get('name'))
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => sprintf(_("My %s :: Add Content"), $registry->get('name')),
+]);
+$notification->notify(['listeners' => 'status']);
 require $registry->get('templates', 'horde') . '/portal/edit.inc';
 $page_output->footer();

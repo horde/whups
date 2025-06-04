@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -31,44 +32,105 @@ class Whups_Form_Query_DateCriterion extends Horde_Form
         parent::__construct(
             $vars,
             $vars->get('edit') ? _("Edit Date Criterion") : _("Add Date Criterion"),
-            'Whups_Form_Query_DateCriterion');
+            'Whups_Form_Query_DateCriterion'
+        );
 
         $this->addHidden('', 'edit', 'boolean', false);
 
         $this->addVariable(
-            _("Created from"), 'ticket_timestamp[from]', 'monthdayyear', false,
-            false, null, array(date('Y') - 10));
+            _("Created from"),
+            'ticket_timestamp[from]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
         $this->addVariable(
-            _("Created to"), 'ticket_timestamp[to]', 'monthdayyear', false,
-            false, null, array(date('Y') - 10));
+            _("Created to"),
+            'ticket_timestamp[to]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
 
         $this->addVariable(
-            _("Updated from"), 'date_updated[from]', 'monthdayyear', false,
-            false, null, array(date('Y') - 10));
+            _("Updated from"),
+            'date_updated[from]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
         $this->addVariable(
-            _("Updated to"), 'date_updated[to]', 'monthdayyear', false, false,
-            null, array(date('Y') - 10));
+            _("Updated to"),
+            'date_updated[to]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
 
         $this->addVariable(
-            _("Resolved from"), 'date_resolved[from]', 'monthdayyear', false,
-            false, null, array(date('Y') - 10));
+            _("Resolved from"),
+            'date_resolved[from]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
         $this->addVariable(
-            _("Resolved to"), 'date_resolved[to]', 'monthdayyear', false, false,
-            null, array(date('Y') - 10));
+            _("Resolved to"),
+            'date_resolved[to]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
 
         $this->addVariable(
-            _("Assigned from"), 'date_assigned[from]', 'monthdayyear', false,
-            false, null, array(date('Y') - 10));
+            _("Assigned from"),
+            'date_assigned[from]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
         $this->addVariable(
-            _("Assigned to"), 'date_assigned[to]', 'monthdayyear', false,
-            false, null, array(date('Y') - 10));
+            _("Assigned to"),
+            'date_assigned[to]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
 
         $this->addVariable(
-            _("Due from"), 'ticket_due[from]', 'monthdayyear', false, false,
-            null, array(date('Y') - 10));
+            _("Due from"),
+            'ticket_due[from]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
         $this->addVariable(
-            _("Due to"), 'ticket_due[to]', 'monthdayyear', false, false, null,
-            array(date('Y') - 10));
+            _("Due to"),
+            'ticket_due[to]',
+            'monthdayyear',
+            false,
+            false,
+            null,
+            [date('Y') - 10]
+        );
     }
 
     public function execute($vars = null)
@@ -76,35 +138,49 @@ class Whups_Form_Query_DateCriterion extends Horde_Form
         $path = $vars->get('path');
         $parent = false;
 
-        $keys = array(
+        $keys = [
             Whups_Query::CRITERION_TIMESTAMP => 'ticket_timestamp',
             Whups_Query::CRITERION_UPDATED => 'date_updated',
             Whups_Query::CRITERION_RESOLVED => 'date_resolved',
             Whups_Query::CRITERION_ASSIGNED => 'date_assigned',
-            Whups_Query::CRITERION_DUE => 'ticket_due');
+            Whups_Query::CRITERION_DUE => 'ticket_due'];
 
         foreach ($keys as $key_id => $key_name) {
             $date = $vars->get($key_name . '[from]');
             if (!empty($date['month'])) {
                 if (!$parent) {
                     $path = $GLOBALS['whups_query']->insertBranch(
-                        $path, Whups_Query::TYPE_AND);
+                        $path,
+                        Whups_Query::TYPE_AND
+                    );
                     $parent = true;
                 }
                 $date = mktime(0, 0, 0, $date['month'], $date['day'], $date['year']);
                 $GLOBALS['whups_query']->insertCriterion(
-                    $path, $key_id, null, Whups_Query::OPERATOR_GREATER, $date);
+                    $path,
+                    $key_id,
+                    null,
+                    Whups_Query::OPERATOR_GREATER,
+                    $date
+                );
             }
             $date = $vars->get($key_name . '[to]');
             if (!empty($date['month'])) {
                 if (!$parent) {
                     $path = $GLOBALS['whups_query']->insertBranch(
-                        $path, Whups_Query::TYPE_AND);
+                        $path,
+                        Whups_Query::TYPE_AND
+                    );
                     $parent = true;
                 }
                 $date = mktime(0, 0, 0, $date['month'], $date['day'], $date['year']);
                 $GLOBALS['whups_query']->insertCriterion(
-                    $path, $key_id, null, Whups_Query::OPERATOR_LESS, $date);
+                    $path,
+                    $key_id,
+                    null,
+                    Whups_Query::OPERATOR_LESS,
+                    $date
+                );
             }
         }
 

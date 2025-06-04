@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2013-2017 Horde LLC (http://www.horde.org/)
  *
@@ -21,15 +22,15 @@ try {
     $notification->push($e);
 }
 if ($files) {
-    $format = array(
+    $format = [
         $prefs->getValue('date_format'),
-        $prefs->getValue('time_format')
-    );
+        $prefs->getValue('time_format'),
+    ];
     $attachments = Whups::getAttachments($ticket->getId());
-    $view->attachments = array();
+    $view->attachments = [];
     foreach ($files as $file) {
         $view->attachments[] = array_merge(
-            array(
+            [
                 'timestamp' => $file['timestamp'],
                 'date' => strftime($format[0], $file['timestamp'])
                     . ' ' . strftime($format[1], $file['timestamp']),
@@ -39,7 +40,7 @@ if ($files) {
                     true,
                     true
                 ),
-            ),
+            ],
             Whups::attachmentUrl(
                 $ticket->getId(),
                 $attachments[$file['value']],
@@ -53,10 +54,10 @@ Whups::addTopbarSearch();
 Whups::addFeedLink();
 $page_output->addLinkTag($ticket->feedLink());
 $page_output->addScriptFile('tables.js', 'horde');
-$page_output->header(array(
-    'title' => sprintf(_("Attachments for %s"), '[#' . $id . '] ' . $ticket->get('summary'))
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => sprintf(_("Attachments for %s"), '[#' . $id . '] ' . $ticket->get('summary')),
+]);
+$notification->notify(['listeners' => 'status']);
 echo Whups::getTicketTabs($vars, $ticket->getId())->render('attachments');
 echo $view->render('ticket/attachments');
 $page_output->footer();

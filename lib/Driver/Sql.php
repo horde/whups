@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups backend driver for the Horde_Db abstraction layer.
  *
@@ -26,7 +27,7 @@ class Whups_Driver_Sql extends Whups_Driver
      *
      * @var array
      */
-    protected $_map = array(
+    protected $_map = [
         'id' => 'ticket_id',
         'summary' => 'ticket_summary',
         'requester' => 'user_id_requester',
@@ -39,22 +40,22 @@ class Whups_Driver_Sql extends Whups_Driver
         'due' => 'ticket_due',
         'date_updated' => 'date_updated',
         'date_assigned' => 'date_assigned',
-        'date_resolved' => 'date_resolved'
-    );
+        'date_resolved' => 'date_resolved',
+    ];
 
     /**
      * Local cache for guest email addresses.
      *
      * @var array
      */
-    protected $_guestEmailCache = array();
+    protected $_guestEmailCache = [];
 
     /**
      * Local cache of internal queue hashes
      *
      * @var array
      */
-    protected $_internalQueueCache = array();
+    protected $_internalQueueCache = [];
 
     /**
      * Local queues internal cache
@@ -68,15 +69,15 @@ class Whups_Driver_Sql extends Whups_Driver
      *
      * @var array
      */
-     protected $_slugs = null;
+    protected $_slugs = null;
 
-     public function setStorage($storage)
-     {
+    public function setStorage($storage)
+    {
         if (!($storage instanceof Horde_Db_Adapter_Base)) {
             throw new InvalidArgumentException("Missing Horde_Db_Adapter_Base");
         }
         $this->_db = $storage;
-     }
+    }
 
     /**
      * Adds a new queue.
@@ -93,19 +94,21 @@ class Whups_Driver_Sql extends Whups_Driver
     {
         // Check for slug uniqueness.
         if (strlen($slug) &&
-            $this->_db->selectValue('SELECT 1 FROM whups_queues WHERE queue_slug = ?', array($slug))) {
+            $this->_db->selectValue('SELECT 1 FROM whups_queues WHERE queue_slug = ?', [$slug])) {
             throw new Whups_Exception(
-                _("That queue slug is already taken. Please select another."));
+                _("That queue slug is already taken. Please select another.")
+            );
         }
 
         try {
             return $this->_db->insert(
                 'INSERT INTO whups_queues (queue_name, queue_description, '
                     . 'queue_slug, queue_email) VALUES (?, ?, ?, ?)',
-                array($this->_toBackend($name),
-                      $this->_toBackend($description),
-                      $slug,
-                      $email));
+                [$this->_toBackend($name),
+                    $this->_toBackend($description),
+                    $slug,
+                    $email]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -126,8 +129,9 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->insert(
                 'INSERT INTO whups_types (type_name, type_description) '
                     . 'VALUES (?, ?)',
-                array($this->_toBackend($name),
-                      $this->_toBackend($description)));
+                [$this->_toBackend($name),
+                    $this->_toBackend($description)]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -150,10 +154,11 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->insert(
                 'INSERT INTO whups_states (type_id, state_name, '
                     . 'state_description, state_category) VALUES (?, ?, ?, ?)',
-                array((int)$typeId,
-                      $this->_toBackend($name),
-                      $this->_toBackend($description),
-                      $this->_toBackend($category)));
+                [(int) $typeId,
+                    $this->_toBackend($name),
+                    $this->_toBackend($description),
+                    $this->_toBackend($category)]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -175,9 +180,10 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->insert(
                 'INSERT INTO whups_priorities (type_id, priority_name, '
                     . 'priority_description) VALUES (?, ?, ?)',
-                array((int)$typeId,
-                      $this->_toBackend($name),
-                      $this->_toBackend($description)));
+                [(int) $typeId,
+                    $this->_toBackend($name),
+                    $this->_toBackend($description)]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -201,10 +207,11 @@ class Whups_Driver_Sql extends Whups_Driver
                 'INSERT INTO whups_versions (queue_id, version_name, '
                     . 'version_description, version_active) '
                     . 'VALUES (?, ?, ?, ?)',
-                array((int)$queueId,
-                      $this->_toBackend($name),
-                      $this->_toBackend($description),
-                      (boolean)$active));
+                [(int) $queueId,
+                    $this->_toBackend($name),
+                    $this->_toBackend($description),
+                    (bool) $active]
+            );
         } catch (Horde_Db_Exception $e) {
             throw Whups_Exception($e);
         }
@@ -226,9 +233,10 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->insert(
                 'INSERT INTO whups_replies (type_id, reply_name, reply_text) '
                     . 'VALUES (?, ?, ?)',
-                array((int)$type,
-                      $this->_toBackend($name),
-                      $this->_toBackend($text)));
+                [(int) $type,
+                    $this->_toBackend($name),
+                    $this->_toBackend($text)]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -248,15 +256,15 @@ class Whups_Driver_Sql extends Whups_Driver
     public function addTicket(array &$info, $requester)
     {
         $timestamp  = time();
-        $type       = (int)$info['type'];
-        $state      = $this->getState((int)$info['state']);
-        $priority   = (int)$info['priority'];
-        $queue      = (int)$info['queue'];
+        $type       = (int) $info['type'];
+        $state      = $this->getState((int) $info['state']);
+        $priority   = (int) $info['priority'];
+        $queue      = (int) $info['queue'];
         $summary    = $info['summary'];
-        $version    = (int)isset($info['version']) ? $info['version'] : null;
-        $due        = isset($info['due']) ? $info['due'] : null;
+        $version    = (int) isset($info['version']) ? $info['version'] : null;
+        $due        = $info['due'] ?? null;
         $comment    = $info['comment'];
-        $attributes = isset($info['attributes']) ? $info['attributes'] : array();
+        $attributes = $info['attributes'] ?? [];
 
         // Create the ticket.
         try {
@@ -266,17 +274,18 @@ class Whups_Driver_Sql extends Whups_Driver
                     . 'queue_id, ticket_timestamp, ticket_due, date_updated, '
                     . 'date_assigned, version_id)'
                     . ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                array($this->_toBackend($summary),
-                      $requester,
-                      $type,
-                      $state['id'],
-                      $priority,
-                      $queue,
-                      $timestamp,
-                      $due,
-                      $timestamp,
-                      $state['category'] == 'assigned' ? $timestamp : null,
-                      $version));
+                [$this->_toBackend($summary),
+                    $requester,
+                    $type,
+                    $state['id'],
+                    $priority,
+                    $queue,
+                    $timestamp,
+                    $due,
+                    $timestamp,
+                    $state['category'] == 'assigned' ? $timestamp : null,
+                    $version]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -289,7 +298,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $this->_db->update(
                     'UPDATE whups_tickets SET user_id_requester = ? WHERE '
                         . 'ticket_id = ?',
-                    array($requester, $ticket_id));
+                    [$requester, $ticket_id]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -300,30 +310,36 @@ class Whups_Driver_Sql extends Whups_Driver
                 $this->_db->insert(
                     'INSERT INTO whups_guests (guest_id, guest_email) '
                         . 'VALUES (?, ?)',
-                    array((string)$requester, $info['user_email']));
+                    [(string) $requester, $info['user_email']]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
         }
 
         $commentId = $this->addComment(
-            $ticket_id, $comment, $requester,
-            isset($info['user_email']) ? $info['user_email'] : null);
+            $ticket_id,
+            $comment,
+            $requester,
+            $info['user_email'] ?? null
+        );
 
         // If permissions were specified, set them.
         if (!empty($info['group'])) {
             Whups_Ticket::addCommentPerms($commentId, $info['group']);
         }
 
-        $transaction = $this->updateLog($ticket_id,
-                                        $requester,
-                                        array('state' => $state['id'],
-                                              'priority' => $priority,
-                                              'type' => $type,
-                                              'summary' => $summary,
-                                              'due' => $due,
-                                              'comment' => $commentId,
-                                              'queue' => $queue));
+        $transaction = $this->updateLog(
+            $ticket_id,
+            $requester,
+            ['state' => $state['id'],
+                'priority' => $priority,
+                'type' => $type,
+                'summary' => $summary,
+                'due' => $due,
+                'comment' => $commentId,
+                'queue' => $queue]
+        );
 
         // Store the last-transaction id in the ticket's info for later use if
         // needed.
@@ -331,33 +347,45 @@ class Whups_Driver_Sql extends Whups_Driver
 
         // Assign the ticket, if requested.
         $owners = array_merge(
-            isset($info['owners']) ? $info['owners'] : array(),
-            isset($info['group_owners']) ? $info['group_owners'] : array());
+            $info['owners'] ?? [],
+            $info['group_owners'] ?? []
+        );
         foreach ($owners as $owner) {
             $this->addTicketOwner($ticket_id, $owner);
-            $this->updateLog($ticket_id, $requester,
-                             array('assign' => $owner),
-                             $transaction);
+            $this->updateLog(
+                $ticket_id,
+                $requester,
+                ['assign' => $owner],
+                $transaction
+            );
         }
 
         // Set timestamps, if necessary.
         if ($state['category'] == 'assigned') {
-            $this->updateLog($ticket_id, $requester,
-                             array('date_assigned' => $timestamp),
-                             $transaction);
+            $this->updateLog(
+                $ticket_id,
+                $requester,
+                ['date_assigned' => $timestamp],
+                $transaction
+            );
         }
 
         // Add any supplied attributes for this ticket.
         foreach ($attributes as $attribute_id => $attribute_value) {
             $attribute_value = $this->_serializeAttribute($attribute_value);
             $this->_setAttributeValue(
-                $ticket_id, $attribute_id, $attribute_value);
+                $ticket_id,
+                $attribute_id,
+                $attribute_value
+            );
 
             $this->updateLog(
-                $ticket_id, $requester,
-                array('attribute' => $attribute_id . ':' . $attribute_value,
-                      'attribute_' . $attribute_id => $attribute_value),
-                $transaction);
+                $ticket_id,
+                $requester,
+                ['attribute' => $attribute_id . ':' . $attribute_value,
+                    'attribute_' . $attribute_id => $attribute_value],
+                $transaction
+            );
         }
 
         return $ticket_id;
@@ -374,18 +402,22 @@ class Whups_Driver_Sql extends Whups_Driver
      * @return integer  The new comment ID.
      * @throws Whups_Exception
      */
-    public function addComment($ticket_id, $comment, $creator,
-                               $creator_email = null)
-    {
+    public function addComment(
+        $ticket_id,
+        $comment,
+        $creator,
+        $creator_email = null
+    ) {
         // Add the row.
         try {
             $id = $this->_db->insert(
                 'INSERT INTO whups_comments (ticket_id, user_id_creator, '
                     . ' comment_text, comment_timestamp) VALUES (?, ?, ?, ?)',
-                array((int)$ticket_id,
-                      $creator,
-                      $this->_toBackend($comment),
-                      time()));
+                [(int) $ticket_id,
+                    $creator,
+                    $this->_toBackend($comment),
+                    time()]
+            );
 
             if (empty($creator) || $creator < 0) {
                 $creator = '-' . $id . '_comment';
@@ -393,7 +425,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->update(
                 'UPDATE whups_comments SET user_id_creator = ?'
                 . ' WHERE comment_id = ?',
-                array($creator, $id));
+                [$creator, $id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -405,7 +438,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $this->_db->insert(
                     'INSERT INTO whups_guests (guest_id, guest_email)'
                         . ' VALUES (?, ?)',
-                    array((string)$creator, $creator_email));
+                    [(string) $creator, $creator_email]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -434,7 +468,7 @@ class Whups_Driver_Sql extends Whups_Driver
         }
 
         $query = '';
-        $values = array();
+        $values = [];
         foreach ($attributes as $field => $value) {
             if (empty($this->_map[$field])) {
                 continue;
@@ -450,13 +484,14 @@ class Whups_Driver_Sql extends Whups_Driver
             return;
         }
 
-        $values[] = (int)$ticketId;
+        $values[] = (int) $ticketId;
 
         try {
             $this->_db->update(
                 'UPDATE whups_tickets SET ' . substr($query, 0, -2)
                     . ' WHERE ticket_id = ?',
-                $values);
+                $values
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -476,7 +511,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->insert(
                 'INSERT INTO whups_ticket_owners (ticket_id, ticket_owner) '
                     . 'VALUES (?, ?)',
-                array($ticketId, $owner));
+                [$ticketId, $owner]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -496,7 +532,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->delete(
                 'DELETE FROM whups_ticket_owners WHERE ticket_owner = ? '
                     . 'AND ticket_id = ?',
-                array($owner, (int)$ticketId));
+                [$owner, (int) $ticketId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -511,14 +548,14 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function deleteTicket($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
 
-        $tables = array(
+        $tables = [
             'whups_ticket_listeners',
             'whups_logs',
             'whups_comments',
             'whups_tickets',
-            'whups_attributes');
+            'whups_attributes'];
 
         if (!empty($GLOBALS['conf']['vfs']['type'])) {
             try {
@@ -543,7 +580,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $txs = $this->_db->selectValues(
                 'SELECT DISTINCT transaction_id FROM whups_logs '
                     . 'WHERE ticket_id = ?',
-                array($id));
+                [$id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -553,7 +591,8 @@ class Whups_Driver_Sql extends Whups_Driver
             try {
                 $this->_db->delete(
                     'DELETE FROM ' . $table . ' WHERE ticket_id = ?',
-                    array($id));
+                    [$id]
+                );
             } catch (Horde_Db_Exception $e) {
                 $this->_db->rollbackDbTransaction();
                 throw new Whups_Exception($e);
@@ -565,7 +604,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $this->_db->delete(
                     'DELETE FROM whups_transactions WHERE transaction_id IN '
                         . '(' . str_repeat('?,', count($txs) - 1) . '?)',
-                    $txs);
+                    $txs
+                );
             } catch (Horde_Db_Exception $e) {
                 $this->_db->rollbackDbTransaction();
                 throw new Whups_Exception($e);
@@ -587,16 +627,19 @@ class Whups_Driver_Sql extends Whups_Driver
      *                criteria.
      * @throws Whups_Exception
      */
-    public function executeQuery(Whups_Query $query, Horde_Variables $vars,
-                                 $get_details = true, $munge = true)
-    {
-        $this->jtables = array();
-        $this->joins   = array();
+    public function executeQuery(
+        Whups_Query $query,
+        Horde_Variables $vars,
+        $get_details = true,
+        $munge = true
+    ) {
+        $this->jtables = [];
+        $this->joins   = [];
 
-        $where = $query->reduce(array($this, 'clauseFromQuery'), $vars);
+        $where = $query->reduce([$this, 'clauseFromQuery'], $vars);
         if (!$where) {
             $GLOBALS['notification']->push(_("No query to run"), 'horde.message');
-            return array();
+            return [];
         }
 
         if ($this->joins) {
@@ -608,38 +651,44 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $ids = $this->_db->selectValues(
                 "SELECT whups_tickets.ticket_id FROM whups_tickets $joins "
-                . "WHERE $where");
+                . "WHERE $where"
+            );
         } catch (Horde_Db_Exception $e) {
             $GLOBALS['notification']->push($e->getMessage(), 'horde.error');
-            return array();
+            return [];
         }
 
         if (!count($ids)) {
-            return array();
+            return [];
         }
 
         if ($get_details) {
-            $ids = $this->getTicketsByProperties(array('id' => $ids), $munge);
+            $ids = $this->getTicketsByProperties(['id' => $ids], $munge);
         }
 
         return $ids;
     }
 
-    public function clauseFromQuery($args, $type, $criterion, $cvalue,
-                                        $operator, $value)
-    {
+    public function clauseFromQuery(
+        $args,
+        $type,
+        $criterion,
+        $cvalue,
+        $operator,
+        $value
+    ) {
         switch ($type) {
-        case Whups_Query::TYPE_AND:
-            return $this->_concatClauses($args, 'AND');
+            case Whups_Query::TYPE_AND:
+                return $this->_concatClauses($args, 'AND');
 
-        case Whups_Query::TYPE_OR:
-            return $this->_concatClauses($args, 'OR');
+            case Whups_Query::TYPE_OR:
+                return $this->_concatClauses($args, 'OR');
 
-        case Whups_Query::TYPE_NOT:
-            return $this->_notClause($args);
+            case Whups_Query::TYPE_NOT:
+                return $this->_notClause($args);
 
-        case Whups_Query::TYPE_CRITERION:
-            return $this->_criterionClause($criterion, $cvalue, $operator, $value);
+            case Whups_Query::TYPE_CRITERION:
+                return $this->_criterionClause($criterion, $cvalue, $operator, $value);
         }
     }
 
@@ -689,43 +738,47 @@ class Whups_Driver_Sql extends Whups_Driver
         $value = $this->_toBackend($value);
 
         switch ($operator) {
-        case Whups_Query::OPERATOR_GREATER: $op = '>'; break;
-        case Whups_Query::OPERATOR_LESS:    $op = '<'; break;
-        case Whups_Query::OPERATOR_EQUAL:   $op = '='; break;
-        case Whups_Query::OPERATOR_PATTERN: $op = 'LIKE'; break;
+            case Whups_Query::OPERATOR_GREATER: $op = '>';
+                break;
+            case Whups_Query::OPERATOR_LESS:    $op = '<';
+                break;
+            case Whups_Query::OPERATOR_EQUAL:   $op = '=';
+                break;
+            case Whups_Query::OPERATOR_PATTERN: $op = 'LIKE';
+                break;
 
-        case Whups_Query::OPERATOR_CI_SUBSTRING:
-            $value = '%' . str_replace(array('%', '_'), array('\%', '\_'), $value) . '%';
-            if ($this->_db->phptype == 'pgsql') {
-                $op = 'ILIKE';
-            } else {
-                $op = 'LIKE';
-                $func = 'LOWER(';
+            case Whups_Query::OPERATOR_CI_SUBSTRING:
+                $value = '%' . str_replace(['%', '_'], ['\%', '\_'], $value) . '%';
+                if ($this->_db->phptype == 'pgsql') {
+                    $op = 'ILIKE';
+                } else {
+                    $op = 'LIKE';
+                    $func = 'LOWER(';
+                    $funcend = ')';
+                }
+                break;
+
+            case Whups_Query::OPERATOR_CS_SUBSTRING:
+                // FIXME: Does not work in Postgres.
+                $func    = 'LOCATE(' . $this->_db->quoteString($value) . ', ';
                 $funcend = ')';
-            }
-            break;
+                $op      = '>';
+                $value   = 0;
+                break;
 
-        case Whups_Query::OPERATOR_CS_SUBSTRING:
-            // FIXME: Does not work in Postgres.
-            $func    = 'LOCATE(' . $this->_db->quoteString($value) . ', ';
-            $funcend = ')';
-            $op      = '>';
-            $value   = 0;
-            break;
-
-        case Whups_Query::OPERATOR_WORD:
-            // TODO: There might be a better way to avoid missing
-            // words at the start and end of the text field.
-            if ($this->_db->phptype == 'pgsql') {
-                $func = "' ' || ";
-                $funcend = " || ' '";
-            } else {
-                $func    = "CONCAT(' ', CONCAT(";
-                $funcend = ", ' '))";
-            }
-            $op      = 'LIKE';
-            $value = '%' . str_replace(array('%', '_'), array('\%', '\_'), $value) . '%';
-            break;
+            case Whups_Query::OPERATOR_WORD:
+                // TODO: There might be a better way to avoid missing
+                // words at the start and end of the text field.
+                if ($this->_db->phptype == 'pgsql') {
+                    $func = "' ' || ";
+                    $funcend = " || ' '";
+                } else {
+                    $func    = "CONCAT(' ', CONCAT(";
+                    $funcend = ", ' '))";
+                }
+                $op      = 'LIKE';
+                $value = '%' . str_replace(['%', '_'], ['\%', '\_'], $value) . '%';
+                break;
         }
 
         $qvalue = $this->_db->quoteString($value);
@@ -733,123 +786,123 @@ class Whups_Driver_Sql extends Whups_Driver
         $text = '';
 
         switch ($criterion) {
-        case Whups_Query::CRITERION_ID:
-            $text = "{$func}whups_tickets.ticket_id{$funcend}";
-            break;
+            case Whups_Query::CRITERION_ID:
+                $text = "{$func}whups_tickets.ticket_id{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_QUEUE:
-            $text = "{$func}whups_tickets.queue_id{$funcend}";
-            break;
+            case Whups_Query::CRITERION_QUEUE:
+                $text = "{$func}whups_tickets.queue_id{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_VERSION:
-            $text = "{$func}whups_tickets.version_id{$funcend}";
-            break;
+            case Whups_Query::CRITERION_VERSION:
+                $text = "{$func}whups_tickets.version_id{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_TYPE:
-            $text = "{$func}whups_tickets.type_id{$funcend}";
-            break;
+            case Whups_Query::CRITERION_TYPE:
+                $text = "{$func}whups_tickets.type_id{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_STATE:
-            $text = "{$func}whups_tickets.state_id{$funcend}";
-            break;
+            case Whups_Query::CRITERION_STATE:
+                $text = "{$func}whups_tickets.state_id{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_PRIORITY:
-            $text = "{$func}whups_tickets.priority_id{$funcend}";
-            break;
+            case Whups_Query::CRITERION_PRIORITY:
+                $text = "{$func}whups_tickets.priority_id{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_SUMMARY:
-            $text = "{$func}whups_tickets.ticket_summary{$funcend}";
-            break;
+            case Whups_Query::CRITERION_SUMMARY:
+                $text = "{$func}whups_tickets.ticket_summary{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_TIMESTAMP:
-            $text = "{$func}whups_tickets.ticket_timestamp{$funcend}";
-            break;
+            case Whups_Query::CRITERION_TIMESTAMP:
+                $text = "{$func}whups_tickets.ticket_timestamp{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_UPDATED:
-            $text = "{$func}whups_tickets.date_updated{$funcend}";
-            break;
+            case Whups_Query::CRITERION_UPDATED:
+                $text = "{$func}whups_tickets.date_updated{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_RESOLVED:
-            $text = "{$func}whups_tickets.date_resolved{$funcend}";
-            break;
+            case Whups_Query::CRITERION_RESOLVED:
+                $text = "{$func}whups_tickets.date_resolved{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_ASSIGNED:
-            $text = "{$func}whups_tickets.date_assigned{$funcend}";
-            break;
+            case Whups_Query::CRITERION_ASSIGNED:
+                $text = "{$func}whups_tickets.date_assigned{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_DUE:
-            $text = "{$func}whups_tickets.ticket_due{$funcend}";
-            break;
+            case Whups_Query::CRITERION_DUE:
+                $text = "{$func}whups_tickets.ticket_due{$funcend}";
+                break;
 
-        case Whups_Query::CRITERION_ATTRIBUTE:
-            $cvalue = (int)$cvalue;
+            case Whups_Query::CRITERION_ATTRIBUTE:
+                $cvalue = (int) $cvalue;
 
-            if (!isset($this->jtables['whups_attributes'])) {
-                $this->jtables['whups_attributes'] = 1;
-            }
-            $v = $this->jtables['whups_attributes']++;
+                if (!isset($this->jtables['whups_attributes'])) {
+                    $this->jtables['whups_attributes'] = 1;
+                }
+                $v = $this->jtables['whups_attributes']++;
 
-            $this->joins[] = "LEFT JOIN whups_attributes wa$v ON (whups_tickets.ticket_id = wa$v.ticket_id AND wa$v.attribute_id = $cvalue)";
-            $text = "{$func}wa$v.attribute_value{$funcend} $op $qvalue";
-            $done = true;
-            break;
+                $this->joins[] = "LEFT JOIN whups_attributes wa$v ON (whups_tickets.ticket_id = wa$v.ticket_id AND wa$v.attribute_id = $cvalue)";
+                $text = "{$func}wa$v.attribute_value{$funcend} $op $qvalue";
+                $done = true;
+                break;
 
-        case Whups_Query::CRITERION_OWNERS:
-            if (!isset($this->jtables['whups_ticket_owners'])) {
-                $this->jtables['whups_ticket_owners'] = 1;
-            }
-            $v = $this->jtables['whups_ticket_owners']++;
+            case Whups_Query::CRITERION_OWNERS:
+                if (!isset($this->jtables['whups_ticket_owners'])) {
+                    $this->jtables['whups_ticket_owners'] = 1;
+                }
+                $v = $this->jtables['whups_ticket_owners']++;
 
-            $this->joins[] = "LEFT JOIN whups_ticket_owners wto$v ON whups_tickets.ticket_id = wto$v.ticket_id";
-            $qvalue = $this->_db->quotestring('user:' . $value);
-            $text = "{$func}wto$v.ticket_owner{$funcend} $op $qvalue";
-            $done = true;
-            break;
+                $this->joins[] = "LEFT JOIN whups_ticket_owners wto$v ON whups_tickets.ticket_id = wto$v.ticket_id";
+                $qvalue = $this->_db->quotestring('user:' . $value);
+                $text = "{$func}wto$v.ticket_owner{$funcend} $op $qvalue";
+                $done = true;
+                break;
 
-        case Whups_Query::CRITERION_REQUESTER:
-            if (!isset($this->jtables['whups_guests'])) {
-                $this->jtables['whups_guests'] = 1;
-            }
-            $v = $this->jtables['whups_guests']++;
+            case Whups_Query::CRITERION_REQUESTER:
+                if (!isset($this->jtables['whups_guests'])) {
+                    $this->jtables['whups_guests'] = 1;
+                }
+                $v = $this->jtables['whups_guests']++;
 
-            $this->joins[] = "LEFT JOIN whups_guests wg$v ON whups_tickets.user_id_requester = wg$v.guest_id";
-            $text = "{$func}whups_tickets.user_id_requester{$funcend} $op $qvalue OR {$func}wg$v.guest_email{$funcend} $op $qvalue";
-            $done = true;
-            break;
+                $this->joins[] = "LEFT JOIN whups_guests wg$v ON whups_tickets.user_id_requester = wg$v.guest_id";
+                $text = "{$func}whups_tickets.user_id_requester{$funcend} $op $qvalue OR {$func}wg$v.guest_email{$funcend} $op $qvalue";
+                $done = true;
+                break;
 
-        case Whups_Query::CRITERION_GROUPS:
-            if (!isset($this->jtables['whups_ticket_owners'])) {
-                $this->jtables['whups_ticket_owners'] = 1;
-            }
-            $v = $this->jtables['whups_ticket_owners']++;
+            case Whups_Query::CRITERION_GROUPS:
+                if (!isset($this->jtables['whups_ticket_owners'])) {
+                    $this->jtables['whups_ticket_owners'] = 1;
+                }
+                $v = $this->jtables['whups_ticket_owners']++;
 
-            $this->joins[] = "LEFT JOIN whups_ticket_owners wto$v ON whups_tickets.ticket_id = wto$v.ticket_id";
-            $qvalue = $this->_db->quoteString('group:' . $value);
-            $text = "{$func}wto$v.ticket_owner{$funcend} $op $qvalue";
-            $done = true;
-            break;
+                $this->joins[] = "LEFT JOIN whups_ticket_owners wto$v ON whups_tickets.ticket_id = wto$v.ticket_id";
+                $qvalue = $this->_db->quoteString('group:' . $value);
+                $text = "{$func}wto$v.ticket_owner{$funcend} $op $qvalue";
+                $done = true;
+                break;
 
-        case Whups_Query::CRITERION_ADDED_COMMENT:
-            if (!isset($this->jtables['whups_comments'])) {
-                $this->jtables['whups_comments'] = 1;
-            }
-            $v = $this->jtables['whups_comments']++;
+            case Whups_Query::CRITERION_ADDED_COMMENT:
+                if (!isset($this->jtables['whups_comments'])) {
+                    $this->jtables['whups_comments'] = 1;
+                }
+                $v = $this->jtables['whups_comments']++;
 
-            $this->joins[] = "LEFT JOIN whups_comments wc$v ON (whups_tickets.ticket_id = wc$v.ticket_id)";
-            $text = "{$func}wc$v.user_id_creator{$funcend} $op $qvalue";
-            $done = true;
-            break;
+                $this->joins[] = "LEFT JOIN whups_comments wc$v ON (whups_tickets.ticket_id = wc$v.ticket_id)";
+                $text = "{$func}wc$v.user_id_creator{$funcend} $op $qvalue";
+                $done = true;
+                break;
 
-        case Whups_Query::CRITERION_COMMENT:
-            if (!isset($this->jtables['whups_comments'])) {
-                $this->jtables['whups_comments'] = 1;
-            }
-            $v = $this->jtables['whups_comments']++;
+            case Whups_Query::CRITERION_COMMENT:
+                if (!isset($this->jtables['whups_comments'])) {
+                    $this->jtables['whups_comments'] = 1;
+                }
+                $v = $this->jtables['whups_comments']++;
 
-            $this->joins[] = "LEFT JOIN whups_comments wc$v ON (whups_tickets.ticket_id = wc$v.ticket_id)";
-            $text = "{$func}wc$v.comment_text{$funcend} $op $qvalue";
-            $done = true;
-            break;
+                $this->joins[] = "LEFT JOIN whups_comments wc$v ON (whups_tickets.ticket_id = wc$v.ticket_id)";
+                $text = "{$func}wc$v.comment_text{$funcend} $op $qvalue";
+                $done = true;
+                break;
         }
 
         if ($done == false) {
@@ -872,20 +925,29 @@ class Whups_Driver_Sql extends Whups_Driver
      * @throws Whups_Exception
      */
     public function getTicketsByProperties(
-        array $info, $munge = true, $perowner = false, $format_name = true)
-    {
+        array $info,
+        $munge = true,
+        $perowner = false,
+        $format_name = true
+    ) {
         if (isset($info['queue']) && is_array($info['queue']) && !count($info['queue'])) {
-            return array();
+            return [];
         }
 
         // Search conditions.
         $where = $this->_generateWhere(
             'whups_tickets',
-            array('ticket_id', 'type_id', 'state_id', 'priority_id', 'queue_id'),
-            $info, 'integer');
+            ['ticket_id', 'type_id', 'state_id', 'priority_id', 'queue_id'],
+            $info,
+            'integer'
+        );
 
         $where2 = $this->_generateWhere(
-            'whups_tickets', array('user_id_requester'), $info, 'string');
+            'whups_tickets',
+            ['user_id_requester'],
+            $info,
+            'string'
+        );
 
         if (empty($where)) {
             $where = $where2;
@@ -896,9 +958,11 @@ class Whups_Driver_Sql extends Whups_Driver
         // Add summary filter if present.
         if (!empty($info['summary'])) {
             $where = $this->_addWhere(
-                $where, 1,
+                $where,
+                1,
                 'LOWER(whups_tickets.ticket_summary) LIKE '
-                . $this->_db->quotestring('%' . Horde_String::lower($info['summary']) . '%'));
+                . $this->_db->quotestring('%' . Horde_String::lower($info['summary']) . '%')
+            );
         }
 
         // Add date fields.
@@ -918,7 +982,7 @@ class Whups_Driver_Sql extends Whups_Driver
             $where = $this->_addDateWhere($where, $info['ticket_due'], 'ticket_due');
         }
 
-        $fields = array(
+        $fields = [
             'ticket_id AS id',
             'ticket_summary AS summary',
             'user_id_requester',
@@ -929,7 +993,7 @@ class Whups_Driver_Sql extends Whups_Driver
             'date_updated',
             'date_assigned',
             'date_resolved',
-            'version_id AS version');
+            'version_id AS version'];
 
         $fields = $this->_prefixTableToColumns('whups_tickets', $fields)
             . ', whups_tickets.ticket_timestamp AS timestamp, whups_tickets.ticket_due AS due';
@@ -962,7 +1026,7 @@ class Whups_Driver_Sql extends Whups_Driver
         // Type filters.
         if (isset($info['type_id'])) {
             if (is_array($info['type_id'])) {
-                $t = array();
+                $t = [];
                 foreach ($info['type_id'] as $type) {
                     $t[] = 'whups_tickets.type_id = '
                         . $this->_db->quotestring($type);
@@ -1009,7 +1073,7 @@ class Whups_Driver_Sql extends Whups_Driver
         if (isset($info['owner'])) {
             $join .= ' INNER JOIN whups_ticket_owners ON whups_tickets.ticket_id = whups_ticket_owners.ticket_id AND ';
             if (is_array($info['owner'])) {
-                $clauses = array();
+                $clauses = [];
                 foreach ($info['owner'] as $owner) {
                     $clauses[] = 'whups_ticket_owners.ticket_owner = '
                         . $this->_db->quotestring($owner);
@@ -1027,8 +1091,11 @@ class Whups_Driver_Sql extends Whups_Driver
             } else {
                 $join .= ' LEFT JOIN whups_ticket_owners ON whups_tickets.ticket_id = whups_ticket_owners.ticket_id AND whups_ticket_owners.ticket_owner = ' . $this->_db->quotestring($info['notowner']);
             }
-            $where = $this->_addWhere($where, 1,
-                                      'whups_ticket_owners.ticket_id IS NULL');
+            $where = $this->_addWhere(
+                $where,
+                1,
+                'whups_ticket_owners.ticket_id IS NULL'
+            );
         }
 
         if ($munge) {
@@ -1048,7 +1115,7 @@ class Whups_Driver_Sql extends Whups_Driver
 
             $groupby .= ', whups_types.type_name, whups_states.state_name, whups_states.state_category';
             if ($myversions) {
-                $versions = array();
+                $versions = [];
                 $fields .= ', whups_versions.version_name AS version_name'
                     . ', whups_versions.version_description AS version_description'
                     . ', whups_versions.version_active AS version_active';
@@ -1056,7 +1123,7 @@ class Whups_Driver_Sql extends Whups_Driver
                 $groupby .= ', whups_versions.version_name, whups_versions.version_description, whups_versions.version_active, whups_tickets.version_id';
             }
             if ($myqueues) {
-                $queues = array();
+                $queues = [];
                 $fields .= ', whups_queues.queue_name AS queue_name';
                 $join .= ' INNER JOIN whups_queues ON whups_tickets.queue_id = whups_queues.queue_id';
                 $groupby .= ', whups_queues.queue_name';
@@ -1081,19 +1148,20 @@ class Whups_Driver_Sql extends Whups_Driver
         }
 
         if (!$info->columnCount()) {
-            return array();
+            return [];
         }
 
         $info = $this->_fromBackend($info);
 
-        $tickets = array();
+        $tickets = [];
         foreach ($info as $ticket) {
             if ($munge) {
                 if (!$myqueues) {
                     if (!isset($queues[$ticket['queue']])) {
                         $queues[$ticket['queue']] = $GLOBALS['registry']->call(
                             'tickets/getQueueDetails',
-                            array($ticket['queue']));
+                            [$ticket['queue']]
+                        );
                     }
                     $ticket['queue_name'] = $queues[$ticket['queue']]['name'];
                     if (isset($queues[$ticket['queue']]['link'])) {
@@ -1104,7 +1172,8 @@ class Whups_Driver_Sql extends Whups_Driver
                     if (!isset($versions[$ticket['version']])) {
                         $versions[$ticket['version']] = $GLOBALS['registry']->call(
                             'tickets/getVersionDetails',
-                            array($ticket['version']));
+                            [$ticket['version']]
+                        );
                     }
                     $ticket['version_name'] = $versions[$ticket['version']]['name'];
                     if (isset($versions[$ticket['version']]['link'])) {
@@ -1120,7 +1189,7 @@ class Whups_Driver_Sql extends Whups_Driver
 
         foreach ($this->getOwners(array_keys($tickets)) as $id => $owners) {
             $tickets[$id]['owners'] = $owners;
-            foreach($owners as $owner) {
+            foreach ($owners as $owner) {
                 $tickets[$id]['owners_formatted'][] = $format_name
                     ? Whups::formatUser($owner, false, true, true)
                     : $owner;
@@ -1148,21 +1217,27 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function getTicketDetails($ticket, $checkPerms = true)
     {
-        $result = $this->getTicketsByProperties(array('id' => $ticket));
+        $result = $this->getTicketsByProperties(['id' => $ticket]);
 
         if (!isset($result[0])) {
             throw new Horde_Exception_NotFound(
-                sprintf(_("Ticket %s was not found."), $ticket));
+                sprintf(_("Ticket %s was not found."), $ticket)
+            );
         }
 
         $queues = Whups::permissionsFilter(
-            $this->getQueues(), 'queue', Horde_Perms::READ,
-            $GLOBALS['registry']->getAuth(), $result[0]['user_id_requester']);
+            $this->getQueues(),
+            'queue',
+            Horde_Perms::READ,
+            $GLOBALS['registry']->getAuth(),
+            $result[0]['user_id_requester']
+        );
 
         if ($checkPerms &&
             !in_array($result[0]['queue'], array_flip($queues))) {
             throw new Horde_Exception_PermissionDenied(
-                sprintf(_("You do not have permission to access this ticket (%s)."), $ticket));
+                sprintf(_("You do not have permission to access this ticket (%s)."), $ticket)
+            );
         }
 
         return $result[0];
@@ -1184,7 +1259,8 @@ class Whups_Driver_Sql extends Whups_Driver
                     . 'FROM whups_tickets INNER JOIN whups_states '
                     . 'ON whups_tickets.state_id = whups_states.state_id '
                     . 'WHERE ticket_id = ?',
-                array($ticket_id));
+                [$ticket_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1204,7 +1280,8 @@ class Whups_Driver_Sql extends Whups_Driver
             try {
                 $result = $this->_db->selectValue(
                     'SELECT guest_email FROM whups_guests WHERE guest_id = ?',
-                    array($guest_id));
+                    [$guest_id]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -1225,7 +1302,7 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     protected function _getHistory($ticket_id)
     {
-        $where = 'whups_logs.ticket_id = ' . (int)$ticket_id;
+        $where = 'whups_logs.ticket_id = ' . (int) $ticket_id;
         $join  = 'LEFT JOIN whups_comments
                     ON whups_logs.log_type = \'comment\'
                     AND whups_logs.log_value_num = whups_comments.comment_id
@@ -1247,8 +1324,10 @@ class Whups_Driver_Sql extends Whups_Driver
                   LEFT JOIN whups_transactions
                     ON whups_logs.transaction_id = whups_transactions.transaction_id';
 
-        $fields = $this->_prefixTableToColumns('whups_comments',
-                                               array('comment_text'))
+        $fields = $this->_prefixTableToColumns(
+            'whups_comments',
+            ['comment_text']
+        )
             . ', whups_transactions.transaction_timestamp AS timestamp, whups_logs.ticket_id'
             . ', whups_logs.log_type, whups_logs.log_value'
             . ', whups_logs.log_value_num, whups_logs.log_id'
@@ -1284,7 +1363,7 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function deleteHistory($transaction)
     {
-        $transaction = (int)$transaction;
+        $transaction = (int) $transaction;
         $this->_db->beginDbTransaction();
 
         /* Deleting comments. */
@@ -1292,7 +1371,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $comments = $this->_db->selectValues(
                 'SELECT log_value FROM whups_logs WHERE log_type = ? '
                     . 'AND transaction_id = ?',
-                array('comment', $transaction));
+                ['comment', $transaction]
+            );
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
             throw new Whups_Exception($e);
@@ -1301,7 +1381,8 @@ class Whups_Driver_Sql extends Whups_Driver
         if ($comments) {
             $query = sprintf(
                 'DELETE FROM whups_comments WHERE comment_id IN (%s)',
-                implode(',', $comments));
+                implode(',', $comments)
+            );
             try {
                 $this->_db->delete($query);
             } catch (Horde_Db_Exception $e) {
@@ -1316,7 +1397,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $attachments = $this->_db->select(
                     'SELECT ticket_id, log_value FROM whups_logs '
                         . 'WHERE log_type = ? AND transaction_id = ?',
-                    array('attachment', $transaction));
+                    ['attachment', $transaction]
+                );
             } catch (Horde_Db_Exception $e) {
                 $this->_db->rollbackDbTransaction();
                 throw new Whups_Exception($e);
@@ -1343,10 +1425,12 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $this->_db->delete(
                 'DELETE FROM whups_logs WHERE transaction_id = ?',
-                array($transaction));
+                [$transaction]
+            );
             $this->_db->delete(
                 'DELETE FROM whups_transactions WHERE transaction_id = ?',
-                array($transaction));
+                [$transaction]
+            );
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
             throw new Whups_Exception($e);
@@ -1407,24 +1491,25 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT queue_id, queue_name, queue_description, '
                     . 'queue_versioned, queue_slug, queue_email '
                     . 'FROM whups_queues WHERE queue_id = ?',
-                array((int)$queueId));
+                [(int) $queueId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
         if (!$queue) {
-            return array();
+            return [];
         }
 
         $queue = $this->_fromBackend($queue);
-        $this->_internalQueueCache[$queueId] = array(
-            'id'          => (int)$queue['queue_id'],
+        $this->_internalQueueCache[$queueId] = [
+            'id'          => (int) $queue['queue_id'],
             'name'        => $queue['queue_name'],
             'description' => $queue['queue_description'],
-            'versioned'   => (bool)$queue['queue_versioned'],
+            'versioned'   => (bool) $queue['queue_versioned'],
             'slug'        => $queue['queue_slug'],
             'email'       => $queue['queue_email'],
-            'readonly'    => false);
+            'readonly'    => false];
 
         return $this->_internalQueueCache[$queueId];
     }
@@ -1445,23 +1530,24 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT queue_id, queue_name, queue_description, '
                     . 'queue_versioned, queue_slug FROM whups_queues WHERE '
                     . 'queue_slug = ?',
-                array((string)$slug));
+                [(string) $slug]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
         if (!$queue) {
-            return array();
+            return [];
         }
 
         $queue = $this->_fromBackend($queue);
-        return array(
+        return [
             'id'          => $queue['queue_id'],
             'name'        => $queue['queue_name'],
             'description' => $queue['queue_description'],
             'versioned'   => $queue['queue_versioned'],
             'slug'        => $queue['queue_slug'],
-            'readonly'    => false);
+            'readonly'    => false];
     }
 
     /**
@@ -1476,7 +1562,8 @@ class Whups_Driver_Sql extends Whups_Driver
             try {
                 $queues = $this->_db->selectAssoc(
                     'SELECT queue_id, queue_name FROM whups_queues '
-                        . 'ORDER BY queue_name');
+                        . 'ORDER BY queue_name'
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -1499,7 +1586,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $queues = $this->_db->selectAssoc(
                     'SELECT queue_id, queue_slug FROM whups_queues '
                         . 'WHERE queue_slug IS NOT NULL AND queue_slug <> \'\' '
-                        . 'ORDER BY queue_slug');
+                        . 'ORDER BY queue_slug'
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -1524,18 +1612,25 @@ class Whups_Driver_Sql extends Whups_Driver
      *
      * @throws Whups_Exception
      */
-    public function updateQueue($queueId, $name, $description,
-                                array $types = array(), $versioned = 0,
-                                $slug = '', $email = '', $default = null)
-    {
+    public function updateQueue(
+        $queueId,
+        $name,
+        $description,
+        array $types = [],
+        $versioned = 0,
+        $slug = '',
+        $email = '',
+        $default = null
+    ) {
         global $registry;
 
         if ($registry->hasMethod('tickets/listQueues') == $registry->getApp()) {
             // Is slug unique?
             if (!empty($slug)) {
-                if ($this->_db->selectValue('SELECT 1 FROM whups_queues WHERE queue_slug = ? AND queue_id <> ?', array($slug, $queueId))) {
+                if ($this->_db->selectValue('SELECT 1 FROM whups_queues WHERE queue_slug = ? AND queue_id <> ?', [$slug, $queueId])) {
                     throw new Whups_Exception(
-                        _("That queue slug is already taken. Please select another."));
+                        _("That queue slug is already taken. Please select another.")
+                    );
                 }
             }
 
@@ -1545,12 +1640,13 @@ class Whups_Driver_Sql extends Whups_Driver
                     'UPDATE whups_queues SET queue_name = ?, '
                         . 'queue_description = ?, queue_versioned = ?, '
                         . 'queue_slug = ?, queue_email = ? WHERE queue_id = ?',
-                    array($this->_toBackend($name),
-                          $this->_toBackend($description),
-                          empty($versioned) ? 0 : 1,
-                          $slug,
-                          $email,
-                          (int)$queueId));
+                    [$this->_toBackend($name),
+                        $this->_toBackend($description),
+                        empty($versioned) ? 0 : 1,
+                        $slug,
+                        $email,
+                        (int) $queueId]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -1560,7 +1656,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $this->_db->delete(
                 'DELETE FROM whups_types_queues WHERE queue_id = ?',
-                array((int)$queueId));
+                [(int) $queueId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1572,9 +1669,10 @@ class Whups_Driver_Sql extends Whups_Driver
                     $this->_db->insert(
                         'INSERT INTO whups_types_queues '
                         . '(queue_id, type_id, type_default) VALUES (?, ?, ?)',
-                        array((int)$queueId,
-                              (int)$typeId,
-                              $default == $typeId ? 1 : 0));
+                        [(int) $queueId,
+                            (int) $typeId,
+                            $default == $typeId ? 1 : 0]
+                    );
                 } catch (Horde_Db_Exception $e) {
                     throw new Whups_Exception($e);
                 }
@@ -1595,7 +1693,8 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->selectValue(
                 'SELECT type_id FROM whups_types_queues '
                     . 'WHERE type_default = 1 AND queue_id = ?',
-                array($queue));
+                [$queue]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1614,7 +1713,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $result = $this->_db->select(
                 'SELECT ticket_id FROM whups_tickets WHERE queue_id = ?',
-                array((int)$queueId));
+                [(int) $queueId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1623,17 +1723,18 @@ class Whups_Driver_Sql extends Whups_Driver
         }
 
         // Now remove all references to the queue itself.
-        $tables = array(
+        $tables = [
             'whups_queues_users',
             'whups_types_queues',
             'whups_versions',
-            'whups_queues');
+            'whups_queues'];
         $this->_db->beginDbTransaction();
         foreach ($tables as $table) {
             try {
                 $this->_db->delete(
                     'DELETE FROM ' . $table . ' WHERE queue_id = ?',
-                    array((int)$queueId));
+                    [(int) $queueId]
+                );
             } catch (Horde_Db_Exception $e) {
                 $this->_db->rollbackDbTransaction();
                 throw new Whups_Exception($e);
@@ -1670,7 +1771,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $this->_db->insert(
                     'INSERT INTO whups_types_queues (queue_id, type_id) '
                         . 'VALUES (?, ?)',
-                    array((int)$pair[0], (int)$pair[1]));
+                    [(int) $pair[0], (int) $pair[1]]
+                );
             } catch (Horde_Db_Exception $e) {
                 $this->_db->rollbackDbTransaction();
                 throw new Whups_Exception($e);
@@ -1699,7 +1801,8 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->selectValues(
                 'SELECT user_uid FROM whups_queues_users'
                     . ' WHERE queue_id = ? ORDER BY user_uid',
-                array((int)$queueId));
+                [(int) $queueId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1716,14 +1819,15 @@ class Whups_Driver_Sql extends Whups_Driver
     public function addQueueUser($queueId, $userId)
     {
         if (!is_array($userId)) {
-            $userId = array($userId);
+            $userId = [$userId];
         }
         foreach ($userId as $user) {
             try {
                 $this->_db->insert(
                     'INSERT INTO whups_queues_users (queue_id, user_uid) '
                         . 'VALUES (?, ?)',
-                    array((int)$queueId, $user));
+                    [(int) $queueId, $user]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -1744,7 +1848,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->delete(
                 'DELETE FROM whups_queues_users'
                     . ' WHERE queue_id = ? AND user_uid = ?',
-                array((int)$queueId, $userId));
+                [(int) $queueId, $userId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1764,16 +1869,17 @@ class Whups_Driver_Sql extends Whups_Driver
             $type = $this->_db->selectOne(
                 'SELECT type_id, type_name, type_description '
                     . 'FROM whups_types WHERE type_id = ?',
-                array((int)$typeId));
+                [(int) $typeId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
         $type = $this->_fromBackend($type);
 
-        return array('id'          => $typeId,
-                     'name'        => $type['type_name'],
-                     'description' => $type['type_description']);
+        return ['id'          => $typeId,
+            'name'        => $type['type_name'],
+            'description' => $type['type_description']];
     }
 
     /**
@@ -1792,7 +1898,8 @@ class Whups_Driver_Sql extends Whups_Driver
                     . 'FROM whups_types t, whups_types_queues tm '
                     . 'WHERE tm.queue_id = ? AND tm.type_id = t.type_id '
                     . 'ORDER BY t.type_name',
-                array((int)$queueId));
+                [(int) $queueId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1814,7 +1921,8 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->selectValues(
                 'SELECT type_id FROM whups_types_queues '
                     . 'WHERE queue_id = ? ORDER BY type_id',
-                array((int)$queueId));
+                [(int) $queueId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1830,7 +1938,8 @@ class Whups_Driver_Sql extends Whups_Driver
     {
         try {
             $types = $this->_db->selectAssoc(
-                'SELECT type_id, type_name FROM whups_types ORDER BY type_name');
+                'SELECT type_id, type_name FROM whups_types ORDER BY type_name'
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1849,7 +1958,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $info = $this->_db->selectAll(
                 'SELECT type_id, type_name, type_description '
-                . 'FROM whups_types ORDER BY type_id');
+                . 'FROM whups_types ORDER BY type_id'
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1870,7 +1980,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $name = $this->_db->selectValue(
                 'SELECT type_name FROM whups_types WHERE type_id = ?',
-                array((int)$type));
+                [(int) $type]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1893,9 +2004,10 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->update(
                 'UPDATE whups_types SET type_name = ?, type_description = ? '
                     . 'WHERE type_id = ?',
-                array($this->_toBackend($name),
-                      $this->_toBackend($description),
-                      (int)$typeId));
+                [$this->_toBackend($name),
+                    $this->_toBackend($description),
+                    (int) $typeId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -1911,23 +2023,27 @@ class Whups_Driver_Sql extends Whups_Driver
     public function deleteType($typeId)
     {
         $this->_db->beginDbTransaction();
-        $values = array((int)$typeId);
+        $values = [(int) $typeId];
         try {
             $this->_db->delete(
                 'DELETE FROM whups_states WHERE type_id = ?',
-                $values);
+                $values
+            );
 
             $this->_db->delete(
                 'DELETE FROM whups_priorities WHERE type_id = ?',
-                 $values);
+                $values
+            );
 
             $this->_db->delete(
                 'DELETE FROM whups_attributes_desc WHERE type_id = ?',
-                $values);
+                $values
+            );
 
             $this->_db->delete(
                 'DELETE FROM whups_types WHERE type_id = ?',
-                $values);
+                $values
+            );
             $this->_db->commitDbTransaction();
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
@@ -1962,18 +2078,19 @@ class Whups_Driver_Sql extends Whups_Driver
         if (!is_array($category)) {
             $where = $this->_addWhere($where, $category, 'state_category = ' . $this->_db->quoteString($category));
         } else {
-            $clauses = array();
+            $clauses = [];
             foreach ($category as $cat) {
                 $clauses[] = 'state_category = ' . $this->_db->quoteString($cat);
             }
-            if (count($clauses))
+            if (count($clauses)) {
                 $where = $this->_addWhere($where, $cat, implode(' OR ', $clauses));
+            }
         }
 
         if (!is_array($notcategory)) {
             $where = $this->_addWhere($where, $notcategory, 'state_category <> ' . $this->_db->quoteString($notcategory));
         } else {
-            $clauses = array();
+            $clauses = [];
             foreach ($notcategory as $notcat) {
                 $clauses[] = 'state_category <> ' . $this->_db->quoteString($notcat);
             }
@@ -1992,7 +2109,7 @@ class Whups_Driver_Sql extends Whups_Driver
             throw new Whups_Exception($e);
         }
 
-        $return = array();
+        $return = [];
         if (empty($type)) {
             foreach ($states as $state) {
                 $return[$state['state_id']] = $state['state_name'] . ' (' . $state['type_name'] . ')';
@@ -2019,18 +2136,19 @@ class Whups_Driver_Sql extends Whups_Driver
             $state = $this->_db->selectOne(
                 'SELECT state_name, state_description, state_category, '
                     . 'type_id FROM whups_states WHERE state_id = ?',
-                array((int)$stateId));
+                [(int) $stateId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
         $state = $this->_fromBackend($state);
 
-        return array('id'          => $stateId,
-                     'name'        => $state['state_name'],
-                     'description' => $state['state_description'],
-                     'category'    => $state['state_category'],
-                     'type'        => $state['type_id']);
+        return ['id'          => $stateId,
+            'name'        => $state['state_name'],
+            'description' => $state['state_description'],
+            'category'    => $state['state_category'],
+            'type'        => $state['type_id']];
     }
 
     /**
@@ -2048,7 +2166,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT state_id, state_name, state_description, '
                     . 'state_category FROM whups_states WHERE type_id = ? '
                     . 'ORDER BY state_id',
-                array((int)$type));
+                [(int) $type]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2072,10 +2191,11 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->update(
                 'UPDATE whups_states SET state_name = ?, state_description = ?, '
                     . 'state_category = ? WHERE state_id = ?',
-                array($this->_toBackend($name),
-                      $this->_toBackend($description),
-                      $this->_toBackend($category),
-                      (int)$stateId));
+                [$this->_toBackend($name),
+                    $this->_toBackend($description),
+                    $this->_toBackend($category),
+                    (int) $stateId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2095,7 +2215,8 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->selectValue(
                 'SELECT state_id FROM whups_states WHERE state_default = 1 '
                     . 'AND type_id = ?',
-                array($type));
+                [$type]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2115,10 +2236,12 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $this->_db->update(
                 'UPDATE whups_states SET state_default = 0 WHERE type_id = ?',
-                array((int)$type));
+                [(int) $type]
+            );
             $this->_db->update(
                 'UPDATE whups_states SET state_default = 1 WHERE state_id = ?',
-                array((int)$state));
+                [(int) $state]
+            );
             $this->_db->commitDbTransaction();
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
@@ -2136,8 +2259,10 @@ class Whups_Driver_Sql extends Whups_Driver
     public function deleteState($state_id)
     {
         try {
-            $this->_db->delete('DELETE FROM whups_states WHERE state_id = ?',
-                               array((int)$state_id));
+            $this->_db->delete(
+                'DELETE FROM whups_states WHERE state_id = ?',
+                [(int) $state_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2157,7 +2282,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $query = $this->_db->selectOne(
                 'SELECT query_parameters, query_object FROM whups_queries '
                     . 'WHERE query_id = ?',
-                array((int)$queryId));
+                [(int) $queryId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2179,26 +2305,29 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $exists = $this->_db->selectValue(
                 'SELECT 1 FROM whups_queries WHERE query_id = ?',
-                array((int)$query->id));
+                [(int) $query->id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
-        $values = $this->_toBackend(array(serialize($query->parameters),
-                                          serialize($query->query),
-                                          $query->id));
+        $values = $this->_toBackend([serialize($query->parameters),
+            serialize($query->query),
+            $query->id]);
 
         try {
             if ($exists) {
                 $this->_db->update(
                     'UPDATE whups_queries SET query_parameters = ?, '
                         . 'query_object = ? WHERE query_id = ?',
-                    $values);
+                    $values
+                );
             } else {
                 $this->_db->insert(
                     'INSERT INTO whups_queries (query_parameters, '
                         . 'query_object, query_id) VALUES (?, ?, ?)',
-                    $values);
+                    $values
+                );
             }
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
@@ -2215,8 +2344,10 @@ class Whups_Driver_Sql extends Whups_Driver
     public function deleteQuery($queryId)
     {
         try {
-            $this->_db->delete('DELETE FROM whups_queries WHERE query_id = ?',
-                               array((int)$queryId));
+            $this->_db->delete(
+                'DELETE FROM whups_queries WHERE query_id = ?',
+                [(int) $queryId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2234,10 +2365,11 @@ class Whups_Driver_Sql extends Whups_Driver
     public function isCategory($category, $state_id)
     {
         try {
-            return (bool)$this->_db->selectValue(
+            return (bool) $this->_db->selectValue(
                 'SELECT 1 FROM whups_states '
                     . 'WHERE state_id = ? AND state_category = ?',
-                array((int)$state_id, $category));
+                [(int) $state_id, $category]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2258,7 +2390,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT priority_id, priority_name, priority_description '
                     . 'FROM whups_priorities WHERE type_id = ? '
                     . 'ORDER BY priority_id',
-                array((int)$type));
+                [(int) $type]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2298,7 +2431,7 @@ class Whups_Driver_Sql extends Whups_Driver
             throw new Whups_Exception($e);
         }
 
-        $return = array();
+        $return = [];
         if (empty($type)) {
             foreach ($priorities as $priority) {
                 $return[$priority['priority_id']] = $priority['priority_name'] . ' (' . $priority['type_name'] . ')';
@@ -2326,17 +2459,18 @@ class Whups_Driver_Sql extends Whups_Driver
             $priority = $this->_db->selectOne(
                 'SELECT priority_name, priority_description, type_id '
                     . 'FROM whups_priorities WHERE priority_id = ?',
-                array((int)$priorityId));
+                [(int) $priorityId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
         $priority = $this->_fromBackend($priority);
 
-        return array('id'          => $priorityId,
-                     'name'        => $priority['priority_name'],
-                     'description' => $priority['priority_description'],
-                     'type'        => $priority['type_id']);
+        return ['id'          => $priorityId,
+            'name'        => $priority['priority_name'],
+            'description' => $priority['priority_description'],
+            'type'        => $priority['type_id']];
     }
 
     /**
@@ -2354,9 +2488,10 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->update(
                 'UPDATE whups_priorities SET priority_name = ?, '
                     . 'priority_description = ? WHERE priority_id = ?',
-                array($this->_toBackend($name),
-                      $this->_toBackend($description),
-                      (int)$priorityId));
+                [$this->_toBackend($name),
+                    $this->_toBackend($description),
+                    (int) $priorityId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2376,7 +2511,8 @@ class Whups_Driver_Sql extends Whups_Driver
             return $this->_db->selectValue(
                 'SELECT priority_id FROM whups_priorities '
                     . 'WHERE priority_default = 1 AND type_id = ?',
-                array((int)$type));
+                [(int) $type]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2397,11 +2533,13 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->update(
                 'UPDATE whups_priorities SET priority_default = 0 '
                     . 'WHERE type_id = ?',
-                array((int)$type));
+                [(int) $type]
+            );
             $this->_db->update(
                 'UPDATE whups_priorities SET priority_default = 1 '
                     . 'WHERE priority_id = ?',
-                array((int)$priority));
+                [(int) $priority]
+            );
             $this->_db->commitDbTransaction();
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
@@ -2421,7 +2559,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $this->_db->delete(
                 'DELETE FROM whups_priorities WHERE priority_id = ?',
-                array((int)$priorityId));
+                [(int) $priorityId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2442,7 +2581,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT version_id, version_name, version_description, '
                 . 'version_active FROM whups_versions WHERE queue_id = ?'
                 . ' ORDER BY version_id',
-                array((int)$queue));
+                [(int) $queue]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2464,17 +2604,18 @@ class Whups_Driver_Sql extends Whups_Driver
             $version = $this->_db->selectOne(
                 'SELECT version_name, version_description, version_active '
                     . 'FROM whups_versions WHERE version_id = ?',
-                array((int)$versionId));
+                [(int) $versionId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
         $version = $this->_fromBackend($version);
 
-        return array('id'          => $versionId,
-                     'name'        => $version['version_name'],
-                     'description' => $version['version_description'],
-                     'active'      => !empty($version['version_active']));
+        return ['id'          => $versionId,
+            'name'        => $version['version_name'],
+            'description' => $version['version_description'],
+            'active'      => !empty($version['version_active'])];
     }
 
     /**
@@ -2494,10 +2635,11 @@ class Whups_Driver_Sql extends Whups_Driver
                 'UPDATE whups_versions SET version_name = ?, '
                     . 'version_description = ?, version_active = ? '
                     . 'WHERE version_id = ?',
-                array($this->_toBackend($name),
-                      $this->_toBackend($description),
-                      (int)$active,
-                      (int)$versionId));
+                [$this->_toBackend($name),
+                    $this->_toBackend($description),
+                    (int) $active,
+                    (int) $versionId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2515,7 +2657,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $this->_db->delete(
                 'DELETE FROM whups_versions WHERE version_id = ?',
-                array((int)$versionId));
+                [(int) $versionId]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2535,12 +2678,13 @@ class Whups_Driver_Sql extends Whups_Driver
             $rows = $this->_db->select(
                 'SELECT reply_id, reply_name, reply_text '
                     . 'FROM whups_replies WHERE type_id = ? ORDER BY reply_name',
-                array((int)$type));
+                [(int) $type]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
-        $info = array();
+        $info = [];
         foreach ($rows as $row) {
             $info[$row['reply_id']] = $this->_fromBackend($row);
         }
@@ -2562,7 +2706,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $reply = $this->_db->selectOne(
                 'SELECT reply_name, reply_text, type_id '
                     . 'FROM whups_replies WHERE reply_id = ?',
-                array((int)$reply_id));
+                [(int) $reply_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2585,9 +2730,10 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->update(
                 'UPDATE whups_replies SET reply_name = ?, reply_text = ? '
                     . 'WHERE reply_id = ?',
-                array($this->_toBackend($name),
-                      $this->_toBackend($text),
-                      (int)$reply));
+                [$this->_toBackend($name),
+                    $this->_toBackend($text),
+                    (int) $reply]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2603,8 +2749,10 @@ class Whups_Driver_Sql extends Whups_Driver
     public function deleteReply($reply)
     {
         try {
-            $this->_db->delete('DELETE FROM whups_replies WHERE reply_id = ?',
-                               array((int)$reply));
+            $this->_db->delete(
+                'DELETE FROM whups_replies WHERE reply_id = ?',
+                [(int) $reply]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2626,7 +2774,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->insert(
                 'INSERT INTO whups_ticket_listeners (ticket_id, user_uid)'
                     . ' VALUES (?, ?)',
-                array((int)$ticket, $user));
+                [(int) $ticket, $user]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2642,17 +2791,19 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function addUniqueListener($ticket, $user)
     {
-        $id = (int)$ticket->getId();
+        $id = (int) $ticket->getId();
         $requester = Whups::formatUser(
-            $ticket->get('user_id_requester'), true, false
+            $ticket->get('user_id_requester'),
+            true,
+            false
         );
-        if ($user == (string)$requester) {
+        if ($user == (string) $requester) {
             return;
         }
         try {
             $exists = $this->_db->selectValue(
                 'SELECT 1 FROM whups_ticket_listeners WHERE ticket_id = ? AND user_uid = ?',
-                array($id, $user)
+                [$id, $user]
             );
             if (!$exists) {
                 $this->addListener($id, $user);
@@ -2676,7 +2827,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->delete(
                 'DELETE FROM whups_ticket_listeners WHERE ticket_id = ?'
                     . ' AND user_uid = ?',
-                array((int)$ticket, $user));
+                [(int) $ticket, $user]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2694,18 +2846,21 @@ class Whups_Driver_Sql extends Whups_Driver
      * @return array  A list of all ticket listeners.
      * @throws Whups_Exception
      */
-    public function getListeners($ticket, $withowners = true,
-                                 $withrequester = true,
-                                 $withresponsible = false)
-    {
+    public function getListeners(
+        $ticket,
+        $withowners = true,
+        $withrequester = true,
+        $withresponsible = false
+    ) {
         try {
             $listeners = $this->_db->selectValues(
                 'SELECT DISTINCT user_uid FROM whups_ticket_listeners WHERE (ticket_id = ?)',
-                array((int)$ticket));
+                [(int) $ticket]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
-        $users = array();
+        $users = [];
         foreach ($listeners as $user) {
             $users[$user] = 'listener';
         }
@@ -2765,21 +2920,27 @@ class Whups_Driver_Sql extends Whups_Driver
      * @return integer  The new attribute ID.
      * @throws Whups_Exception
      */
-    public function addAttributeDesc($type_id, $name, $desc, $type, $params,
-                                     $required)
-    {
+    public function addAttributeDesc(
+        $type_id,
+        $name,
+        $desc,
+        $type,
+        $params,
+        $required
+    ) {
         try {
             return $this->_db->insert(
                 'INSERT INTO whups_attributes_desc '
                     . '(type_id, attribute_name, attribute_description, '
                     . 'attribute_type, attribute_params, attribute_required)'
                     . ' VALUES (?, ?, ?, ?, ?, ?)',
-                array((int)$type_id,
-                      $this->_toBackend($name),
-                      $this->_toBackend($desc),
-                      $type,
-                      serialize($this->_toBackend($params)),
-                      (int)($required == 'on')));
+                [(int) $type_id,
+                    $this->_toBackend($name),
+                    $this->_toBackend($desc),
+                    $type,
+                    serialize($this->_toBackend($params)),
+                    (int) ($required == 'on')]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2797,21 +2958,27 @@ class Whups_Driver_Sql extends Whups_Driver
      *
      * @throws Whups_Exception
      */
-    public function updateAttributeDesc($attribute_id, $newname, $newdesc,
-                                        $newtype, $newparams, $newrequired)
-    {
+    public function updateAttributeDesc(
+        $attribute_id,
+        $newname,
+        $newdesc,
+        $newtype,
+        $newparams,
+        $newrequired
+    ) {
         try {
             $this->_db->update(
                 'UPDATE whups_attributes_desc '
                     . 'SET attribute_name = ?, attribute_description = ?, '
                     . 'attribute_type = ?, attribute_params = ?, '
                     . 'attribute_required = ? WHERE attribute_id = ?',
-                array($this->_toBackend($newname),
-                      $this->_toBackend($newdesc),
-                      $newtype,
-                      serialize($this->_toBackend($newparams)),
-                      (int)($newrequired == 'on'),
-                      (int)$attribute_id));
+                [$this->_toBackend($newname),
+                    $this->_toBackend($newdesc),
+                    $newtype,
+                    serialize($this->_toBackend($newparams)),
+                    (int) ($newrequired == 'on'),
+                    (int) $attribute_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2830,10 +2997,12 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $this->_db->delete(
                 'DELETE FROM whups_attributes_desc WHERE attribute_id = ?',
-                array((int)$attribute_id));
+                [(int) $attribute_id]
+            );
             $this->_db->delete(
                 'DELETE FROM whups_attributes WHERE attribute_id = ?',
-                array((int)$attribute_id));
+                [(int) $attribute_id]
+            );
             $this->_db->commitDbTransaction();
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
@@ -2852,7 +3021,8 @@ class Whups_Driver_Sql extends Whups_Driver
         try {
             $attributes = $this->_db->selectAll(
                 'SELECT attribute_id, attribute_name, attribute_description, '
-                    . 'type_id FROM whups_attributes_desc');
+                    . 'type_id FROM whups_attributes_desc'
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2874,12 +3044,13 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT attribute_name, attribute_description, '
                     . 'attribute_type, attribute_params, attribute_required '
                     . 'FROM whups_attributes_desc WHERE attribute_id = ?',
-                array((int)$attribute_id));
+                [(int) $attribute_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
 
-        return array(
+        return [
             'id' => $attribute_id,
             'name' => $this->_fromBackend($attribute['attribute_name']),
             'description' => $this->_fromBackend($attribute['attribute_description']),
@@ -2887,7 +3058,7 @@ class Whups_Driver_Sql extends Whups_Driver
                 ? 'text'
                 : $attribute['attribute_type'],
             'params' => $this->_fromBackend(@unserialize($attribute['attribute_params'])),
-            'required' => (bool)$attribute['attribute_required']);
+            'required' => (bool) $attribute['attribute_required']];
     }
 
     /**
@@ -2904,7 +3075,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $name = $this->_db->selectValue(
                 'SELECT attribute_name FROM whups_attributes_desc '
                     . 'WHERE attribute_id = ?',
-                array((int)$attribute_id));
+                [(int) $attribute_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -2931,7 +3103,7 @@ class Whups_Driver_Sql extends Whups_Driver
             $where = '';
             $order = 'type_name, ' . $order;
         } else {
-            $where = ' WHERE type_id = ' . (int)$type;
+            $where = ' WHERE type_id = ' . (int) $type;
         }
 
         $query = "SELECT $fields FROM $from$where ORDER BY $order";
@@ -2940,7 +3112,7 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
-        $results = array();
+        $results = [];
         foreach ($attributes as $attribute) {
             $id = $attribute['attribute_id'];
             $results[$id] = $attribute;
@@ -2959,7 +3131,7 @@ class Whups_Driver_Sql extends Whups_Driver
             $results[$id]['attribute_params'] =
                 $this->_fromBackend(@unserialize($attribute['attribute_params']));
             $results[$id]['attribute_required'] =
-                (bool)$attribute['attribute_required'];
+                (bool) $attribute['attribute_required'];
         }
 
         return $results;
@@ -2979,7 +3151,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $names = $this->_db->selectAll(
                 'SELECT attribute_name FROM whups_attributes_desc '
                     . 'WHERE type_id = ? ORDER BY attribute_name',
-                array((int)$type_id));
+                [(int) $type_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -3002,7 +3175,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 'SELECT attribute_id, attribute_name, attribute_description '
                     . 'FROM whups_attributes_desc WHERE type_id = ? '
                     . 'ORDER BY attribute_id',
-                array((int)$type_id));
+                [(int) $type_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -3019,9 +3193,11 @@ class Whups_Driver_Sql extends Whups_Driver
      *
      * @throws Whups_Exception
      */
-    protected function _setAttributeValue($ticket_id, $attribute_id,
-                                          $attribute_value)
-    {
+    protected function _setAttributeValue(
+        $ticket_id,
+        $attribute_id,
+        $attribute_value
+    ) {
         $db_attribute_value = $this->_toBackend($attribute_value);
 
         $this->_db->beginDbTransaction();
@@ -3029,12 +3205,14 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->delete(
                 'DELETE FROM whups_attributes WHERE ticket_id = ? '
                     . 'AND attribute_id = ?',
-                 array($ticket_id, $attribute_id));
+                [$ticket_id, $attribute_id]
+            );
 
             if (strlen($attribute_value)) {
                 $this->_db->insert(
                     'INSERT INTO whups_attributes (ticket_id, attribute_id, attribute_value) VALUES (?, ?, ?)',
-                    array($ticket_id, $attribute_id, $db_attribute_value));
+                    [$ticket_id, $attribute_id, $db_attribute_value]
+                );
             }
             $this->_db->commitDbTransaction();
         } catch (Horde_Db_Exception $e) {
@@ -3060,7 +3238,7 @@ class Whups_Driver_Sql extends Whups_Driver
             // No need to run a query for an empty array, and it would result
             // in an invalid SQL query anyway.
             if (!count($ticket_id)) {
-                return array();
+                return [];
             }
 
             try {
@@ -3068,7 +3246,8 @@ class Whups_Driver_Sql extends Whups_Driver
                     'SELECT ticket_id AS id, attribute_id, attribute_value '
                         . 'FROM whups_attributes WHERE ticket_id IN ('
                         . str_repeat('?, ', count($ticket_id) - 1) . '?)',
-                    $ticket_id);
+                    $ticket_id
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -3077,7 +3256,8 @@ class Whups_Driver_Sql extends Whups_Driver
                 $attributes = $this->_db->selectAssoc(
                     'SELECT attribute_id, attribute_value'
                         . ' FROM whups_attributes WHERE ticket_id = ?',
-                    array((int)$ticket_id));
+                    [(int) $ticket_id]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -3088,7 +3268,8 @@ class Whups_Driver_Sql extends Whups_Driver
             try {
                 $attribute = Horde_Serialize::unserialize(
                     $attribute,
-                    Horde_Serialize::JSON);
+                    Horde_Serialize::JSON
+                );
             } catch (Horde_Serialize_Exception $e) {
             }
         }
@@ -3113,7 +3294,7 @@ class Whups_Driver_Sql extends Whups_Driver
             // No need to run a query for an empty array, and it would result
             // in an invalid SQL query anyway.
             if (!count($ticket_id)) {
-                return array();
+                return [];
             }
 
             try {
@@ -3125,7 +3306,8 @@ class Whups_Driver_Sql extends Whups_Driver
                         . 'ON (d.attribute_id = a.attribute_id)'
                         . 'WHERE a.ticket_id IN ('
                         . str_repeat('?, ', count($ticket_id) - 1) . '?)',
-                    $ticket_id);
+                    $ticket_id
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -3142,7 +3324,8 @@ class Whups_Driver_Sql extends Whups_Driver
                         . 'whups_attributes_desc d '
                         . 'ON (d.attribute_id = a.attribute_id)'
                         . 'WHERE a.ticket_id = ? ORDER BY d.attribute_name',
-                    array((int)$ticket_id));
+                    [(int) $ticket_id]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -3182,7 +3365,8 @@ class Whups_Driver_Sql extends Whups_Driver
                     . 'LEFT OUTER JOIN whups_attributes a '
                     . 'ON (d.attribute_id = a.attribute_id AND a.ticket_id = ?) '
                     . 'WHERE d.type_id = t.type_id ORDER BY d.attribute_name',
-                array($ticket_id, $ticket_id));
+                [$ticket_id, $ticket_id]
+            );
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
@@ -3199,7 +3383,7 @@ class Whups_Driver_Sql extends Whups_Driver
             $attribute['attribute_params'] =
                 $this->_fromBackend(@unserialize($attribute['attribute_params']));
             $attribute['attribute_required'] =
-                (bool)$attribute['attribute_required'];
+                (bool) $attribute['attribute_required'];
             $attribute['attribute_value'] = $this->_json_decode($attribute['attribute_value']);
         }
 
@@ -3218,7 +3402,7 @@ class Whups_Driver_Sql extends Whups_Driver
     {
         if (is_array($ticketId)) {
             if (!count($ticketId)) {
-                return array();
+                return [];
             }
 
             try {
@@ -3226,7 +3410,8 @@ class Whups_Driver_Sql extends Whups_Driver
                     'SELECT ticket_id AS id, ticket_owner AS owner '
                         . 'FROM whups_ticket_owners WHERE ticket_id IN '
                         . '(' . str_repeat('?, ', count($ticketId) - 1) . '?)',
-                    $ticketId);
+                    $ticketId
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
@@ -3235,15 +3420,16 @@ class Whups_Driver_Sql extends Whups_Driver
                 $owners = $this->_db->select(
                     'SELECT ticket_id as id, ticket_owner as owner '
                         . 'FROM whups_ticket_owners WHERE ticket_id = ?',
-                    array((int)$ticketId));
+                    [(int) $ticketId]
+                );
             } catch (Horde_Db_Exception $e) {
                 throw new Whups_Exception($e);
             }
         }
 
-        $results = array();
+        $results = [];
         foreach ($owners as $owner) {
-           $results[$owner['id']][] = $owner['owner'];
+            $results[$owner['id']][] = $owner['owner'];
         }
 
         return $results;
@@ -3260,16 +3446,19 @@ class Whups_Driver_Sql extends Whups_Driver
      * @return integer  A transaction ID.
      * @throws Whups_Exception
      */
-    public function updateLog($ticket_id, $user, array $changes = array(),
-                              $transactionId = null)
-    {
+    public function updateLog(
+        $ticket_id,
+        $user,
+        array $changes = [],
+        $transactionId = null
+    ) {
         if (is_null($transactionId)) {
             $transactionId = $this->newTransaction($user);
         }
 
         foreach ($changes as $type => $values) {
             if (!is_array($values)) {
-                $values = array($values);
+                $values = [$values];
             }
             foreach ($values as $value) {
                 try {
@@ -3277,11 +3466,12 @@ class Whups_Driver_Sql extends Whups_Driver
                         'INSERT INTO whups_logs (transaction_id, '
                             . 'ticket_id, log_type, log_value, '
                             . 'log_value_num) VALUES (?, ?, ?, ?, ?)',
-                        array((int)$transactionId,
-                              (int)$ticket_id,
-                              $type,
-                              $this->_toBackend((string)$value),
-                              (int)$value));
+                        [(int) $transactionId,
+                            (int) $ticket_id,
+                            $type,
+                            $this->_toBackend((string) $value),
+                            (int) $value]
+                    );
                 } catch (Horde_Db_Exception $e) {
                     throw new Whups_Exception($e);
                 }
@@ -3310,18 +3500,20 @@ class Whups_Driver_Sql extends Whups_Driver
             if ((empty($creator) || $creator < 0) && !empty($creator_email)) {
                 // Need to insert dummy value first so we can get the
                 // transaction ID.
-                $transactionId = $this->_db->insert($insert, array(time(), 'x'));
+                $transactionId = $this->_db->insert($insert, [time(), 'x']);
                 $creator = '-' . $transactionId . '_transaction';
                 $this->_db->insert(
                     'INSERT INTO whups_guests (guest_id, guest_email) '
                         . 'VALUES (?, ?)',
-                    array((string)$creator, $creator_email));
+                    [(string) $creator, $creator_email]
+                );
                 $this->_db->update(
                     'UPDATE whups_transactions SET transaction_user_id = ? '
                         . 'WHERE transaction_id = ?',
-                    array($creator, $transactionId));
+                    [$creator, $transactionId]
+                );
             } else {
-                $transactionId = $this->_db->insert($insert, array(time(), $creator));
+                $transactionId = $this->_db->insert($insert, [time(), $creator]);
             }
         } catch (Horde_Db_Exception $e) {
             $this->_db->rollbackDbTransaction();
@@ -3341,7 +3533,7 @@ class Whups_Driver_Sql extends Whups_Driver
             if (isset($info[$field])) {
                 $prop = $info[$field];
                 if (is_array($info[$field])) {
-                    $clauses = array();
+                    $clauses = [];
                     foreach ($prop as $pprop) {
                         if (@settype($pprop, $type)) {
                             $clauses[] = "$table.$field = " . $this->_db->quoteString($pprop);
@@ -3414,17 +3606,23 @@ class Whups_Driver_Sql extends Whups_Driver
     {
         if (is_array($data)) {
             if (!empty($data['from'])) {
-                $where = $this->_addWhere($where, true,
-                                          $type . ' >= ' . (int)$data['from']);
+                $where = $this->_addWhere(
+                    $where,
+                    true,
+                    $type . ' >= ' . (int) $data['from']
+                );
             }
             if (!empty($data['to'])) {
-                $where = $this->_addWhere($where, true,
-                                          $type . ' <= ' . (int)$data['to']);
+                $where = $this->_addWhere(
+                    $where,
+                    true,
+                    $type . ' <= ' . (int) $data['to']
+                );
             }
             return $where;
         }
 
-        return $this->_addWhere($where, true, $type . ' = ' . (int)$data);
+        return $this->_addWhere($where, true, $type . ' = ' . (int) $data);
     }
 
     protected function _prefixTableToColumns($table, $columns)

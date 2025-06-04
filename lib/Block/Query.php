@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Display the results of a saved Query in a block.
  */
@@ -13,7 +14,7 @@ class Whups_Block_Query extends Whups_Block_Tickets
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
         $this->_name = _("Query Results");
@@ -33,13 +34,14 @@ class Whups_Block_Query extends Whups_Block_Tickets
             $qType = 'error';
         }
 
-        return array_merge(array(
-            'query' => array(
-                'type' => $qType,
-                'name' => _("Query to run"),
-                'default' => $qDefault,
-                'values' => $qParams
-            )),
+        return array_merge(
+            [
+                'query' => [
+                    'type' => $qType,
+                    'name' => _("Query to run"),
+                    'default' => $qDefault,
+                    'values' => $qParams,
+                ]],
             parent::_params()
         );
     }
@@ -49,7 +51,7 @@ class Whups_Block_Query extends Whups_Block_Tickets
     protected function _title()
     {
         if (($query = $this->_getQuery()) && $query->name) {
-            return Horde::link(Whups::urlFor('query', empty($query->slug) ? array('id' => $query->id) : array('slug' => $query->slug)))
+            return Horde::link(Whups::urlFor('query', empty($query->slug) ? ['id' => $query->id] : ['slug' => $query->slug]))
                 . htmlspecialchars($query->name) . '</a>';
         }
 

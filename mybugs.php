@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
  *
@@ -22,31 +23,31 @@ Whups::addTopbarSearch();
 // Load layout from preferences for authenticated users, and a default
 // block set for guests.
 if (!$registry->isAuthenticated()) {
-    $prefs->setValue('mybugs_layout', serialize(array(
-        array(array('app' => 'whups', 'params' => array('type2' => 'whups_Block_Myqueries', 'params' => false), 'height' => 1, 'width' => 1)),
-        array(array('app' => 'whups', 'params' => array('type2' => 'whups_Block_Queuesummary', 'params' => false), 'height' => 1, 'width' => 1)),
-    )));
+    $prefs->setValue('mybugs_layout', serialize([
+        [['app' => 'whups', 'params' => ['type2' => 'whups_Block_Myqueries', 'params' => false], 'height' => 1, 'width' => 1]],
+        [['app' => 'whups', 'params' => ['type2' => 'whups_Block_Queuesummary', 'params' => false], 'height' => 1, 'width' => 1]],
+    ]));
 } elseif (!@unserialize($prefs->getValue('mybugs_layout'))) {
-    $prefs->setValue('mybugs_layout', serialize(array(
-        array(array('app' => 'whups', 'params' => array('type2' => 'whups_Block_Mytickets', 'params' => false), 'height' => 1, 'width' => 1)),
-        array(array('app' => 'whups', 'params' => array('type2' => 'whups_Block_Myrequests', 'params' => false), 'height' => 1, 'width' => 1)),
-        array(array('app' => 'whups', 'params' => array('type2' => 'whups_Block_Myqueries', 'params' => false), 'height' => 1, 'width' => 1))
-    )));
+    $prefs->setValue('mybugs_layout', serialize([
+        [['app' => 'whups', 'params' => ['type2' => 'whups_Block_Mytickets', 'params' => false], 'height' => 1, 'width' => 1]],
+        [['app' => 'whups', 'params' => ['type2' => 'whups_Block_Myrequests', 'params' => false], 'height' => 1, 'width' => 1]],
+        [['app' => 'whups', 'params' => ['type2' => 'whups_Block_Myqueries', 'params' => false], 'height' => 1, 'width' => 1]],
+    ]));
 }
 
 Whups::addFeedLink();
 
 $layout = new Horde_Core_Block_Layout_View(
-    $injector->getInstance('Horde_Core_Factory_BlockCollection')->create(array('whups'), 'mybugs_layout')->getLayout(),
+    $injector->getInstance('Horde_Core_Factory_BlockCollection')->create(['whups'], 'mybugs_layout')->getLayout(),
     Horde::url('mybugs_edit.php'),
     Horde::url('mybugs.php', true)
 );
 $layout_html = $layout->toHtml();
 
 $menuBottom = '<div id="menuBottom"><a href="' . Horde::url('mybugs_edit.php') . '">' . _("Add Content") . '</a></div><div class="clear">&nbsp;</div>';
-$page_output->header(array(
-    'title' => sprintf(_("My %s"), $registry->get('name'))
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => sprintf(_("My %s"), $registry->get('name')),
+]);
+$notification->notify(['listeners' => 'status']);
 echo $layout_html;
 $page_output->footer();

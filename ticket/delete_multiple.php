@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Handles the form to delete multiple tickets.
  *
@@ -43,10 +44,10 @@ if ($vars->get('formname') == 'whups_form_ticket_deletemultiple' &&
 }
 
 $vars->set('tickets', serialize($deleteform->getTickets()));
-$page_output->header(array(
-    'title' => $title
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => $title,
+]);
+$notification->notify(['listeners' => 'status']);
 $deleteform->renderActive(
     $deleteform->getRenderer(),
     $vars,

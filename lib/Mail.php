@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups mail processing library.
  *
@@ -68,7 +69,7 @@ class Whups_Mail
             $from = $reply_to;
         }
         $fromAddress = new Horde_Mail_Rfc822_Address($from);
-        $listeners = array();
+        $listeners = [];
         if ($headers->getValue('Precedence') != 'bulk') {
             $listeners[] = $fromAddress->bare_address;
             if ($cc = $headers->getValue('cc')) {
@@ -90,8 +91,8 @@ class Whups_Mail
         // Format the message into a comment.
         $comment = _("Received message:") . "\n\n";
         if (!empty($GLOBALS['conf']['mail']['include_headers'])) {
-            foreach ($headers->toArray(array('nowrap' => true)) as $name => $vals) {
-                if (!in_array(strtolower($name), array('subject', 'from', 'to', 'cc', 'date'))) {
+            foreach ($headers->toArray(['nowrap' => true]) as $name => $vals) {
+                if (!in_array(strtolower($name), ['subject', 'from', 'to', 'cc', 'date'])) {
                     if (is_array($vals)) {
                         foreach ($vals as $val) {
                             $comment .= $name . ': ' . $val . "\n";
@@ -110,18 +111,25 @@ class Whups_Mail
         if ($body_id) {
             $part = $message->getPart($body_id);
             $content = Horde_String::convertCharset(
-                $part->getContents(), $part->getCharset(), 'UTF-8');
+                $part->getContents(),
+                $part->getCharset(),
+                'UTF-8'
+            );
             switch ($part->getType()) {
-            case 'text/plain':
-                $comment .= $content;
-                break;
-            case 'text/html':
-                $comment .= Horde_Text_Filter::filter(
-                    $content, array('Html2text'), array(array('width' => 0)));;
-                break;
-            default:
-                $comment .= _("[ Could not render body of message. ]");
-                break;
+                case 'text/plain':
+                    $comment .= $content;
+                    break;
+                case 'text/html':
+                    $comment .= Horde_Text_Filter::filter(
+                        $content,
+                        ['Html2text'],
+                        [['width' => 0]]
+                    );
+                    ;
+                    break;
+                default:
+                    $comment .= _("[ Could not render body of message. ]");
+                    break;
             }
         } else {
             $comment .= _("[ Could not render body of message. ]");
@@ -151,7 +159,7 @@ class Whups_Mail
 
         // Authenticate as the correct Horde user.
         if (!empty($auth_user) && $auth_user != $GLOBALS['registry']->getAuth()) {
-            $GLOBALS['registry']->setAuth($auth_user, array());
+            $GLOBALS['registry']->setAuth($auth_user, []);
         }
 
         // Extract attachments.
@@ -163,7 +171,8 @@ class Whups_Mail
             $fp = @fopen($tmp_name, 'wb');
             if (!$fp) {
                 throw new Whups_Exception(
-                    sprintf('Cannot open file %s for writing.', $tmp_name));
+                    sprintf('Cannot open file %s for writing.', $tmp_name)
+                );
             }
             fwrite($fp, $part->getContents());
             fclose($fp);
@@ -171,21 +180,21 @@ class Whups_Mail
             if (!$part_name) {
                 $ptype = $part->getPrimaryType();
                 switch ($ptype) {
-                case 'multipart':
-                case 'application':
-                    $part_name = sprintf(_("%s part"), ucfirst($part->getSubType()));
-                    break;
-                default:
-                    $part_name = sprintf(_("%s part"), ucfirst($ptype));
-                    break;
+                    case 'multipart':
+                    case 'application':
+                        $part_name = sprintf(_("%s part"), ucfirst($part->getSubType()));
+                        break;
+                    default:
+                        $part_name = sprintf(_("%s part"), ucfirst($ptype));
+                        break;
                 }
                 if ($ext = Horde_Mime_Magic::mimeToExt($part->getType())) {
                     $part_name .= '.' . $ext;
                 }
             }
-            $attachments[] = array(
+            $attachments[] = [
                 'name' => $part_name,
-                'tmp_name' => $tmp_name);
+                'tmp_name' => $tmp_name];
         }
 
         // See if we can match this message to an existing ticket.
@@ -204,15 +213,18 @@ class Whups_Mail
             // Didn't match an existing ticket though a ticket number had been
             // specified.
             throw new Whups_Exception(
-                sprintf(_("Could not find ticket \"%s\"."), $info['ticket']));
+                sprintf(_("Could not find ticket \"%s\"."), $info['ticket'])
+            );
         } else {
             if (!empty($info['guess-queue'])) {
                 // Try to guess the queue name for the new ticket from the
                 // message subject.
                 $queues = $GLOBALS['whups_driver']->getQueues();
                 foreach ($queues as $queueId => $queueName) {
-                    if (preg_match('/\b' . preg_quote($queueName, '/') . '\b/i',
-                                   $info['summary'])) {
+                    if (preg_match(
+                        '/\b' . preg_quote($queueName, '/') . '\b/i',
+                        $info['summary']
+                    )) {
                         $info['queue'] = $queueId;
                         break;
                     }

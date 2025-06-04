@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Deletes a history entry from the ticket.
  *

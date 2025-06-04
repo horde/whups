@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays and handles the form to move a ticket to a different queue.
  *
@@ -91,20 +92,21 @@ if ($form == 'whups_form_queue_stepthree') {
             $ticket->commit();
             $notification->push(
                 sprintf(_("Moved ticket %d to \"%s\""), $id, $ticket->get('queue_name')),
-                'horde.success');
+                'horde.success'
+            );
             $ticket->show();
         } catch (Whups_Exception $e) {
-                $notification->push($e, 'horde.error');
+            $notification->push($e, 'horde.error');
         }
     } else {
         $action = 'sq3';
     }
 }
 
-$page_output->header(array(
-    'title' => sprintf(_("Set Queue for %s"), '[#' . $id . '] ' . $ticket->get('summary'))
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => sprintf(_("Set Queue for %s"), '[#' . $id . '] ' . $ticket->get('summary')),
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 
 $tabs = Whups::getTicketTabs($vars, $id);
@@ -113,31 +115,31 @@ echo $tabs->render('queue');
 $r = new Horde_Form_Renderer();
 
 switch ($action) {
-case 'sq2':
-    $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
-    $form2 = new Whups_Form_Queue_StepTwo($vars, _("Set Queue - Step 2"));
+    case 'sq2':
+        $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
+        $form2 = new Whups_Form_Queue_StepTwo($vars, _("Set Queue - Step 2"));
 
-    $form1->renderInactive($r, $vars);
-    echo '<br />';
-    $form2->renderActive($r, $vars, Horde::url('ticket/queue.php'), 'post');
-    break;
+        $form1->renderInactive($r, $vars);
+        echo '<br />';
+        $form2->renderActive($r, $vars, Horde::url('ticket/queue.php'), 'post');
+        break;
 
-case 'sq3':
-    $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
-    $form2 = new Whups_Form_Queue_StepTwo($vars, _("Set Queue - Step 2"));
-    $form3 = new Whups_Form_Queue_StepThree($vars, _("Set Queue - Step 3"));
+    case 'sq3':
+        $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
+        $form2 = new Whups_Form_Queue_StepTwo($vars, _("Set Queue - Step 2"));
+        $form3 = new Whups_Form_Queue_StepThree($vars, _("Set Queue - Step 3"));
 
-    $form1->renderInactive($r, $vars);
-    echo '<br />';
-    $form2->renderInactive($r, $vars);
-    echo '<br />';
-    $form3->renderActive($r, $vars, Horde::url('ticket/queue.php'), 'post');
-    break;
+        $form1->renderInactive($r, $vars);
+        echo '<br />';
+        $form2->renderInactive($r, $vars);
+        echo '<br />';
+        $form3->renderActive($r, $vars, Horde::url('ticket/queue.php'), 'post');
+        break;
 
-default:
-    $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
-    $form1->renderActive($r, $vars, Horde::url('ticket/queue.php'), 'post');
-    break;
+    default:
+        $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
+        $form1->renderActive($r, $vars, Horde::url('ticket/queue.php'), 'post');
+        break;
 }
 
 $page_output->footer();

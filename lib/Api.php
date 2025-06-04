@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups external API interface.
  *
@@ -14,9 +15,9 @@ class Whups_Api extends Horde_Registry_Api
      *
      * @var array
      */
-    protected $_links = array(
-        'show' => '%application%/ticket/?id=|ticket|'
-    );
+    protected $_links = [
+        'show' => '%application%/ticket/?id=|ticket|',
+    ];
 
     /**
      * Browse through Whups' object tree.
@@ -35,42 +36,53 @@ class Whups_Api extends Horde_Registry_Api
         $path = trim($path, '/');
 
         if (empty($path)) {
-            $results = array(
-                'whups/queue' => array(
+            $results = [
+                'whups/queue' => [
                     'name' => _("Queues"),
                     'icon' => Horde_Themes::img('whups.png'),
                     'browseable' => count(
-                        Whups::permissionsFilter($whups_driver->getQueues(),
-                                                 'queue', Horde_Perms::READ))));
+                        Whups::permissionsFilter(
+                            $whups_driver->getQueues(),
+                            'queue',
+                            Horde_Perms::READ
+                        )
+                    )]];
         } else {
             $path = explode('/', $path);
-            $results = array();
+            $results = [];
 
             switch ($path[0]) {
-            case 'queue':
-                $queues = Whups::permissionsFilter($whups_driver->getQueues(),
-                                                   'queue', Horde_Perms::SHOW);
-                if (count($path) == 1) {
-                    foreach ($queues as $queue => $name) {
-                        $results['whups/queue/' . $queue] = array(
-                            'name' => sprintf(_("Tickets from %s"), $name),
-                            'browseable' => true);
-                    }
-                } else {
-                    if (!Whups::hasPermission($queues[$path[1]], 'queue',
-                                              Horde_Perms::READ)) {
-                        throw new Horde_Exception_PermissionDenied();
-                    }
+                case 'queue':
+                    $queues = Whups::permissionsFilter(
+                        $whups_driver->getQueues(),
+                        'queue',
+                        Horde_Perms::SHOW
+                    );
+                    if (count($path) == 1) {
+                        foreach ($queues as $queue => $name) {
+                            $results['whups/queue/' . $queue] = [
+                                'name' => sprintf(_("Tickets from %s"), $name),
+                                'browseable' => true];
+                        }
+                    } else {
+                        if (!Whups::hasPermission(
+                            $queues[$path[1]],
+                            'queue',
+                            Horde_Perms::READ
+                        )) {
+                            throw new Horde_Exception_PermissionDenied();
+                        }
 
-                    $tickets = $whups_driver->getTicketsByProperties(
-                        array('queue' => $path[1]));
-                    foreach ($tickets as $ticket) {
-                        $results['whups/queue/' . $path[1] . '/' . $ticket['id']] = array(
-                            'name' => $ticket['summary'],
-                            'browseable' => false);
+                        $tickets = $whups_driver->getTicketsByProperties(
+                            ['queue' => $path[1]]
+                        );
+                        foreach ($tickets as $ticket) {
+                            $results['whups/queue/' . $path[1] . '/' . $ticket['id']] = [
+                                'name' => $ticket['summary'],
+                                'browseable' => false];
+                        }
                     }
-                }
-                break;
+                    break;
             }
         }
 
@@ -86,7 +98,7 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function addQueue($name)
     {
-        if ($GLOBALS['registry']->isAdmin(array('permission' => 'whups:admin'))) {
+        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin'])) {
             return $GLOBALS['whups_driver']->addQueue($name, '');
         }
         throw new Horde_Exception_PermissionDenied('You must be an administrator to perform this action.');
@@ -101,9 +113,9 @@ class Whups_Api extends Horde_Registry_Api
     {
         global $whups_driver;
 
-        $info = array('owner' => 'user:' . $GLOBALS['registry']->getAuth(), 'nores' => true);
+        $info = ['owner' => 'user:' . $GLOBALS['registry']->getAuth(), 'nores' => true];
         $tickets = $whups_driver->getTicketsByProperties($info);
-        $result = array();
+        $result = [];
         foreach ($tickets as $ticket) {
             $result[] = $ticket['id'];
         }
@@ -119,9 +131,9 @@ class Whups_Api extends Horde_Registry_Api
     {
         global $whups_driver;
 
-        $info = array('requester' => $GLOBALS['registry']->getAuth(), 'nores' => true);
+        $info = ['requester' => $GLOBALS['registry']->getAuth(), 'nores' => true];
         $tickets = $whups_driver->getTicketsByProperties($info);
-        $result = array();
+        $result = [];
         foreach ($tickets as $ticket) {
             $result[] = (int) $ticket['id'];
         }
@@ -205,7 +217,7 @@ class Whups_Api extends Horde_Registry_Api
         global $whups_driver;
 
         // Cast as an int for safety.
-        $ticket = Whups_Ticket::makeTicket((int)$ticket_id);
+        $ticket = Whups_Ticket::makeTicket((int) $ticket_id);
 
         // Check that we have permission to update the ticket
         if (!$GLOBALS['registry']->getAuth() ||
@@ -231,8 +243,8 @@ class Whups_Api extends Horde_Registry_Api
 
         // Attempt to validate and update the ticket.
         if (!$editform->validate($vars)) {
-             $form_errors = var_export($editform->getErrors(), true);
-             throw new Whups_Exception(sprintf(_("Invalid ticket data supplied: %s"), $form_errors));
+            $form_errors = var_export($editform->getErrors(), true);
+            throw new Whups_Exception(sprintf(_("Invalid ticket data supplied: %s"), $form_errors));
         }
 
         $info = $editform->getInfo($vars, $info);
@@ -253,9 +265,11 @@ class Whups_Api extends Horde_Registry_Api
 
         // Add attachment if one was uploaded.
         if (!empty($info['newattachment']['name'])) {
-            $ticket->change('attachment',
-                            array('name' => $info['newattachment']['name'],
-                                  'tmp_name' => $info['newattachment']['tmp_name']));
+            $ticket->change(
+                'attachment',
+                ['name' => $info['newattachment']['name'],
+                    'tmp_name' => $info['newattachment']['tmp_name']]
+            );
         }
 
         // If there was a new comment and permissions were specified on
@@ -280,7 +294,7 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function addComment($ticket_id, $comment, $group = null)
     {
-        $ticket_id = (int)$ticket_id;
+        $ticket_id = (int) $ticket_id;
         if (empty($ticket_id)) {
             throw new Whups_Exception('Invalid ticket id');
         }
@@ -314,7 +328,7 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function addAttachment($ticket_id, $name, $data)
     {
-        $ticket_id = (int)$ticket_id;
+        $ticket_id = (int) $ticket_id;
         if (empty($ticket_id)) {
             throw new Whups_Exception(_("Invalid Ticket Id"));
         }
@@ -329,7 +343,7 @@ class Whups_Api extends Horde_Registry_Api
         fwrite($fp, $data);
         fclose($fp);
 
-        $ticket->change('attachment', array('name' => $name, 'tmp_name' => $tmp_name));
+        $ticket->change('attachment', ['name' => $name, 'tmp_name' => $tmp_name]);
         $ticket->commit();
     }
 
@@ -348,7 +362,7 @@ class Whups_Api extends Horde_Registry_Api
 
         // Convert the RPC parameters into what we'd expect if we were
         // posting the EditAttributes form.
-        $ainfo = array();
+        $ainfo = [];
         foreach ($info['attributes'] as $attrib) {
             if (!isset($attrib['id']) || !isset($attrib['value'])) {
                 throw new InvalidArgumentException(_("Invalid argument: Missing attribute name or value."));
@@ -367,7 +381,7 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function getListTypes()
     {
-        return array('taskHash' => true);
+        return ['taskHash' => true];
     }
 
     /**
@@ -380,35 +394,35 @@ class Whups_Api extends Horde_Registry_Api
     public function listAs($type)
     {
         switch ($type) {
-        case 'taskHash':
-            global $whups_driver;
-            $info = array(
-              'owner' => 'user:' . $GLOBALS['registry']->getAuth(),
-              'nores' => true);
-            $tickets = $whups_driver->getTicketsByProperties($info);
-            $result = array();
-            foreach ($tickets as $ticket) {
-                $view_link = Whups::urlFor('ticket', $ticket['id'], true);
-                $delete_link = Whups::urlFor('ticket_action', array('delete', $ticket['id']), true);
-                $complete_link = Whups::urlFor('ticket_action', array('update', $ticket['id']), true);
+            case 'taskHash':
+                global $whups_driver;
+                $info = [
+                    'owner' => 'user:' . $GLOBALS['registry']->getAuth(),
+                    'nores' => true];
+                $tickets = $whups_driver->getTicketsByProperties($info);
+                $result = [];
+                foreach ($tickets as $ticket) {
+                    $view_link = Whups::urlFor('ticket', $ticket['id'], true);
+                    $delete_link = Whups::urlFor('ticket_action', ['delete', $ticket['id']], true);
+                    $complete_link = Whups::urlFor('ticket_action', ['update', $ticket['id']], true);
 
-                $result['whups/' . $ticket['id']] = array(
-                    'task_id'           => $ticket['id'],
-                    'completed'         => ($ticket['state_category'] == 'resolved'),
-                    'name'              => '[' . _("Ticket") . ' #' . $ticket['id'] . '] ' . $ticket['summary'],
-                    'desc'              => null,
-                    'due'               => $ticket['due'],
-                    'view_link'         => $view_link,
-                    'delete_link'       => $delete_link,
-                    'edit_link'         => $view_link,
-                    'complete_link'     => $complete_link
-                    );
-            }
-            break;
+                    $result['whups/' . $ticket['id']] = [
+                        'task_id'           => $ticket['id'],
+                        'completed'         => ($ticket['state_category'] == 'resolved'),
+                        'name'              => '[' . _("Ticket") . ' #' . $ticket['id'] . '] ' . $ticket['summary'],
+                        'desc'              => null,
+                        'due'               => $ticket['due'],
+                        'view_link'         => $view_link,
+                        'delete_link'       => $delete_link,
+                        'edit_link'         => $view_link,
+                        'complete_link'     => $complete_link,
+                    ];
+                }
+                break;
 
-        default:
-            $result = array();
-            break;
+            default:
+                $result = [];
+                break;
         }
 
         return $result;
@@ -445,19 +459,19 @@ class Whups_Api extends Horde_Registry_Api
     {
         if (is_array($queue)) {
             $queues = Whups::permissionsFilter($queue, 'queue_id');
-            $details = array();
+            $details = [];
             foreach ($queues as $id) {
                 $details[$id] = $GLOBALS['whups_driver']->getQueueInternal($id);
             }
             return $details;
         }
 
-        $queues = Whups::permissionsFilter(array($queue), 'queue_id');
+        $queues = Whups::permissionsFilter([$queue], 'queue_id');
         if ($queues) {
             return $GLOBALS['whups_driver']->getQueueInternal($queue);
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -469,30 +483,30 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function listVersions($queue)
     {
-        $queues = Whups::permissionsFilter(array($queue), 'queue_id');
+        $queues = Whups::permissionsFilter([$queue], 'queue_id');
         if (!$queues) {
-            return array();
+            return [];
         }
 
-        $versions = array();
+        $versions = [];
         $version_list = $GLOBALS['whups_driver']->getVersionInfoInternal($queue);
         foreach ($version_list as $version) {
-            $versions[] = array('id' => $version['version_id'],
-                                'name' => $version['version_name'],
-                                'description' => $version['version_description'],
-                                'active' => !empty($version['version_active']),
-                                'readonly' => false);
+            $versions[] = ['id' => $version['version_id'],
+                'name' => $version['version_name'],
+                'description' => $version['version_description'],
+                'active' => !empty($version['version_active']),
+                'readonly' => false];
         }
 
-        usort($versions, array($this, '_sortVersions'));
+        usort($versions, [$this, '_sortVersions']);
 
         return $versions;
     }
 
     private function _sortVersions($a, $b)
     {
-        $a_number = (string)(int)$a['name'][0] === $a['name'][0];
-        $b_number = (string)(int)$b['name'][0] === $b['name'][0];
+        $a_number = (string) (int) $a['name'][0] === $a['name'][0];
+        $b_number = (string) (int) $b['name'][0] === $b['name'][0];
 
         if ($a_number && $b_number) {
             return version_compare($b['name'], $a['name']);
@@ -548,26 +562,26 @@ class Whups_Api extends Horde_Registry_Api
 
         for ($i = 0; $i < count($tickets); $i++) {
             $view_link = Whups::urlFor('ticket', $tickets[$i]['id'], true);
-            $delete_link = Whups::urlFor('ticket_action', array('delete', $tickets[$i]['id']), true);
-            $complete_link = Whups::urlFor('ticket_action', array('update', $tickets[$i]['id']), true);
+            $delete_link = Whups::urlFor('ticket_action', ['delete', $tickets[$i]['id']], true);
+            $complete_link = Whups::urlFor('ticket_action', ['update', $tickets[$i]['id']], true);
 
-            $tickets[$i] = array(
-                    'ticket_id'         => $tickets[$i]['id'],
-                    'completed'         => ($tickets[$i]['state_category'] == 'resolved'),
-                    'assigned'          => ($tickets[$i]['state_category'] == 'assigned'),
-                    'name'              => $tickets[$i]['queue_name'] . ' #' .
-                                           $tickets[$i]['id'] . ' - ' . $tickets[$i]['summary'],
-                    'state'             => $tickets[$i]['state_name'],
-                    'type'              => $tickets[$i]['type_name'],
-                    'priority'          => $tickets[$i]['priority_name'],
-                    'desc'              => null,
-                    'due'               => $tickets[$i]['due'],
-                    'category'          => null,
-                    'view_link'         => $view_link,
-                    'delete_link'       => $delete_link,
-                    'edit_link'         => $view_link,
-                    'complete_link'     => $complete_link
-                    );
+            $tickets[$i] = [
+                'ticket_id'         => $tickets[$i]['id'],
+                'completed'         => ($tickets[$i]['state_category'] == 'resolved'),
+                'assigned'          => ($tickets[$i]['state_category'] == 'assigned'),
+                'name'              => $tickets[$i]['queue_name'] . ' #' .
+                                       $tickets[$i]['id'] . ' - ' . $tickets[$i]['summary'],
+                'state'             => $tickets[$i]['state_name'],
+                'type'              => $tickets[$i]['type_name'],
+                'priority'          => $tickets[$i]['priority_name'],
+                'desc'              => null,
+                'due'               => $tickets[$i]['due'],
+                'category'          => null,
+                'view_link'         => $view_link,
+                'delete_link'       => $delete_link,
+                'edit_link'         => $view_link,
+                'complete_link'     => $complete_link,
+            ];
         }
 
         return $tickets;
@@ -584,11 +598,11 @@ class Whups_Api extends Horde_Registry_Api
     {
         global $whups_driver;
 
-        $info = array();
+        $info = [];
         if (!empty($criteria['user'])) {
             if (is_array($criteria['user'])) {
                 $info['owner'] = array_map(
-                    function($input) { return 'user:' . $input; },
+                    function ($input) { return 'user:' . $input; },
                     $criteria['user']
                 );
             } else {
@@ -603,17 +617,20 @@ class Whups_Api extends Horde_Registry_Api
         }
 
         $tickets = $whups_driver->getTicketsByProperties($info, true, false, false);
-        $result = array();
+        $result = [];
         foreach ($tickets as $ticket) {
-            $result[$ticket['id']] = array(
-              'id'     => $ticket['id'],
-              'active' => ($ticket['state_category'] != 'resolved'),
-              'name'   => sprintf(
-                _("Ticket %s - %s"), $ticket['id'], $ticket['summary']));
+            $result[$ticket['id']] = [
+                'id'     => $ticket['id'],
+                'active' => ($ticket['state_category'] != 'resolved'),
+                'name'   => sprintf(
+                    _("Ticket %s - %s"),
+                    $ticket['id'],
+                    $ticket['summary']
+                )];
         }
         /* If the user has an estimate attribute, use that for cost object
          * hour estimates. */
-        $ticket_ids = array_map(function($item) {
+        $ticket_ids = array_map(function ($item) {
             return $item['id'];
         }, $tickets);
         $att_list = $whups_driver->getTicketAttributesWithNames($ticket_ids);
@@ -621,19 +638,19 @@ class Whups_Api extends Horde_Registry_Api
             foreach ($attributes as $k => $v) {
                 if (strtolower($v['attribute_name']) == _("estimated time")) {
                     if (!empty($v['attribute_value'])) {
-                        $result[$k['id']]['estimate'] = (double) $v['attribute_value'];
+                        $result[$k['id']]['estimate'] = (float) $v['attribute_value'];
                     }
                 }
             }
         }
         ksort($result);
         if (count($result) == 0) {
-            return array();
+            return [];
         } else {
-            return array(
-              array(
-                'category' => _("Tickets"),
-                'objects'  => array_values($result)));
+            return [
+                [
+                    'category' => _("Tickets"),
+                    'objects'  => array_values($result)]];
         }
     }
 
@@ -644,11 +661,11 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function listTimeObjectCategories()
     {
-        return array('created' => array('title' => _("My tickets by creation date"), 'type' => 'single'),
-                     'assigned' => array('title' => _("My tickets by assignment date"), 'type' => 'single'),
-                     'due' => array('title' => _("My tickets by due date"), 'type' => 'single'),
-                     'resolved' => array('title' => _("My tickets by resolution date"), 'type' => 'single')
-                );
+        return ['created' => ['title' => _("My tickets by creation date"), 'type' => 'single'],
+            'assigned' => ['title' => _("My tickets by assignment date"), 'type' => 'single'],
+            'due' => ['title' => _("My tickets by due date"), 'type' => 'single'],
+            'resolved' => ['title' => _("My tickets by resolution date"), 'type' => 'single'],
+        ];
     }
 
     /**
@@ -672,67 +689,67 @@ class Whups_Api extends Horde_Registry_Api
         /* @TODO Use $categories */
         $category = 'due';
         switch ($category) {
-        case 'assigned':
-            $label = _("Assigned");
-            $criteria['ass'] = true;
-            break;
+            case 'assigned':
+                $label = _("Assigned");
+                $criteria['ass'] = true;
+                break;
 
-        case 'created':
-            $label = _("Created");
-            break;
+            case 'created':
+                $label = _("Created");
+                break;
 
-        case 'due':
-            $label = _("Due");
-            $criteria['nores'] = true;
-            break;
+            case 'due':
+                $label = _("Due");
+                $criteria['nores'] = true;
+                break;
 
-        case 'resolved':
-            $label = _("Resolved");
-            $criteria['res'] = true;
-            break;
+            case 'resolved':
+                $label = _("Resolved");
+                $criteria['res'] = true;
+                break;
         }
 
         try {
             $tickets = $whups_driver->getTicketsByProperties($criteria);
         } catch (Whups_Exception $e) {
-          return array();
+            return [];
         }
-        $objects = array();
+        $objects = [];
         foreach ($tickets as $ticket) {
             switch ($category) {
-            case 'assigned':
-                $t_start = $ticket['date_assigned'];
-                break;
+                case 'assigned':
+                    $t_start = $ticket['date_assigned'];
+                    break;
 
-            case 'created':
-                $t_start = $ticket['timestamp'];
-                break;
+                case 'created':
+                    $t_start = $ticket['timestamp'];
+                    break;
 
-            case 'due':
-                if (empty($ticket['due'])) {
-                    continue 2;
-                }
-                $t_start = $ticket['due'];
-                break;
+                case 'due':
+                    if (empty($ticket['due'])) {
+                        continue 2;
+                    }
+                    $t_start = $ticket['due'];
+                    break;
 
-            case 'resolved':
-                $t_start = $ticket['date_resolved'];
-                break;
+                case 'resolved':
+                    $t_start = $ticket['date_resolved'];
+                    break;
             }
 
             if ($t_start + 1 < $start_ts || $t_start > $end_ts) {
                 continue;
             }
             $t = new Whups_Ticket($ticket['id'], $ticket);
-            $objects[$ticket['id']] = array(
+            $objects[$ticket['id']] = [
                 'title' => sprintf('%s: [#%s] %s', $label, $ticket['id'], $ticket['summary']),
                 'description' => $t->toString(),
                 'id' => $ticket['id'],
                 'start' => date('Y-m-d\TH:i:s', $t_start),
                 'end' => date('Y-m-d\TH:i:s', $t_start + 1),
-                'params' => array('id' => $ticket['id']),
-                'link' => Whups::urlFor('ticket', $ticket['id'], true)
-            );
+                'params' => ['id' => $ticket['id']],
+                'link' => Whups::urlFor('ticket', $ticket['id'], true),
+            ];
         }
 
         return $objects;

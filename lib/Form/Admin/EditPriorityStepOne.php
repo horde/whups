@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for priority administration.
  *
@@ -18,15 +19,15 @@ class Whups_Form_Admin_EditPriorityStepOne extends Horde_Form
         global $whups_driver;
 
         parent::__construct($vars, _("Edit or Delete Priorities"));
-        $this->setButtons(array(_("Edit Priority"), array('class' => 'horde-delete', 'value' => _("Delete Priority"))));
+        $this->setButtons([_("Edit Priority"), ['class' => 'horde-delete', 'value' => _("Delete Priority")]]);
 
         $priorities = $whups_driver->getPriorities($vars->get('type'));
         if ($priorities) {
             $stype = 'enum';
-            $type_params = array($priorities);
+            $type_params = [$priorities];
         } else {
             $stype = 'invalid';
-            $type_params = array(_("There are no priorities to edit"));
+            $type_params = [_("There are no priorities to edit")];
         }
 
         $this->addHidden('', 'type', 'int', true, true);

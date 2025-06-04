@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for ticket state administration.
  *
@@ -13,18 +14,18 @@
 
 class Whups_Form_Admin_EditStateStepOne extends Horde_Form
 {
-    function __construct($vars)
+    public function __construct($vars)
     {
         parent::__construct($vars, _("Edit or Delete States"));
-        $this->setButtons(array(_("Edit State"), array('class' => 'horde-delete', 'value' => _("Delete State"))));
+        $this->setButtons([_("Edit State"), ['class' => 'horde-delete', 'value' => _("Delete State")]]);
 
         $states = $GLOBALS['whups_driver']->getStates($vars->get('type'));
         if ($states) {
             $stype = 'enum';
-            $type_params = array($states);
+            $type_params = [$states];
         } else {
             $stype = 'invalid';
-            $type_params = array(_("There are no states to edit"));
+            $type_params = [_("There are no states to edit")];
         }
 
         $this->addHidden('', 'type', 'int', true, true);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for ticket type administration.
  *
@@ -20,17 +21,27 @@ class Whups_Form_Admin_CloneType extends Horde_Form
         $type = $vars->get('type');
         $info = $whups_driver->getType($type);
         parent::__construct(
-            $vars, sprintf(_("Make a clone of %s"), $info['name']));
+            $vars,
+            sprintf(_("Make a clone of %s"), $info['name'])
+        );
 
         $this->setButtons(_("Clone"));
         $this->addHidden('', 'type', 'int', true, true);
 
         $tname = $this->addVariable(
-            _("Name of the cloned copy"), 'name', 'text', true);
+            _("Name of the cloned copy"),
+            'name',
+            'text',
+            true
+        );
         $tname->setDefault(sprintf(_("Copy of %s"), $info['name']));
 
         $tdesc = $this->addVariable(
-            _("Clone Description"), 'description', 'text', true);
+            _("Clone Description"),
+            'description',
+            'text',
+            true
+        );
         $tdesc->setDefault($info['description']);
     }
 

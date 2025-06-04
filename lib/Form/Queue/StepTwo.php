@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
@@ -31,15 +32,15 @@ class Whups_Form_Queue_StepTwo extends Horde_Form
             $versions = $whups_driver->getVersions($vars->get('queue'));
             if (count($versions) == 0) {
                 $vtype = 'invalid';
-                $v_params = array(_("This queue requires that you specify a version, but there are no versions associated with it. Until versions are created for this queue, you will not be able to create tickets."));
+                $v_params = [_("This queue requires that you specify a version, but there are no versions associated with it. Until versions are created for this queue, you will not be able to create tickets.")];
             } else {
                 $vtype = 'enum';
-                $v_params = array($versions);
+                $v_params = [$versions];
             }
             $this->addVariable(_("Queue Version"), 'version', $vtype, true, false, null, $v_params);
         }
 
-        $this->addVariable(_("Type"), 'type', 'enum', true, false, null, array($whups_driver->getTypes($queue)));
+        $this->addVariable(_("Type"), 'type', 'enum', true, false, null, [$whups_driver->getTypes($queue)]);
     }
 
 }

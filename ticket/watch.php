@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -32,14 +33,15 @@ if ($vars->get('formname') == 'whups_form_addlistener' &&
         $ticket->notify(
             $info['add_listener'],
             false,
-            array('**' . $info['add_listener'] => 'listener')
+            ['**' . $info['add_listener'] => 'listener']
         );
         $notification->push(
             sprintf(
                 _("%s will be notified when this ticket is updated."),
                 $info['add_listener']
             ),
-            'horde.success');
+            'horde.success'
+        );
         $ticket->show();
     } catch (Whups_Exception $e) {
         $notification->push($e, 'horde.error');
@@ -52,7 +54,8 @@ if ($vars->get('formname') == 'whups_form_addlistener' &&
                 _("%s will no longer receive updates for this ticket."),
                 $listener
             ),
-            'horde.success');
+            'horde.success'
+        );
         $ticket->show();
     } catch (Whups_Exception $e) {
         $notification->push($e, 'horde.error');
@@ -60,15 +63,16 @@ if ($vars->get('formname') == 'whups_form_addlistener' &&
 }
 
 $form = new Whups_Form_TicketDetails(
-    $vars, $ticket, '[#' . $id . '] ' . $ticket->get('summary')
+    $vars,
+    $ticket,
+    '[#' . $id . '] ' . $ticket->get('summary')
 );
 $ticket->setDetails($vars);
 
 $listeners = array_keys($whups_driver->getListeners($id, false, false, false));
 array_walk(
     $listeners,
-    function(&$listener)
-    {
+    function (&$listener) {
         $listener = preg_replace('/^\*\*/', '', $listener);
     }
 );
@@ -76,7 +80,7 @@ $owners = $whups_driver->getOwners($id);
 if ($owners) {
     $owners = reset($owners);
 } else {
-    $owners = array();
+    $owners = [];
 }
 $delurl = Horde::url('ticket/watch.php')->add('id', $id);
 $delimg = Horde::img('delete.png');
@@ -84,13 +88,13 @@ $delimg = Horde::img('delete.png');
 $r = new Horde_Form_Renderer();
 
 // Output content.
-$page_output->header(array(
+$page_output->header([
     'title' => sprintf(
         _("Watchers for %s"),
         '[#' . $id . '] ' . $ticket->get('summary')
-    )
-));
-$notification->notify(array('listeners' => 'status'));
+    ),
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 echo Whups::getTicketTabs($vars, $id)->render('watch');
 require WHUPS_TEMPLATES . '/ticket/watchers.inc';

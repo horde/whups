@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for version administration.
  *
@@ -13,21 +14,20 @@
 
 class Whups_Form_Admin_EditVersionStepOne extends Horde_Form
 {
-
     public function __construct($vars)
     {
         global $whups_driver;
 
         parent::__construct($vars, _("Edit or Delete Versions"));
-        $this->setButtons(array(_("Edit Version"), array('class' => 'horde-delete', 'value' => _("Delete Version"))));
+        $this->setButtons([_("Edit Version"), ['class' => 'horde-delete', 'value' => _("Delete Version")]]);
 
         $versions = $whups_driver->getVersions($vars->get('queue'), true);
         if ($versions) {
             $vtype = 'enum';
-            $type_params = array($versions);
+            $type_params = [$versions];
         } else {
             $vtype = 'invalid';
-            $type_params = array(_("There are no versions to edit"));
+            $type_params = [_("There are no versions to edit")];
         }
 
         $this->addHidden('', 'queue', 'int', true, true);

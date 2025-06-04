@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base class for blocks that display a summary of tickets.
  */
@@ -20,19 +21,17 @@ class Whups_Block_Tickets extends Horde_Core_Block
     {
         $all = array_flip(Whups::getSearchResultColumns());
         unset($all['id']);
-        return array('columns' => array(
+        return ['columns' => [
             'type' => 'multienum',
             'name' => _("Columns"),
             'default' => array_values(Whups::getSearchResultColumns('block')),
             'values' => $all,
-        ));
+        ]];
     }
 
     /**
      */
-    protected function _content()
-    {
-    }
+    protected function _content() {}
 
     /**
      * Generates a table with ticket information.
@@ -48,7 +47,7 @@ class Whups_Block_Tickets extends Horde_Core_Block
             $tableId = get_class($this);
         }
 
-        $columns = isset($this->_params['columns']) ? $this->_params['columns'] : null;
+        $columns = $this->_params['columns'] ?? null;
         $sortby = $GLOBALS['prefs']->getValue('sortby');
         $sortdirclass = ' class="' . ($GLOBALS['prefs']->getValue('sortdir') ? 'sortup' : 'sortdown') . '"';
         $html = '<thead><tr><th' . ($sortby == 'id' ? $sortdirclass : '') . '>' . _("Id") . '</th>';

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@ require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
 $vars = Horde_Variables::getDefaultVariables();
-$limit = (int)$vars->get('limit');
+$limit = (int) $vars->get('limit');
 $form = new Whups_Form_Search($vars);
 
 if ($form->validate($vars, true)) {
@@ -24,18 +25,22 @@ if ($form->validate($vars, true)) {
 }
 
 $count = 0;
-$items = array();
+$items = [];
 foreach (array_keys($tickets) as $i) {
     if ($limit > 0 && $count++ == $limit) {
         break;
     }
-    $description = sprintf(_("Type: %s; State: %s"),
-                           $tickets[$i]['type_name'],
-                           $tickets[$i]['state_name']);
+    $description = sprintf(
+        _("Type: %s; State: %s"),
+        $tickets[$i]['type_name'],
+        $tickets[$i]['state_name']
+    );
 
-    $items[$i]['title'] = htmlspecialchars(sprintf('[%s] %s',
-                                                   $tickets[$i]['id'],
-                                                   $tickets[$i]['summary']));
+    $items[$i]['title'] = htmlspecialchars(sprintf(
+        '[%s] %s',
+        $tickets[$i]['id'],
+        $tickets[$i]['summary']
+    ));
     $items[$i]['description'] = htmlspecialchars($description);
     $items[$i]['url'] = Whups::urlFor('ticket', $tickets[$i]['id'], true, -1);
     $items[$i]['pubDate'] = htmlspecialchars(date('r', $tickets[$i]['timestamp']));

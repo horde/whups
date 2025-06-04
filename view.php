@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2003-2017 Horde LLC (http://www.horde.org/)
  *
@@ -11,9 +12,9 @@
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
-$id = (int)Horde_Util::getFormData('ticket');
+$id = (int) Horde_Util::getFormData('ticket');
 $filename = Horde_Util::getFormData('file');
-$message = (int)Horde_Util::getFormData('message');
+$message = (int) Horde_Util::getFormData('message');
 $type = Horde_Util::getFormData('type');
 
 // Get the ticket details first.

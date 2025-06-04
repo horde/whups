@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups RSS feed.
  *
@@ -34,21 +35,21 @@ if ($state_category) {
     $state_display = Horde_String::ucFirst($state_category);
     // When specifying an explicit state, limit the feed to 10.
     $limit = 10;
-    $state_category = array($state_category);
+    $state_category = [$state_category];
 } else {
-    $state_category = array('unconfirmed', 'new', 'assigned');
+    $state_category = ['unconfirmed', 'new', 'assigned'];
     $state_display = _("Open");
     $limit = 0;
 }
 
-$criteria = array();
+$criteria = [];
 
 // See if we are requesting a specific type_id (for bug, feature etc...)
 $typeId = Horde_Util::getFormData('type_id');
 if (is_numeric($typeId)) {
     try {
         $type = $whups_driver->getType($typeId);
-        $criteria['type'] = array($typeId);
+        $criteria['type'] = [$typeId];
     } catch (Whups_Exception $e) {
         unset($type);
     }
@@ -77,9 +78,11 @@ foreach (array_keys($tickets) as $i) {
     $description = 'Type: ' . $tickets[$i]['type_name'] . '; State: '
         . $tickets[$i]['state_name'];
 
-    $items[$i]['title'] = htmlspecialchars(sprintf('[%s] %s',
-                                                    $tickets[$i]['id'],
-                                                     $tickets[$i]['summary']));
+    $items[$i]['title'] = htmlspecialchars(sprintf(
+        '[%s] %s',
+        $tickets[$i]['id'],
+        $tickets[$i]['summary']
+    ));
     $items[$i]['description'] = htmlspecialchars($description);
     $items[$i]['url'] = Whups::urlFor('ticket', $tickets[$i]['id'], true, -1);
     $items[$i]['pubDate'] = htmlspecialchars(date('r', $tickets[$i]['timestamp']));
@@ -89,19 +92,26 @@ $template = $injector->createInstance('Horde_Template');
 $template->set('xsl', Horde_Themes::getFeedXsl());
 $template->set('pubDate', htmlspecialchars(date('r')));
 if (isset($type) && isset($queue['name'])) {
-    $rss_title = sprintf(_("%s %s tickets in %s"),
-                         $state_display,
-                         $type['name'], $queue['name']);
+    $rss_title = sprintf(
+        _("%s %s tickets in %s"),
+        $state_display,
+        $type['name'],
+        $queue['name']
+    );
 } elseif (isset($type)) {
-    $rss_title = sprintf(_("%s %s tickets in all queues"),
-                         $state_display,
-                         $type['name']);
+    $rss_title = sprintf(
+        _("%s %s tickets in all queues"),
+        $state_display,
+        $type['name']
+    );
 } elseif (isset($queue['name'])) {
-    $rss_title = sprintf(_("%s tickets in %s"),
-                         $state_display,
-                         $queue['name']);
+    $rss_title = sprintf(
+        _("%s tickets in %s"),
+        $state_display,
+        $queue['name']
+    );
 } else {
-     $rss_title = sprintf(_("%s tickets in all queues"), $state_display);
+    $rss_title = sprintf(_("%s tickets in all queues"), $state_display);
 }
 $template->set('title', htmlspecialchars($rss_title));
 $template->set('items', $items, true);
@@ -114,5 +124,5 @@ if (isset($queue['name'])) {
 }
 $template->set('description', htmlspecialchars($description));
 
-$browser->downloadHeaders((isset($queue['name']) ? $queue['name'] : 'horde') . '.rss', 'text/xml', true);
+$browser->downloadHeaders(($queue['name'] ?? 'horde') . '.rss', 'text/xml', true);
 echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Display a summary of the current user's requested tickets.
  */
@@ -13,7 +14,7 @@ class Whups_Block_Myrequests extends Whups_Block_Tickets
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
         $this->_name = _("My Requests");
@@ -26,19 +27,22 @@ class Whups_Block_Myrequests extends Whups_Block_Tickets
         global $whups_driver, $prefs;
 
         $queue_ids = array_keys(
-            Whups::permissionsFilter($GLOBALS['whups_driver']->getQueues(),
-                                     'queue',
-                                     Horde_Perms::READ));
-        $info = array('requester' => $GLOBALS['registry']->getAuth(),
-                      'notowner' => 'user:' . $GLOBALS['registry']->getAuth(),
-                      'nores' => true,
-                      'queue' => $queue_ids);
+            Whups::permissionsFilter(
+                $GLOBALS['whups_driver']->getQueues(),
+                'queue',
+                Horde_Perms::READ
+            )
+        );
+        $info = ['requester' => $GLOBALS['registry']->getAuth(),
+            'notowner' => 'user:' . $GLOBALS['registry']->getAuth(),
+            'nores' => true,
+            'queue' => $queue_ids];
         $requests = $GLOBALS['whups_driver']->getTicketsByProperties($info);
         if (!$requests) {
             return '<p class="horde-content"><em>' . _("You have no open requests.") . '</em></p>';
         }
 
         return $this->_table($requests);
-   }
+    }
 
 }

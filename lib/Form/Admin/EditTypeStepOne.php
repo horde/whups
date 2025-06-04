@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for ticket type administration.
  *
@@ -18,22 +19,30 @@ class Whups_Form_Admin_EditTypeStepOne extends Horde_Form
 
         parent::__construct($vars, _("Edit or Delete Types"));
         $this->setButtons(
-            array(
+            [
                 _("Edit Type"),
                 _("Clone Type"),
-                array('class' => 'horde-delete', 'value' => _("Delete Type"))));
+                ['class' => 'horde-delete', 'value' => _("Delete Type")]]
+        );
 
         $types = $whups_driver->getAllTypes();
         if ($types) {
             $ttype = 'enum';
-            $type_params = array($types);
+            $type_params = [$types];
         } else {
             $ttype = 'invalid';
-            $type_params = array(_("There are no types to edit"));
+            $type_params = [_("There are no types to edit")];
         }
 
         $this->addVariable(
-            _("Type Name"), 'type', $ttype, true, false, null, $type_params);
+            _("Type Name"),
+            'type',
+            $ttype,
+            true,
+            false,
+            null,
+            $type_params
+        );
     }
 
 }

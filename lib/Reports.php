@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups_Reports:: class.
  *
@@ -46,7 +47,7 @@ class Whups_Reports
      *
      * @return Whups_Reports
      */
-    function __construct(Whups_Driver $whups_driver)
+    public function __construct(Whups_Driver $whups_driver)
     {
         $this->_backend = $whups_driver;
     }
@@ -62,9 +63,9 @@ class Whups_Reports
     {
         $operation = 'inc';
         $state = null;
-        list($type, $field) = explode('|', $report);
+        [$type, $field] = explode('|', $report);
         if (substr($type, 0, 1) == '@') {
-            list($type, $operation, $state) = explode(':', substr($type, 1));
+            [$type, $operation, $state] = explode(':', substr($type, 1));
         }
         $tickets = $this->_getTicketSet($type, ($field == 'owner'));
 
@@ -74,16 +75,16 @@ class Whups_Reports
             $user = false;
         }
 
-        $dataset = array();
+        $dataset = [];
         foreach ($tickets as $info) {
             switch ($state) {
-            case 'open':
-                $date1 = new Horde_Date($info['date_resolved']);
-                $newdata = $date1->diff(new Horde_Date($info['timestamp']));
-                break;
+                case 'open':
+                    $date1 = new Horde_Date($info['date_resolved']);
+                    $newdata = $date1->diff(new Horde_Date($info['timestamp']));
+                    break;
 
-            default:
-                $newdata = 1;
+                default:
+                    $newdata = 1;
             }
 
             if (empty($info[$field])) {
@@ -102,11 +103,11 @@ class Whups_Reports
         // Perform any necessary post-processing on the dataset - process
         // averages, for example.
         switch ($operation) {
-        case 'avg':
-            foreach ($dataset as $index => $data) {
-                $dataset[$index] = number_format(array_sum($data) / count($data), 2);
-            }
-            break;
+            case 'avg':
+                foreach ($dataset as $index => $data) {
+                    $dataset[$index] = number_format(array_sum($data) / count($data), 2);
+                }
+                break;
         }
 
         // Sort
@@ -124,31 +125,31 @@ class Whups_Reports
      * @param mixed $newdata     The new data to insert.
      * @param string $operation  The operation being performed.
      */
-    function _updateDataSet(&$dataset, $index, $newdata, $operation)
+    public function _updateDataSet(&$dataset, $index, $newdata, $operation)
     {
         if (isset($dataset[$index])) {
             switch ($operation) {
-            case 'inc':
-                $dataset[$index] += $newdata;
-                break;
+                case 'inc':
+                    $dataset[$index] += $newdata;
+                    break;
 
-            case 'max':
-            case 'min':
-                $dataset[$index] = $operation($newdata, $dataset[$index]);
-                break;
+                case 'max':
+                case 'min':
+                    $dataset[$index] = $operation($newdata, $dataset[$index]);
+                    break;
 
-            case 'avg':
-                $dataset[$index][] = $newdata;
-                break;
+                case 'avg':
+                    $dataset[$index][] = $newdata;
+                    break;
             }
         } else {
             switch ($operation) {
-            case 'avg':
-                $dataset[$index] = array($newdata);
-                break;
+                case 'avg':
+                    $dataset[$index] = [$newdata];
+                    break;
 
-            default:
-                $dataset[$index] = $newdata;
+                default:
+                    $dataset[$index] = $newdata;
             }
         }
     }
@@ -169,16 +170,16 @@ class Whups_Reports
      */
     public function getTime($stat, $group_by = null)
     {
-        list($operation, $state) = explode('|', $stat);
+        [$operation, $state] = explode('|', $stat);
 
         $tickets = $this->_getTicketSet('closed');
         if (!count($tickets)) {
             throw new Whups_Exception(_("There is no data for this report."));
         }
 
-        $dataset = array();
+        $dataset = [];
         if (empty($group_by)) {
-            $dataset[0] = array();
+            $dataset[0] = [];
         }
         foreach ($tickets as $info) {
             if (is_null($info['date_resolved'])) {
@@ -186,22 +187,22 @@ class Whups_Reports
             }
 
             switch ($state) {
-            case 'open':
-                $date1 = new Horde_Date($info['date_resolved']);
-                $diff = $date1->diff(new Horde_Date($info['timestamp']));
-                if (empty($group_by)) {
-                    $dataset[0][] = $diff;
-                } else {
-                    if (!isset($info[$group_by])) {
-                        continue;
+                case 'open':
+                    $date1 = new Horde_Date($info['date_resolved']);
+                    $diff = $date1->diff(new Horde_Date($info['timestamp']));
+                    if (empty($group_by)) {
+                        $dataset[0][] = $diff;
+                    } else {
+                        if (!isset($info[$group_by])) {
+                            continue;
+                        }
+                        if (!isset($dataset[$info[$group_by]])) {
+                            $dataset[$info[$group_by]] = [];
+                        }
+                        $dataset[$info[$group_by]][] = $diff;
                     }
-                    if (!isset($dataset[$info[$group_by]])) {
-                        $dataset[$info[$group_by]] = array();
-                    }
-                    $dataset[$info[$group_by]][] = $diff;
-                }
 
-                break;
+                    break;
             }
         }
 
@@ -210,18 +211,18 @@ class Whups_Reports
         }
 
         switch ($operation) {
-        case 'min':
-        case 'max':
-            foreach (array_keys($dataset) as $group) {
-                $dataset[$group] = $operation($dataset[$group]);
-            }
-            break;
+            case 'min':
+            case 'max':
+                foreach (array_keys($dataset) as $group) {
+                    $dataset[$group] = $operation($dataset[$group]);
+                }
+                break;
 
-        case 'avg':
-            foreach (array_keys($dataset) as $group) {
-                $dataset[$group] = round(array_sum($dataset[$group]) / count($dataset[$group]), 2);
-            }
-            break;
+            case 'avg':
+                foreach (array_keys($dataset) as $group) {
+                    $dataset[$group] = round(array_sum($dataset[$group]) / count($dataset[$group]), 2);
+                }
+                break;
         }
 
         if (empty($group_by)) {
@@ -246,25 +247,25 @@ class Whups_Reports
     protected function &_getTicketSet($type, $expanded = false)
     {
         $queues = array_keys(Whups::permissionsFilter($this->_backend->getQueues(), 'queue'));
-        $expanded = (int)$expanded;
+        $expanded = (int) $expanded;
         switch ($type) {
-        case 'open':
-            if (is_null($this->_opentickets[$expanded])) {
-                $this->_opentickets[$expanded] = $this->_backend->getTicketsByProperties(array('nores' => true, 'queue' => $queues), true, $expanded);
-            }
-            return $this->_opentickets[$expanded];
+            case 'open':
+                if (is_null($this->_opentickets[$expanded])) {
+                    $this->_opentickets[$expanded] = $this->_backend->getTicketsByProperties(['nores' => true, 'queue' => $queues], true, $expanded);
+                }
+                return $this->_opentickets[$expanded];
 
-        case 'closed':
-            if (is_null($this->_closedtickets[$expanded])) {
-                $this->_closedtickets[$expanded] = $this->_backend->getTicketsByProperties(array('res' => true, 'queue' => $queues), true, $expanded);
-            }
-            return $this->_closedtickets[$expanded];
+            case 'closed':
+                if (is_null($this->_closedtickets[$expanded])) {
+                    $this->_closedtickets[$expanded] = $this->_backend->getTicketsByProperties(['res' => true, 'queue' => $queues], true, $expanded);
+                }
+                return $this->_closedtickets[$expanded];
 
-        case 'all':
-            if (is_null($this->_alltickets[$expanded])) {
-                $this->_alltickets[$expanded] = $this->_backend->getTicketsByProperties(array('queue' => $queues), true, $expanded);
-            }
-            return $this->_alltickets[$expanded];
+            case 'all':
+                if (is_null($this->_alltickets[$expanded])) {
+                    $this->_alltickets[$expanded] = $this->_backend->getTicketsByProperties(['queue' => $queues], true, $expanded);
+                }
+                return $this->_alltickets[$expanded];
         }
     }
 

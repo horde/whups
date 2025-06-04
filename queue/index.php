@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Allows direct access to open tickets in specified queue.
  *
@@ -31,29 +32,30 @@ if (!$id) {
 
 Whups::addFeedLink();
 $page_output->ajax = true;
-$page_output->header(array(
-    'title' => sprintf(_("Open tickets in %s"), $queue['name'])
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => sprintf(_("Open tickets in %s"), $queue['name']),
+]);
+$notification->notify(['listeners' => 'status']);
 
-$criteria = array('queue' => $id,
-                  'category' => array('unconfirmed', 'new', 'assigned'));
+$criteria = ['queue' => $id,
+    'category' => ['unconfirmed', 'new', 'assigned']];
 
 try {
     $tickets = $whups_driver->getTicketsByProperties($criteria);
     Whups::sortTickets($tickets);
     $values = Whups::getSearchResultColumns();
     $self = Whups::urlFor('queue', $queue);
-    $results = new Whups_View_Results(array('title' => sprintf(_("Open tickets in %s"), $queue['name']),
-                                            'results' => $tickets,
-                                            'values' => $values,
-                                            'url' => $self));
+    $results = new Whups_View_Results(['title' => sprintf(_("Open tickets in %s"), $queue['name']),
+        'results' => $tickets,
+        'values' => $values,
+        'url' => $self]);
     $session->set('whups', 'last_search', $self);
     $results->html();
 } catch (Whups_Exception $e) {
     $notification->push(
         sprintf(_("There was an error locating tickets in this queue: %s"), $e->getMessage()),
-        'horde.error');
+        'horde.error'
+    );
 }
 
 $page_output->footer();

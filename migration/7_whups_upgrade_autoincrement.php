@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Change columns to autoincrement.
  *
@@ -91,16 +92,16 @@ class WhupsUpgradeAutoIncrement extends Horde_Db_Migration_Base
      */
     public function down()
     {
-        $this->changeColumn('whups_tickets', 'ticket_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_queues', 'queue_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_types', 'type_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_states', 'state_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_replies', 'reply_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_attributes_desc', 'attribute_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_comments', 'comment_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_logs', 'log_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_priorities', 'priority_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_versions', 'version_id', 'integer', array('null' => false));
-        $this->changeColumn('whups_queries', 'query_id', 'integer', array('null' => false));
+        $this->changeColumn('whups_tickets', 'ticket_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_queues', 'queue_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_types', 'type_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_states', 'state_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_replies', 'reply_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_attributes_desc', 'attribute_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_comments', 'comment_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_logs', 'log_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_priorities', 'priority_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_versions', 'version_id', 'integer', ['null' => false]);
+        $this->changeColumn('whups_queries', 'query_id', 'integer', ['null' => false]);
     }
 }

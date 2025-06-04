@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Display a summary of the current user's assigned tickets.
  */
@@ -13,7 +14,7 @@ class Whups_Block_Mytickets extends Whups_Block_Tickets
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
         $this->_name = _("My Tickets");
@@ -24,13 +25,16 @@ class Whups_Block_Mytickets extends Whups_Block_Tickets
     protected function _content()
     {
         $queue_ids = array_keys(
-            Whups::permissionsFilter($GLOBALS['whups_driver']->getQueues(),
-                                     'queue',
-                                     Horde_Perms::READ));
-        $info = array(
+            Whups::permissionsFilter(
+                $GLOBALS['whups_driver']->getQueues(),
+                'queue',
+                Horde_Perms::READ
+            )
+        );
+        $info = [
             'owner' => Whups::getOwnerCriteria($GLOBALS['registry']->getAuth()),
             'nores' => true,
-            'queue' => $queue_ids);
+            'queue' => $queue_ids];
         $assigned = $GLOBALS['whups_driver']->getTicketsByProperties($info);
         if (!$assigned) {
             return '<p class="horde-content"><em>' . _("No tickets are assigned to you.") . '</em></p>';

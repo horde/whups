@@ -10,15 +10,17 @@ require_once __DIR__ . '/TestBase.php';
  * @author     Michael J. Rubinsky <mrubinsk@horde.org>
  * @package    Whups
  * @subpackage UnitTests
+ * @coversNothing
  */
-class Whups_ApiTest extends Whups_TestBase {
-    function setUp()
+class Whups_ApiTest extends Whups_TestBase
+{
+    public function setUp()
     {
         parent::setUp();
         require_once WHUPS_BASE . '/lib/api.php';
     }
 
-    function test_listQueues_returns_hash()
+    public function test_listQueues_returns_hash()
     {
         $GLOBALS['perms'] = new Whups_Test_Perms();
         $result = _whups_listQueues();

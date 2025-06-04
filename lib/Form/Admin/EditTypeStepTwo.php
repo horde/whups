@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for ticket type administration.
  *
@@ -28,74 +29,130 @@ class Whups_Form_Admin_EditTypeStepTwo extends Horde_Form
         $tname->setDefault($info['name']);
 
         $tdesc = $this->addVariable(
-            _("Type Description"), 'description', 'text', true);
+            _("Type Description"),
+            'description',
+            'text',
+            true
+        );
         $tdesc->setDefault($info['description']);
 
         /* States. */
         $states = $whups_driver->getStates($type);
         $tstates = $this->addVariable(
-            _("States for this Type"), 'state', 'set', false, true, null,
-            array($states));
+            _("States for this Type"),
+            'state',
+            'set',
+            false,
+            true,
+            null,
+            [$states]
+        );
         $tstates->setDefault(array_keys($states));
-        $statelink = array(
-            array('text' => _("Edit States"),
-                  'url' => Horde::url('admin/?formname=whups_form_admin_editstatestepone&type=' . $type)));
+        $statelink = [
+            ['text' => _("Edit States"),
+                'url' => Horde::url('admin/?formname=whups_form_admin_editstatestepone&type=' . $type)]];
         if (!count($states)) {
-            $statelink[] = array(
+            $statelink[] = [
                 'text' => _("Create Default States"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_createdefaultstates&type=' . $type));
+                'url' => Horde::url('admin/?formname=whups_form_admin_createdefaultstates&type=' . $type)];
         }
-        $this->addVariable('', 'link', 'link', false, true, null,
-                           array($statelink));
+        $this->addVariable(
+            '',
+            'link',
+            'link',
+            false,
+            true,
+            null,
+            [$statelink]
+        );
 
         /* Priorities. */
         $priorities = $whups_driver->getPriorities($type);
-        $tpriorities = $this->addVariable(_("Priorities for this Type"),
-                                           'priority', 'set', false, true, null,
-                                           array($priorities));
+        $tpriorities = $this->addVariable(
+            _("Priorities for this Type"),
+            'priority',
+            'set',
+            false,
+            true,
+            null,
+            [$priorities]
+        );
         $tpriorities->setDefault(array_keys($priorities));
-        $prioritylink = array(
-            array('text' => _("Edit Priorities"),
-                  'url' => Horde::url('admin/?formname=whups_form_admin_editprioritystepone&type=' . $type)));
+        $prioritylink = [
+            ['text' => _("Edit Priorities"),
+                'url' => Horde::url('admin/?formname=whups_form_admin_editprioritystepone&type=' . $type)]];
         if (!count($priorities)) {
-            $prioritylink[] = array(
+            $prioritylink[] = [
                 'text' => _("Create Default Priorities"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_createdefaultpriorities&type=' . $type));
+                'url' => Horde::url('admin/?formname=whups_form_admin_createdefaultpriorities&type=' . $type)];
         }
-        $this->addVariable('', 'link', 'link', false, true, null,
-                           array($prioritylink));
+        $this->addVariable(
+            '',
+            'link',
+            'link',
+            false,
+            true,
+            null,
+            [$prioritylink]
+        );
 
         /* Attributes. */
         $attributes = $whups_driver->getAttributesForType($type);
-        $params = array();
+        $params = [];
         foreach ($attributes as $key => $attribute) {
             $params[$key] = $attribute['human_name'];
         }
-        $tattributes = $this->addVariable(_("Attributes for this Type"),
-                                           'attribute', 'set', false, true,
-                                           null, array($params));
+        $tattributes = $this->addVariable(
+            _("Attributes for this Type"),
+            'attribute',
+            'set',
+            false,
+            true,
+            null,
+            [$params]
+        );
         $tattributes->setDefault(array_keys($attributes));
-        $attributelink = array(
+        $attributelink = [
             'text' => _("Edit Attributes"),
-            'url' => Horde::url('admin/?formname=whups_form_admin_editattributestepone&type=' . $type));
-        $this->addVariable('', 'link', 'link', false, true, null,
-                           array($attributelink));
+            'url' => Horde::url('admin/?formname=whups_form_admin_editattributestepone&type=' . $type)];
+        $this->addVariable(
+            '',
+            'link',
+            'link',
+            false,
+            true,
+            null,
+            [$attributelink]
+        );
 
         /* Form replies. */
         $replies = $whups_driver->getReplies($type);
-        $params = array();
+        $params = [];
         foreach ($replies as $key => $reply) {
             $params[$key] = $reply['reply_name'];
         }
-        $treplies = $this->addVariable(_("Form Replies for this Type"),
-                                        'reply', 'set', false, true, null,
-                                        array($params));
+        $treplies = $this->addVariable(
+            _("Form Replies for this Type"),
+            'reply',
+            'set',
+            false,
+            true,
+            null,
+            [$params]
+        );
         $treplies->setDefault(array_keys($replies));
-        $replylink = array(
+        $replylink = [
             'text' => _("Edit Form Replies"),
-            'url' => Horde::url('admin/?formname=whups_form_admin_editreplystepone&type=' . $type));
-        $this->addVariable('', 'link', 'link', false, true, null,
-                           array($replylink));
+            'url' => Horde::url('admin/?formname=whups_form_admin_editreplystepone&type=' . $type)];
+        $this->addVariable(
+            '',
+            'link',
+            'link',
+            false,
+            true,
+            null,
+            [$replylink]
+        );
     }
 
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
  *
@@ -36,27 +37,56 @@ class Whups_Form_Admin_DeleteType extends Horde_Form
         $this->addHidden('', 'type', 'int', true, true);
 
         $tname = $this->addVariable(
-            _("Type Name"), 'name', 'text', false, true);
+            _("Type Name"),
+            'name',
+            'text',
+            false,
+            true
+        );
         $tname->setDefault($info['name']);
 
         $tdesc = $this->addVariable(
-            _("Type Description"), 'description', 'text', false, true);
+            _("Type Description"),
+            'description',
+            'text',
+            false,
+            true
+        );
         $tdesc->setDefault($info['description']);
 
         $states = $whups_driver->getStates($type);
         $tstates = $this->addVariable(
-            _("States for this Type"), 'state', 'set', false, true, null, array($states));
+            _("States for this Type"),
+            'state',
+            'set',
+            false,
+            true,
+            null,
+            [$states]
+        );
         $tstates->setDefault(array_keys($states));
 
         $priorities = $whups_driver->getPriorities($type);
         $tpriorities = $this->addVariable(
-            _("Priorities for this Type"), 'priority', 'set', false, true, null,
-            array($priorities));
+            _("Priorities for this Type"),
+            'priority',
+            'set',
+            false,
+            true,
+            null,
+            [$priorities]
+        );
         $tpriorities->setDefault(array_keys($priorities));
 
-        $yesno = array(array(0 => _("No"), 1 => _("Yes")));
+        $yesno = [[0 => _("No"), 1 => _("Yes")]];
         $this->addVariable(
             _("Really delete this type? This may cause data problems!"),
-            'yesno', 'enum', true, false, null, $yesno);
+            'yesno',
+            'enum',
+            true,
+            false,
+            null,
+            $yesno
+        );
     }
 }

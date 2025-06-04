@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -29,7 +30,7 @@ class Whups_Form_Query_AttributeCriterion extends Horde_Form
     /**
      * List of all available attributes.
      */
-    public $attribs = array();
+    public $attribs = [];
 
     public function __construct($vars)
     {
@@ -40,7 +41,8 @@ class Whups_Form_Query_AttributeCriterion extends Horde_Form
             $vars->get('edit')
                 ? _("Edit Attribute Criterion")
                 : _("Add Attribute Criterion"),
-            'Whups_Form_Query_AttributeCriterion');
+            'Whups_Form_Query_AttributeCriterion'
+        );
 
         $this->addHidden('', 'edit', 'boolean', false);
 
@@ -49,23 +51,44 @@ class Whups_Form_Query_AttributeCriterion extends Horde_Form
             if ($this->attribs) {
                 $this->addVariable(_("Match"), 'text', 'text', true);
                 $this->addVariable(
-                    _("Match Operator"), 'operator', 'enum', true, false, null,
-                    array(Whups_Query::textOperators()));
+                    _("Match Operator"),
+                    'operator',
+                    'enum',
+                    true,
+                    false,
+                    null,
+                    [Whups_Query::textOperators()]
+                );
 
                 foreach ($this->attribs as $id => $attribute) {
                     $this->addVariable(
                         sprintf(_("Search %s Attribute"), $attribute['human_name']),
-                        "a$id", 'boolean', false);
+                        "a$id",
+                        'boolean',
+                        false
+                    );
                 }
             } else {
                 $this->addVariable(
-                    _("Search Attribute"), 'attribute', 'invalid', true, false,
-                    null, array(_("There are no attributes defined.")));
+                    _("Search Attribute"),
+                    'attribute',
+                    'invalid',
+                    true,
+                    false,
+                    null,
+                    [_("There are no attributes defined.")]
+                );
             }
         } catch (Whups_Exception $e) {
             $this->addVariable(
-                _("Search Attribute"), 'attribute', 'invalid', true, false,
-                null, array($e->getMessage()));
+                _("Search Attribute"),
+                'attribute',
+                'invalid',
+                true,
+                false,
+                null,
+                [$e->getMessage()]
+            );
         }
     }
 
@@ -89,7 +112,12 @@ class Whups_Form_Query_AttributeCriterion extends Horde_Form
         foreach ($keys as $id) {
             if ($vars->get("a$id")) {
                 $GLOBALS['whups_query']->insertCriterion(
-                    $path, Whups_Query::CRITERION_ATTRIBUTE, $id, $operator, $text);
+                    $path,
+                    Whups_Query::CRITERION_ATTRIBUTE,
+                    $id,
+                    $operator,
+                    $text
+                );
             }
         }
 

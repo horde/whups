@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2016-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@ class Whups_Form_Ticket_DeleteMultiple extends Horde_Form
      *
      * @var array
      */
-    protected $_tickets = array();
+    protected $_tickets = [];
 
     /**
      * Constructor.
@@ -25,11 +26,11 @@ class Whups_Form_Ticket_DeleteMultiple extends Horde_Form
         $this->addHidden('', 'tickets', 'text', true, true);
         $this->addHidden('', 'url', 'text', true, true);
 
-        $tickets = array();
-        foreach ((array)$vars->get('ticket') as $id) {
+        $tickets = [];
+        foreach ((array) $vars->get('ticket') as $id) {
             $ticket = $whups_driver->getTicketDetails($id, false);
             if (Whups::hasPermission($ticket['queue'], 'queue', Horde_Perms::DELETE)) {
-                $this->_tickets[] = (int)$id;
+                $this->_tickets[] = (int) $id;
                 $this->addVariable(
                     _("Ticket") . ' ' . $id,
                     'summary' . $id,
@@ -48,10 +49,10 @@ class Whups_Form_Ticket_DeleteMultiple extends Horde_Form
                 . '</span>'
             );
 
-        $this->setButtons(array(
-            array('class' => 'horde-delete', 'value' => _("Delete")),
-            array('class' => 'horde-cancel', 'value' => _("Cancel")),
-        ));
+        $this->setButtons([
+            ['class' => 'horde-delete', 'value' => _("Delete")],
+            ['class' => 'horde-cancel', 'value' => _("Cancel")],
+        ]);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups_View for displaying a list of tickets.
  *
@@ -29,7 +30,7 @@ class Whups_View_Results extends Whups_View_Base
         $sortdir = $prefs->getValue('sortdir');
         $sortdirclass = $sortdir ? 'sortup' : 'sortdown';
 
-        $ids = array();
+        $ids = [];
         foreach ($this->_params['results'] as $info) {
             $ids[] = $info['id'];
         }

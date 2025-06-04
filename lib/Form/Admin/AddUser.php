@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for administrating responsible
  * users.
@@ -14,7 +15,6 @@
 
 class Whups_Form_Admin_AddUser extends Horde_Form
 {
-
     public function __construct($vars)
     {
         parent::__construct($vars, _("Add Users"));
@@ -30,17 +30,23 @@ class Whups_Form_Admin_AddUser extends Horde_Form
 
             try {
                 $list = $auth->listNames();
-                $users = array();
+                $users = [];
                 foreach ($list as $user => $name) {
                     if (!in_array($user, $current)) {
                         $users[$user] = $name;
                     }
                 }
-                $this->addVariable(_("User"), 'user', 'multienum', true, false, null, array($users));
+                $this->addVariable(_("User"), 'user', 'multienum', true, false, null, [$users]);
             } catch (Horde_Auth_Exception $e) {
                 $this->addVariable(
-                    _("User"), 'user', 'invalid', true, false, null,
-                    array(sprintf(_("There was an error listing users: %s"), $e->getMessage())));
+                    _("User"),
+                    'user',
+                    'invalid',
+                    true,
+                    false,
+                    null,
+                    [sprintf(_("There was an error listing users: %s"), $e->getMessage())]
+                );
             }
         } else {
             $this->addVariable(_("User"), 'user', 'text', true);

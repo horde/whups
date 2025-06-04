@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -24,7 +25,8 @@ $form2 = new Whups_Form_Ticket_CreateStepTwo($vars);
 $form3 = new Whups_Form_Ticket_CreateStepThree($vars);
 $form4 = new Whups_Form_Ticket_CreateStepFour($vars);
 $r = new Horde_Form_Renderer(
-    array('varrenderer_driver' => array('whups', 'whups')));
+    ['varrenderer_driver' => ['whups', 'whups']]
+);
 
 $valid4 = $form4->validate($vars) &&
      $formname == 'whups_form_ticket_createstepfour';
@@ -51,7 +53,8 @@ if ($valid1 && $valid2 && $valid3 &&
         Horde::log($e, 'ERR');
         $notification->push(
             sprintf(_("Adding your ticket failed: %s."), $e->getMessage()),
-            'horde.error');
+            'horde.error'
+        );
         Horde::url('ticket/create.php', true)->redirect();
     }
     $notification->push(sprintf(_("Your ticket ID is %s. An appropriate person has been notified of this request."), $ticket->getId()), 'horde.success');
@@ -59,10 +62,10 @@ if ($valid1 && $valid2 && $valid3 &&
 }
 
 // Start the page.
-$page_output->header(array(
-    'title' => _("New Ticket")
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => _("New Ticket"),
+]);
+$notification->notify(['listeners' => 'status']);
 
 if ($valid3 && $valid2 && $valid1) {
     $form4->open($r, $vars, 'create.php', 'post');
@@ -95,8 +98,10 @@ if ($valid3 && $valid2 && $valid1) {
         $file_name = $info['newattachment']['name'];
 
         $tmp_file_path = Horde::getTempFile('whups', false);
-        if (move_uploaded_file($info['newattachment']['tmp_name'],
-                               $tmp_file_path)) {
+        if (move_uploaded_file(
+            $info['newattachment']['tmp_name'],
+            $tmp_file_path
+        )) {
             $session->set('whups', 'deferred_attachment/' . $file_name, $tmp_file_path);
             $vars->set('deferred_attachment', $file_name);
             $form4->preserveVarByPost($vars, 'deferred_attachment');

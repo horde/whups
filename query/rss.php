@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups RSS feed.
  *
@@ -43,9 +44,11 @@ foreach (array_keys($tickets) as $i) {
     $description = 'Type: ' . $tickets[$i]['type_name'] . '; State: '
         . $tickets[$i]['state_name'];
 
-    $items[$i]['title'] = htmlspecialchars(sprintf('[%s] %s',
-                                                   $tickets[$i]['id'],
-                                                   $tickets[$i]['summary']));
+    $items[$i]['title'] = htmlspecialchars(sprintf(
+        '[%s] %s',
+        $tickets[$i]['id'],
+        $tickets[$i]['summary']
+    ));
     $items[$i]['description'] = htmlspecialchars($description);
     $items[$i]['url'] = Whups::urlFor('ticket', $tickets[$i]['id'], true, -1);
     $items[$i]['pubDate'] = htmlspecialchars(date('r', $tickets[$i]['timestamp']));
@@ -57,11 +60,11 @@ $template->set('pubDate', htmlspecialchars(date('r')));
 $template->set('title', htmlspecialchars($whups_query->name ? $whups_query->name : _("Query Results")));
 $template->set('items', $items, true);
 $url_param = isset($slug)
-    ? array('slug' => $slug)
-    : array('id' => Horde_Util::getFormData('query'));
+    ? ['slug' => $slug]
+    : ['id' => Horde_Util::getFormData('query')];
 $template->set('url', Whups::urlFor('query', $url_param, true, -1));
 $template->set('rss_url', Whups::urlFor('query_rss', $url_param, true, -1));
 $template->set('description', htmlspecialchars(sprintf(_("Tickets matching the query \"%s\"."), $whups_query->name)));
 
-$browser->downloadHeaders((isset($slug) ? $slug : 'query') . '.rss', 'text/xml', true);
+$browser->downloadHeaders(($slug ?? 'query') . '.rss', 'text/xml', true);
 echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');

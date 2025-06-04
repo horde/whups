@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for administrating responsible
  * users.
@@ -18,23 +19,23 @@ class Whups_Form_Admin_EditUser extends Horde_Form
     {
         global $whups_driver;
 
-        $this->appendButtons(array(array('class' => 'horde-delete', 'value' => _("Remove User"))));
+        $this->appendButtons([['class' => 'horde-delete', 'value' => _("Remove User")]]);
 
         parent::__construct($vars, _("Responsible Users"));
 
         $queue = $vars->get('queue');
         $users = $whups_driver->getQueueUsers($queue);
-        $f_users = array();
+        $f_users = [];
         foreach ($users as $user) {
             $f_users[$user] = Whups::formatUser($user);
         }
         if ($f_users) {
             asort($f_users);
             $usertype = 'enum';
-            $type_params = array($f_users);
+            $type_params = [$f_users];
         } else {
             $usertype = 'invalid';
-            $type_params = array(_("There are no users responsible for this queue."));
+            $type_params = [_("There are no users responsible for this queue.")];
         }
 
         $this->addHidden('', 'queue', 'int', true, true);

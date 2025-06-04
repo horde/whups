@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Show the open tickets in a queue.
  */
@@ -13,7 +14,7 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
         $this->_name = _("Queue Contents");
@@ -23,12 +24,13 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
      */
     protected function _params()
     {
-        $qParams = array();
+        $qParams = [];
         $qDefault = null;
         $qParams = Whups::permissionsFilter(
             $GLOBALS['whups_driver']->getQueues(),
             'queue',
-            Horde_Perms::READ);
+            Horde_Perms::READ
+        );
         if (!$qParams) {
             $qDefault = _("No queues available.");
             $qType = 'error';
@@ -36,13 +38,14 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
             $qType = 'enum';
         }
 
-        return array_merge(array(
-            'queue' => array(
-                'type' => $qType,
-                'name' => _("Queue"),
-                'default' => $qDefault,
-                'values' => $qParams,
-            )),
+        return array_merge(
+            [
+                'queue' => [
+                    'type' => $qType,
+                    'name' => _("Queue"),
+                    'default' => $qDefault,
+                    'values' => $qParams,
+                ]],
             parent::_params()
         );
     }
@@ -66,8 +69,8 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
             return '<p class="horde-content"><em>' . _("No tickets in queue.") . '</em></p>';
         }
 
-        $info = array('queue' => $this->_params['queue'],
-                      'nores' => true);
+        $info = ['queue' => $this->_params['queue'],
+            'nores' => true];
         $tickets = $GLOBALS['whups_driver']->getTicketsByProperties($info);
         if (!$tickets) {
             return '<p class="horde-content"><em>' . _("No tickets in queue.") . '</em></p>';
@@ -83,7 +86,7 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
         if (empty($this->_params['queue'])) {
             return false;
         }
-        if (!Whups::permissionsFilter(array($this->_params['queue'] => true), 'queue', Horde_Perms::READ)) {
+        if (!Whups::permissionsFilter([$this->_params['queue'] => true], 'queue', Horde_Perms::READ)) {
             return false;
         }
 

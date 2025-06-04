@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Show the current user's queries.
  */
@@ -6,7 +7,7 @@ class Whups_Block_Myqueries extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -20,7 +21,8 @@ class Whups_Block_Myqueries extends Horde_Core_Block
         $qManager = new Whups_Query_Manager();
         $queries = $qManager->listQueries($GLOBALS['registry']->getAuth(), true);
         $myqueries = new Whups_View_SavedQueries(
-            array('results' => $queries));
+            ['results' => $queries]
+        );
         Horde::startBuffer();
         $myqueries->html(false);
         $html = Horde::endBuffer();

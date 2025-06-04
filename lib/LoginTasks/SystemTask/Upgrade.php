@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
@@ -27,19 +28,19 @@ class Whups_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
 
     /**
      */
-    protected $_versions = array(
-        '2.0'
-    );
+    protected $_versions = [
+        '2.0',
+    ];
 
     /**
      */
     protected function _upgrade($version)
     {
         switch ($version) {
-        case '2.0':
-            $this->_upgradeAbookPrefs();
-            $this->_upgradeLayout();
-            break;
+            case '2.0':
+                $this->_upgradeAbookPrefs();
+                $this->_upgradeLayout();
+                break;
         }
     }
 
@@ -60,7 +61,7 @@ class Whups_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
         if (!$prefs->isDefault('search_fields')) {
             $val = $prefs->getValue('search_fields');
             if (!is_array(json_decode($val, true))) {
-                $fields = array();
+                $fields = [];
                 foreach (explode("\n", $val) as $field) {
                     $field = trim($field);
                     if (!empty($field)) {

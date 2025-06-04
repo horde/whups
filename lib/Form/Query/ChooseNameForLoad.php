@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -26,7 +27,6 @@
  */
 class Whups_Form_Query_ChooseNameForLoad extends Horde_Form
 {
-
     public function __construct($vars)
     {
         parent::__construct($vars, _("Load Query"), 'Whups_Form_Query_ChooseNameForLoad');
@@ -40,7 +40,7 @@ class Whups_Form_Query_ChooseNameForLoad extends Horde_Form
             $qParams = _("You have no saved queries.");
         }
 
-        $this->addVariable(_("Name"), 'name', $qType, true, false, null, array($qParams));
+        $this->addVariable(_("Name"), 'name', $qType, true, false, null, [$qParams]);
     }
 
     public function execute($vars = null)
@@ -52,7 +52,8 @@ class Whups_Form_Query_ChooseNameForLoad extends Horde_Form
         } catch (Whups_Exception $e) {
             $GLOBALS['notification']->push(
                 sprintf(_("The query couldn't be loaded:"), $e->getMessage()),
-                'horde.error');
+                'horde.error'
+            );
         }
         $this->unsetVars($vars);
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains all Horde_Form classes for form reply administration.
  *
@@ -16,24 +17,31 @@ class Whups_Form_Admin_EditReplyStepOne extends Horde_Form
     public function __construct($vars)
     {
         parent::__construct($vars, _("Edit or Delete Form Replies"));
-        $this->setButtons(array(_("Edit Form Reply"), array('class' => 'horde-delete', 'value' => _("Delete Form Reply"))));
+        $this->setButtons([_("Edit Form Reply"), ['class' => 'horde-delete', 'value' => _("Delete Form Reply")]]);
 
         $replies = $GLOBALS['whups_driver']->getReplies($vars->get('type'));
         if ($replies) {
-            $params = array();
+            $params = [];
             foreach ($replies as $key => $reply) {
                 $params[$key] = $reply['reply_name'];
             }
             $stype = 'enum';
-            $type_params = array($params);
+            $type_params = [$params];
         } else {
             $stype = 'invalid';
-            $type_params = array(_("There are no form replies to edit"));
+            $type_params = [_("There are no form replies to edit")];
         }
 
         $this->addHidden('', 'type', 'int', true, true);
         $this->addVariable(
-            _("Form Reply Name"), 'reply', $stype, true, false, null, $type_params);
+            _("Form Reply Name"),
+            'reply',
+            $stype,
+            true,
+            false,
+            null,
+            $type_params
+        );
     }
 
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays and handles the form to change the ticket type.
  *
@@ -21,7 +22,7 @@ class Whups_Form_SetTypeStepOne extends Horde_Form
 
         /* Types */
         $queue = $vars->get('queue');
-        $this->addVariable(_("New Type"), 'type', 'enum', true, false, null, array($whups_driver->getTypes($queue)));
+        $this->addVariable(_("New Type"), 'type', 'enum', true, false, null, [$whups_driver->getTypes($queue)]);
         $this->addVariable(_("Comment"), 'newcomment', 'longtext', false);
 
         /* Group restrictions. */
@@ -32,8 +33,8 @@ class Whups_Form_SetTypeStepOne extends Horde_Form
                 $grouplist[$gid] = $groups->getName($gid, true);
             }
             asort($grouplist);
-            $grouplist = array_merge(array(0 => _("Any Group")), $grouplist);
-            $this->addVariable(_("Viewable only by members of"), 'group', 'enum', true, false, null, array($grouplist));
+            $grouplist = array_merge([0 => _("Any Group")], $grouplist);
+            $this->addVariable(_("Viewable only by members of"), 'group', 'enum', true, false, null, [$grouplist]);
         }
     }
 

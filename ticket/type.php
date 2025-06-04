@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays and handles the form to change the ticket type.
  *
@@ -71,10 +72,10 @@ if ($form == 'whups_form_settypesteptwo') {
     }
 }
 
-$page_output->header(array(
-    'title' => sprintf(_("Set Type for %s"), '[#' . $id . '] ' . $ticket->get('summary'))
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => sprintf(_("Set Type for %s"), '[#' . $id . '] ' . $ticket->get('summary')),
+]);
+$notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 
 $tabs = Whups::getTicketTabs($vars, $id);
@@ -83,19 +84,19 @@ echo $tabs->render('type');
 $r = new Horde_Form_Renderer();
 
 switch ($action) {
-case 'st2':
-    $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
-    $form2 = new Whups_Form_SetTypeStepTwo($vars, _("Set Type - Step 2"));
+    case 'st2':
+        $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
+        $form2 = new Whups_Form_SetTypeStepTwo($vars, _("Set Type - Step 2"));
 
-    $form1->renderInactive($r, $vars);
-    echo '<br />';
-    $form2->renderActive($r, $vars, Horde::url('ticket/type.php'), 'post');
-    break;
+        $form1->renderInactive($r, $vars);
+        echo '<br />';
+        $form2->renderActive($r, $vars, Horde::url('ticket/type.php'), 'post');
+        break;
 
-default:
-    $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
-    $form1->renderActive($r, $vars, Horde::url('ticket/type.php'), 'post');
-    break;
+    default:
+        $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
+        $form1->renderActive($r, $vars, Horde::url('ticket/type.php'), 'post');
+        break;
 }
 
 $page_output->footer();

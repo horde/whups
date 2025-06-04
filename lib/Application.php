@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Whups application API.
  *
@@ -57,48 +58,48 @@ class Whups_Application extends Horde_Registry_Application
     public function perms()
     {
         /* Available Whups permissions. */
-        $perms = array(
-            'admin' => array(
-                'title' => _("Administration")
-            ),
-            'hiddenComments' => array(
-                'title' => _("Hidden Comments")
-            ),
-            'queues' => array(
-                'title' => _("Queues")
-            ),
-            'replies' => array(
-                'title' => _("Form Replies")
-            )
-        );
+        $perms = [
+            'admin' => [
+                'title' => _("Administration"),
+            ],
+            'hiddenComments' => [
+                'title' => _("Hidden Comments"),
+            ],
+            'queues' => [
+                'title' => _("Queues"),
+            ],
+            'replies' => [
+                'title' => _("Form Replies"),
+            ],
+        ];
 
         /* Loop through queues and add their titles. */
         $queues = $GLOBALS['whups_driver']->getQueues();
         foreach ($queues as $id => $name) {
-            $perms['queues:' . $id] = array(
-                'title' => $name
-            );
+            $perms['queues:' . $id] = [
+                'title' => $name,
+            ];
 
-            $entries = array(
+            $entries = [
                 'assign' => _("Assign"),
                 'requester' => _("Set Requester"),
-                'update' => _("Update")
-            );
+                'update' => _("Update"),
+            ];
 
             foreach ($entries as $key => $val) {
-                $perms['queues:' . $id . ':' . $key] = array(
+                $perms['queues:' . $id . ':' . $key] = [
                     'title' => $val,
-                    'type' => 'boolean'
-                );
+                    'type' => 'boolean',
+                ];
             }
         }
 
         /* Loop through type and replies and add their titles. */
         foreach ($GLOBALS['whups_driver']->getAllTypes() as $type_id => $type_name) {
             foreach ($GLOBALS['whups_driver']->getReplies($type_id) as $reply_id => $reply) {
-                $perms['replies:' . $reply_id] = array(
-                    'title' => $type_name . ': ' . $reply['reply_name']
-                );
+                $perms['replies:' . $reply_id] = [
+                    'title' => $type_name . ': ' . $reply['reply_name'],
+                ];
             }
         }
 
@@ -111,23 +112,24 @@ class Whups_Application extends Horde_Registry_Application
 
         $sidebar->addNewButton(
             _("_New Ticket"),
-            Horde::url('ticket/create.php'));
-        $sidebar->containers['queries'] = array(
-            'header' => array(
+            Horde::url('ticket/create.php')
+        );
+        $sidebar->containers['queries'] = [
+            'header' => [
                 'id' => 'whups-toggle-queries',
                 'label' => _("Saved Queries"),
-            ),
-        );
+            ],
+        ];
         $manager = new Whups_Query_Manager();
         $queries = $manager->listQueries($registry->getAuth(), true);
         foreach ($queries as $id => $query) {
-            $row = array(
+            $row = [
                 'selected' => strpos(strval(Horde::selfUrl()), $registry->get('webroot') . '/query') === 0 &&
                     $id == $session->get('whups', 'query'),
                 'cssClass' => 'whups-sidebar-query',
-                'url' => Whups::urlFor('query', empty($query['slug']) ? array('id' => $id) : array('slug' => $query['slug'])),
+                'url' => Whups::urlFor('query', empty($query['slug']) ? ['id' => $id] : ['slug' => $query['slug']]),
                 'label' => $query['name'],
-            );
+            ];
             $sidebar->addRow($row, 'queries');
         }
     }
@@ -142,7 +144,7 @@ class Whups_Application extends Horde_Registry_Application
         $menu->add(Horde::url('reports.php'), _("_Reports"), 'whups-reports');
 
         /* Administration. */
-        if ($GLOBALS['registry']->isAdmin(array('permission' => 'whups:admin'))) {
+        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin'])) {
             $menu->add(Horde::url('admin/'), _("_Admin"), 'whups-admin');
         }
     }
@@ -151,28 +153,30 @@ class Whups_Application extends Horde_Registry_Application
 
     /**
      */
-    public function topbarCreate(Horde_Tree_Renderer_Base $tree, $parent = null,
-                                 array $params = array())
-    {
-        $tree->addNode(array(
+    public function topbarCreate(
+        Horde_Tree_Renderer_Base $tree,
+        $parent = null,
+        array $params = []
+    ) {
+        $tree->addNode([
             'id' => $parent . '__new',
             'parent' => $parent,
             'label' => _("New Ticket"),
             'expanded' => false,
-            'params' => array(
-                'url' => Horde::url('ticket/create.php')
-            )
-        ));
+            'params' => [
+                'url' => Horde::url('ticket/create.php'),
+            ],
+        ]);
 
-        $tree->addNode(array(
+        $tree->addNode([
             'id' => $parent . '__search',
             'parent' => $parent,
             'label' => _("Search"),
             'expanded' => false,
-            'params' => array(
-                'url' => Horde::url('search.php')
-            )
-        ));
+            'params' => [
+                'url' => Horde::url('search.php'),
+            ],
+        ]);
     }
 
     /* Download data. */
@@ -183,13 +187,13 @@ class Whups_Application extends Horde_Registry_Application
     public function download(Horde_Variables $vars)
     {
         switch ($vars->actionID) {
-        case 'download_file':
-        case 'download_message':
-            return $this->_downloadAttachment($vars);
-        case 'ticket':
-            return $this->_downloadTicket($vars);
-        case 'report':
-            return $this->_downloadReport($vars);
+            case 'download_file':
+            case 'download_message':
+                return $this->_downloadAttachment($vars);
+            case 'ticket':
+                return $this->_downloadTicket($vars);
+            case 'report':
+                return $this->_downloadReport($vars);
         }
     }
 
@@ -233,21 +237,21 @@ class Whups_Application extends Horde_Registry_Application
 
         try {
             if ($vars->actionID == 'download_message') {
-                return array(
+                return [
                     'data' => $vfs->read(
                         Whups::VFS_MESSAGE_PATH . '/' . $vars->ticket,
                         $vars->message
                     ),
-                    'name' => _("Original message") . '.eml'
-                );
+                    'name' => _("Original message") . '.eml',
+                ];
             }
-            return array(
+            return [
                 'data' => $vfs->read(
                     Whups::VFS_ATTACH_PATH . '/' . $vars->ticket,
                     $vars->file
                 ),
-                'name' => $vars->file
-            );
+                'name' => $vars->file,
+            ];
         } catch (Horde_Vfs_Exception $e) {
             throw new Whups_Exception(
                 sprintf(_("Access denied to %s"), $vars->file)
@@ -276,41 +280,41 @@ class Whups_Application extends Horde_Registry_Application
         Horde::startBuffer();
 
         $page_output->addMetaTag('Content-Type', 'text/html; charset=UTF-8');
-        $page_output->header(array(
+        $page_output->header([
             'title' => $title,
-            'view' => Horde_Registry::VIEW_MINIMAL
-        ));
+            'view' => Horde_Registry::VIEW_MINIMAL,
+        ]);
 
         $html = Horde::endBuffer();
 
         $html = substr($html, 0, strrpos($html, '</head>')) . <<<STYLE
-   <style type="text/css">
-table, th, td {
-    border: 1px solid black;
-}
-table {
-    border-collapse: collapse;
-}
-td, th {
-    padding: 2px;
-}
-div.header {
-    font-weight: bold;
-    font-size: 140%;
-    padding: 3px 0;
-}
-.nowrap {
-    white-space: nowrap;
-}
-.comment {
-    font-family: Menlo,Consolas,"Lucida Console","DejaVu Sans Mono",monospace;
-    padding: 5px;
-}
-    </style>
- </head>
-<body>
+               <style type="text/css">
+            table, th, td {
+                border: 1px solid black;
+            }
+            table {
+                border-collapse: collapse;
+            }
+            td, th {
+                padding: 2px;
+            }
+            div.header {
+                font-weight: bold;
+                font-size: 140%;
+                padding: 3px 0;
+            }
+            .nowrap {
+                white-space: nowrap;
+            }
+            .comment {
+                font-family: Menlo,Consolas,"Lucida Console","DejaVu Sans Mono",monospace;
+                padding: 5px;
+            }
+                </style>
+             </head>
+            <body>
 
-STYLE;
+            STYLE;
 
         Horde::startBuffer();
 
@@ -326,7 +330,8 @@ STYLE;
         $history = Whups::permissionsFilter(
             $whups_driver->getHistory($ticket->getId(), $form),
             'comment',
-            Horde_Perms::READ);
+            Horde_Perms::READ
+        );
         foreach ($history as $transaction) {
             if (empty($transaction['changes'])) {
                 continue;
@@ -342,11 +347,11 @@ STYLE;
                 $comment = $flowed->toFlowed(false);
                 $comment = $filter->filter(
                     $comment,
-                    array('text2html', 'simplemarkup'),
-                    array(
-                        array('parselevel' => Horde_Text_Filter_Text2html::MICRO),
-                        array('html' => true),
-                    )
+                    ['text2html', 'simplemarkup'],
+                    [
+                        ['parselevel' => Horde_Text_Filter_Text2html::MICRO],
+                        ['html' => true],
+                    ]
                 );
                 $user = empty($transaction['user_id'])
                     ? '&nbsp;'
@@ -359,20 +364,20 @@ STYLE;
                     $transaction['timestamp']
                 );
                 echo <<<COMMENT
-<table width="100%">
- <tr>
-  <td class="nowrap" valign="top"><em>$user</em></td>
-  <td class="nowrap" valign="top" align="right"><em>$time</em></td>
- </tr>
- <tr><td colspan="2">
-  <div class="comment">
-   $comment
-  </div>
- </td></tr>
-</table>
-<br />
+                    <table width="100%">
+                     <tr>
+                      <td class="nowrap" valign="top"><em>$user</em></td>
+                      <td class="nowrap" valign="top" align="right"><em>$time</em></td>
+                     </tr>
+                     <tr><td colspan="2">
+                      <div class="comment">
+                       $comment
+                      </div>
+                     </td></tr>
+                    </table>
+                    <br />
 
-COMMENT;
+                    COMMENT;
             }
         }
 
@@ -382,10 +387,10 @@ COMMENT;
 
         $conf['prefs']['obfuscate_email'] = $obfuscate;
 
-        return array(
+        return [
             'data' => $html,
-            'name' => _("ticket") . $vars->id . '.html'
-        );
+            'name' => _("ticket") . $vars->id . '.html',
+        ];
     }
 
     /**
@@ -400,7 +405,9 @@ COMMENT;
         global $injector, $whups_driver;
 
         $_templates = Horde::loadConfiguration(
-            'templates.php', '_templates', 'whups'
+            'templates.php',
+            '_templates',
+            'whups'
         );
         $tpl = $vars->template;
         if (empty($_templates[$tpl])) {
@@ -415,8 +422,8 @@ COMMENT;
         }
 
         // Fetch all unresolved tickets assigned to the current user.
-        $info = array('id' => explode(',', $vars->ids));
-        $tickets = array();
+        $info = ['id' => explode(',', $vars->ids)];
+        $tickets = [];
         foreach ($whups_driver->getTicketsByProperties($info) as $id => $info) {
             if (!Whups::hasPermission($info['queue'], 'queue', Horde_Perms::READ)) {
                 continue;
@@ -424,24 +431,33 @@ COMMENT;
             $tickets[$id] = $info;
             $tickets[$id]['#'] = $id + 1;
             $tickets[$id]['link'] = Whups::urlFor(
-                'ticket', $info['id'], true, -1
+                'ticket',
+                $info['id'],
+                true,
+                -1
             );
             $tickets[$id]['date_created'] = strftime('%x', $info['timestamp']);
             $tickets[$id]['owners'] = Whups::getOwners($info['id']);
             $tickets[$id]['owner_name'] = Whups::getOwners(
-                $info['id'], false, true
+                $info['id'],
+                false,
+                true
             );
             $tickets[$id]['owner_email'] = Whups::getOwners(
-                $info['id'], true, false
+                $info['id'],
+                true,
+                false
             );
             if (!empty($info['date_assigned'])) {
                 $tickets[$id]['date_assigned'] = strftime(
-                    '%x', $info['date_assigned']
+                    '%x',
+                    $info['date_assigned']
                 );
             }
             if (!empty($info['date_resolved'])) {
                 $tickets[$id]['date_resolved'] = strftime(
-                    '%x', $info['date_resolved']
+                    '%x',
+                    $info['date_resolved']
                 );
             }
 
@@ -454,12 +470,10 @@ COMMENT;
 
         Whups::sortTickets(
             $tickets,
-            isset($_templates[$tpl]['sortby'])
-                ? $_templates[$tpl]['sortby']
-                : null,
-            isset($_templates[$tpl]['sortdir'])
-                ? $_templates[$tpl]['sortdir']
-                : null
+            $_templates[$tpl]['sortby']
+                ?? null,
+            $_templates[$tpl]['sortdir']
+                ?? null
         );
 
         $template = $injector->createInstance('Horde_Template');
@@ -467,11 +481,10 @@ COMMENT;
         $template->set('now', strftime('%x'));
         $template->set('values', Whups::getSearchResultColumns(null, true));
 
-        return array(
+        return [
             'data' => $template->parse($_templates[$tpl]['template']),
-            'name' => isset($_templates[$tpl]['filename'])
-                ? $_templates[$tpl]['filename']
-                : 'report.html'
-        );
+            'name' => $_templates[$tpl]['filename']
+                ?? 'report.html',
+        ];
     }
 }

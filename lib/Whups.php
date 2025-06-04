@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -22,12 +23,12 @@ class Whups
     /**
      * Path to ticket attachments in the VFS.
      */
-    const VFS_ATTACH_PATH = '.horde/whups/attachments';
+    public const VFS_ATTACH_PATH = '.horde/whups/attachments';
 
     /**
      * Path to email messages in the VFS.
      */
-    const VFS_MESSAGE_PATH = '.horde/whups/messages';
+    public const VFS_MESSAGE_PATH = '.horde/whups/messages';
 
     /**
      * The current sort field.
@@ -51,7 +52,7 @@ class Whups
      * @see getUserAttributes()
      * @var array
      */
-    protected static $_users = array();
+    protected static $_users = [];
 
     /**
      * All available form field types including all type information
@@ -60,7 +61,7 @@ class Whups
      * @see fieldTypes()
      * @var array
      */
-    protected static $_fieldTypes = array();
+    protected static $_fieldTypes = [];
 
     /**
      * URL factory.
@@ -74,92 +75,96 @@ class Whups
      *
      * @return Horde_Url  The generated URL.
      */
-    public static function urlFor($controller, $data, $full = false,
-                                  $append_session = 0)
-    {
+    public static function urlFor(
+        $controller,
+        $data,
+        $full = false,
+        $append_session = 0
+    ) {
         $rewrite = isset($GLOBALS['conf']['urls']['pretty']) &&
             $GLOBALS['conf']['urls']['pretty'] == 'rewrite';
 
         switch ($controller) {
-        case 'queue':
-            if ($rewrite) {
-                if (is_array($data)) {
-                    if (empty($data['slug'])) {
-                        $slug = (int)$data['id'];
+            case 'queue':
+                if ($rewrite) {
+                    if (is_array($data)) {
+                        if (empty($data['slug'])) {
+                            $slug = (int) $data['id'];
+                        } else {
+                            $slug = $data['slug'];
+                        }
                     } else {
-                        $slug = $data['slug'];
+                        $slug = (int) $data;
                     }
+                    return Horde::url('queue/' . $slug, $full, $append_session);
                 } else {
-                    $slug = (int)$data;
-                }
-                return Horde::url('queue/' . $slug, $full, $append_session);
-            } else {
-                if (is_array($data)) {
-                    $id = $data['id'];
-                } else {
-                    $id = $data;
-                }
-                return Horde::url('queue/?id=' . $id, $full, $append_session);
-            }
-            break;
-
-        case 'ticket':
-            $id = (int)$data;
-            if ($rewrite) {
-                return Horde::url('ticket/' . $id, $full, $append_session);
-            } else {
-                return Horde::url('ticket/?id=' . $id, $full, $append_session);
-            }
-            break;
-
-        case 'ticket_rss':
-            $id = (int)$data;
-            if ($rewrite) {
-                return Horde::url('ticket/' . $id . '/rss', $full, $append_session);
-            } else {
-                return Horde::url('ticket/rss.php?id=' . $id, $full, $append_session);
-            }
-            break;
-
-        case 'ticket_action':
-            list($controller, $id) = $data;
-            if ($rewrite) {
-                return Horde::url('ticket/' . $id . '/' . $controller, $full, $append_session = 0);
-            } else {
-                return Horde::url('ticket/' . $controller . '.php?id=' . $id, $full, $append_session = 0);
-            }
-
-        case 'query':
-        case 'query_rss':
-            if ($rewrite) {
-                if (is_array($data)) {
-                    if (isset($data['slug'])) {
-                        $slug = $data['slug'];
+                    if (is_array($data)) {
+                        $id = $data['id'];
                     } else {
-                        $slug = $data['id'];
+                        $id = $data;
                     }
+                    return Horde::url('queue/?id=' . $id, $full, $append_session);
+                }
+                break;
+
+            case 'ticket':
+                $id = (int) $data;
+                if ($rewrite) {
+                    return Horde::url('ticket/' . $id, $full, $append_session);
                 } else {
-                    $slug = (int)$data;
+                    return Horde::url('ticket/?id=' . $id, $full, $append_session);
                 }
-                $url = 'query/' . $slug;
-                if ($controller == 'query_rss') {
-                    $url .= '/rss';
+                break;
+
+            case 'ticket_rss':
+                $id = (int) $data;
+                if ($rewrite) {
+                    return Horde::url('ticket/' . $id . '/rss', $full, $append_session);
+                } else {
+                    return Horde::url('ticket/rss.php?id=' . $id, $full, $append_session);
                 }
-                return Horde::url($url, $full, $append_session);
-            } else {
-                if (is_array($data)) {
-                    if (isset($data['slug'])) {
-                        $param = array('slug' => $data['slug']);
+                break;
+
+            case 'ticket_action':
+                [$controller, $id] = $data;
+                if ($rewrite) {
+                    return Horde::url('ticket/' . $id . '/' . $controller, $full, $append_session = 0);
+                } else {
+                    return Horde::url('ticket/' . $controller . '.php?id=' . $id, $full, $append_session = 0);
+                }
+
+                // no break
+            case 'query':
+            case 'query_rss':
+                if ($rewrite) {
+                    if (is_array($data)) {
+                        if (isset($data['slug'])) {
+                            $slug = $data['slug'];
+                        } else {
+                            $slug = $data['id'];
+                        }
                     } else {
-                        $param = array('query' => $data['id']);
+                        $slug = (int) $data;
                     }
+                    $url = 'query/' . $slug;
+                    if ($controller == 'query_rss') {
+                        $url .= '/rss';
+                    }
+                    return Horde::url($url, $full, $append_session);
                 } else {
-                    $param = array('query' => $data);
+                    if (is_array($data)) {
+                        if (isset($data['slug'])) {
+                            $param = ['slug' => $data['slug']];
+                        } else {
+                            $param = ['query' => $data['id']];
+                        }
+                    } else {
+                        $param = ['query' => $data];
+                    }
+                    $url = $controller == 'query' ? 'query/run.php' : 'query/rss.php';
+                    return Horde::url($url, $full, $append_session)->add($param);
                 }
-                $url = $controller == 'query' ? 'query/run.php' : 'query/rss.php';
-                return Horde::url($url, $full, $append_session)->add($param);
-            }
-            break;
+                break;
         }
     }
 
@@ -185,9 +190,9 @@ class Whups
         self::sortDir($dir);
 
         // Do some prep for sorting.
-        $tickets = array_map(array('Whups', '_prepareSort'), $tickets);
+        $tickets = array_map(['Whups', '_prepareSort'], $tickets);
 
-        usort($tickets, array('Whups', '_sort'));
+        usort($tickets, ['Whups', '_sort']);
     }
 
     /**
@@ -235,7 +240,7 @@ class Whups
     protected static function _prepareSort(array $ticket)
     {
         $by = self::sortBy();
-        $ticket['sort_by'] = array();
+        $ticket['sort_by'] = [];
         if (is_array($by)) {
             foreach ($by as $field) {
                 if (!isset($ticket[$field])) {
@@ -302,8 +307,8 @@ class Whups
             return $sortdir[0] ? 1 : -1;
         }
 
-        $a_val = isset($a['sort_by'][$sortby]) ? $a['sort_by'][$sortby] : null;
-        $b_val = isset($b['sort_by'][$sortby]) ? $b['sort_by'][$sortby] : null;
+        $a_val = $a['sort_by'][$sortby] ?? null;
+        $b_val = $b['sort_by'][$sortby] ?? null;
 
         // Take care of the simplest case first
         if ($a_val === $b_val) {
@@ -313,7 +318,7 @@ class Whups
         if ((is_numeric($a_val) || is_null($a_val)) &&
             (is_numeric($b_val) || is_null($b_val))) {
             // Numeric comparison
-            return (int)($sortdir ? ($b_val > $a_val) : ($a_val > $b_val));
+            return (int) ($sortdir ? ($b_val > $a_val) : ($a_val > $b_val));
         }
 
         // Some special case sorting
@@ -359,7 +364,7 @@ class Whups
      */
     public static function listTemplates($type)
     {
-        $templates = array();
+        $templates = [];
 
         $_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
         foreach ($_templates as $name => $info) {
@@ -435,45 +440,45 @@ class Whups
         );
         $tabs->addTab(
             _("_Attachments"),
-            self::urlFor('ticket_action', array('attachments', $id)),
+            self::urlFor('ticket_action', ['attachments', $id]),
             'attachments'
         );
         if (self::hasPermission($queue, 'queue', 'update')) {
             $tabs->addTab(
                 _("_Update"),
-                self::urlFor('ticket_action', array('update', $id)),
+                self::urlFor('ticket_action', ['update', $id]),
                 'update'
             );
         } else {
             $tabs->addTab(
                 _("_Comment"),
-                self::urlFor('ticket_action', array('comment', $id)),
+                self::urlFor('ticket_action', ['comment', $id]),
                 'comment'
             );
         }
         $tabs->addTab(
             _("_Watch"),
-            self::urlFor('ticket_action', array('watch', $id)),
+            self::urlFor('ticket_action', ['watch', $id]),
             'watch'
         );
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
             $tabs->addTab(
                 _("S_et Queue"),
-                self::urlFor('ticket_action', array('queue', $id)),
+                self::urlFor('ticket_action', ['queue', $id]),
                 'queue'
             );
         }
         if (self::hasPermission($queue, 'queue', 'update')) {
             $tabs->addTab(
                 _("Set _Type"),
-                self::urlFor('ticket_action', array('type', $id)),
+                self::urlFor('ticket_action', ['type', $id]),
                 'type'
             );
         }
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
             $tabs->addTab(
                 _("_Delete"),
-                self::urlFor('ticket_action', array('delete', $id)),
+                self::urlFor('ticket_action', ['delete', $id]),
                 'delete'
             );
         }
@@ -481,7 +486,7 @@ class Whups
             _("Download"),
             $registry->downloadUrl(
                 _("ticket") . $id . '.html',
-                array('actionID' => 'ticket', 'id' => $id)
+                ['actionID' => 'ticket', 'id' => $id]
             )
         );
 
@@ -515,47 +520,55 @@ class Whups
             $admin_perm = $permission;
         }
 
-        $admin = $GLOBALS['registry']->isAdmin(array('permission' => 'whups:admin', 'permlevel' => $admin_perm, 'user' => $user));
+        $admin = $GLOBALS['registry']->isAdmin(['permission' => 'whups:admin', 'permlevel' => $admin_perm, 'user' => $user]);
         $perms = $GLOBALS['injector']->getInstance('Horde_Perms');
 
         switch ($filter) {
-        case 'queue':
-            if ($admin) {
-                return true;
-            }
-            switch ($permission) {
-            case Horde_Perms::SHOW:
-            case Horde_Perms::READ:
-            case Horde_Perms::EDIT:
-            case Horde_Perms::DELETE:
-                if ($perms->hasPermission('whups:queues:' . $in, $user,
-                                          $permission)) {
+            case 'queue':
+                if ($admin) {
                     return true;
                 }
-                break;
+                switch ($permission) {
+                    case Horde_Perms::SHOW:
+                    case Horde_Perms::READ:
+                    case Horde_Perms::EDIT:
+                    case Horde_Perms::DELETE:
+                        if ($perms->hasPermission(
+                            'whups:queues:' . $in,
+                            $user,
+                            $permission
+                        )) {
+                            return true;
+                        }
+                        break;
 
-            default:
-                if ($perms->exists('whups:queues:' . $in . ':' . $permission)) {
-                    if (($permission == 'update' ||
-                         $permission == 'assign' ||
-                         $permission == 'requester') &&
-                        $perms->getPermissions(
-                            'whups:queues:' . $in . ':' . $permission, $user)) {
-                        return true;
-                    }
-                } else {
-                    // If the sub-permission doesn't exist, use the queue
-                    // permission at an EDIT level and lock out guests.
-                    if ($permission != 'requester' &&
-                        $GLOBALS['registry']->getAuth() &&
-                        $perms->hasPermission('whups:queues:' . $in, $user,
-                                              Horde_Perms::EDIT)) {
-                        return true;
-                    }
+                    default:
+                        if ($perms->exists('whups:queues:' . $in . ':' . $permission)) {
+                            if (($permission == 'update' ||
+                                 $permission == 'assign' ||
+                                 $permission == 'requester') &&
+                                $perms->getPermissions(
+                                    'whups:queues:' . $in . ':' . $permission,
+                                    $user
+                                )) {
+                                return true;
+                            }
+                        } else {
+                            // If the sub-permission doesn't exist, use the queue
+                            // permission at an EDIT level and lock out guests.
+                            if ($permission != 'requester' &&
+                                $GLOBALS['registry']->getAuth() &&
+                                $perms->hasPermission(
+                                    'whups:queues:' . $in,
+                                    $user,
+                                    Horde_Perms::EDIT
+                                )) {
+                                return true;
+                            }
+                        }
+                        break;
                 }
                 break;
-            }
-            break;
         }
 
         return false;
@@ -576,93 +589,112 @@ class Whups
      *
      * @return array  The list of resources matching the permission criteria.
      */
-    public static function permissionsFilter($in, $filter,
-                                             $permission = Horde_Perms::READ,
-                                             $user = null, $creator = null)
-    {
+    public static function permissionsFilter(
+        $in,
+        $filter,
+        $permission = Horde_Perms::READ,
+        $user = null,
+        $creator = null
+    ) {
         if (is_null($user)) {
             $user = $GLOBALS['registry']->getAuth();
         }
 
-        $admin = $GLOBALS['registry']->isAdmin(array('permission' => 'whups:admin', 'permlevel' => $permission, 'user' => $user));
+        $admin = $GLOBALS['registry']->isAdmin(['permission' => 'whups:admin', 'permlevel' => $permission, 'user' => $user]);
         $perms = $GLOBALS['injector']->getInstance('Horde_Perms');
-        $out = array();
+        $out = [];
 
         switch ($filter) {
-        case 'queue':
-            if ($admin) {
-                return $in;
-            }
-            foreach ($in as $queueID => $name) {
-                if (!$perms->exists('whups:queues:' . $queueID) ||
-                    $perms->hasPermission('whups:queues:' . $queueID, $user,
-                                          $permission, $creator)) {
-                    $out[$queueID] = $name;
+            case 'queue':
+                if ($admin) {
+                    return $in;
                 }
-            }
-            break;
-
-        case 'queue_id':
-            if ($admin) {
-                return $in;
-            }
-            foreach ($in as $queueID) {
-                if (!$perms->exists('whups:queues:' . $queueID) ||
-                    $perms->hasPermission('whups:queues:' . $queueID, $user,
-                                          $permission, $creator)) {
-                    $out[] = $queueID;
-                }
-            }
-            break;
-
-        case 'reply':
-            if ($admin) {
-                return $in;
-            }
-            foreach ($in as $replyID => $name) {
-                if (!$perms->exists('whups:replies:' . $replyID) ||
-                    $perms->hasPermission('whups:replies:' . $replyID,
-                                          $user, $permission, $creator)) {
-                    $out[$replyID] = $name;
-                }
-            }
-            break;
-
-        case 'comment':
-            foreach ($in as $key => $row) {
-                foreach ($row as $rkey => $rval) {
-                    if ($rkey != 'changes') {
-                        $out[$key][$rkey] = $rval;
-                        continue;
+                foreach ($in as $queueID => $name) {
+                    if (!$perms->exists('whups:queues:' . $queueID) ||
+                        $perms->hasPermission(
+                            'whups:queues:' . $queueID,
+                            $user,
+                            $permission,
+                            $creator
+                        )) {
+                        $out[$queueID] = $name;
                     }
-                    foreach ($rval as $i => $change) {
-                        if ($change['type'] != 'comment' ||
-                            !$perms->exists('whups:comments:' . $change['value'])) {
-                            $out[$key][$rkey][$i] = $change;
-                            if (isset($change['comment'])) {
-                                $out[$key]['comment_text'] = $change['comment'];
-                            }
-                        } elseif ($perms->exists('whups:comments:' . $change['value'])) {
-                            $change['private'] = true;
-                            $out[$key][$rkey][$i] = $change;
-                            if (isset($change['comment'])) {
-                                if ($admin ||
-                                    $perms->hasPermission('whups:comments:' . $change['value'],
-                                                          $user, Horde_Perms::READ, $creator)) {
+                }
+                break;
+
+            case 'queue_id':
+                if ($admin) {
+                    return $in;
+                }
+                foreach ($in as $queueID) {
+                    if (!$perms->exists('whups:queues:' . $queueID) ||
+                        $perms->hasPermission(
+                            'whups:queues:' . $queueID,
+                            $user,
+                            $permission,
+                            $creator
+                        )) {
+                        $out[] = $queueID;
+                    }
+                }
+                break;
+
+            case 'reply':
+                if ($admin) {
+                    return $in;
+                }
+                foreach ($in as $replyID => $name) {
+                    if (!$perms->exists('whups:replies:' . $replyID) ||
+                        $perms->hasPermission(
+                            'whups:replies:' . $replyID,
+                            $user,
+                            $permission,
+                            $creator
+                        )) {
+                        $out[$replyID] = $name;
+                    }
+                }
+                break;
+
+            case 'comment':
+                foreach ($in as $key => $row) {
+                    foreach ($row as $rkey => $rval) {
+                        if ($rkey != 'changes') {
+                            $out[$key][$rkey] = $rval;
+                            continue;
+                        }
+                        foreach ($rval as $i => $change) {
+                            if ($change['type'] != 'comment' ||
+                                !$perms->exists('whups:comments:' . $change['value'])) {
+                                $out[$key][$rkey][$i] = $change;
+                                if (isset($change['comment'])) {
                                     $out[$key]['comment_text'] = $change['comment'];
-                                } else {
-                                    $out[$key][$rkey][$i]['comment'] = _("[Hidden]");
+                                }
+                            } elseif ($perms->exists('whups:comments:' . $change['value'])) {
+                                $change['private'] = true;
+                                $out[$key][$rkey][$i] = $change;
+                                if (isset($change['comment'])) {
+                                    if ($admin ||
+                                        $perms->hasPermission(
+                                            'whups:comments:' . $change['value'],
+                                            $user,
+                                            Horde_Perms::READ,
+                                            $creator
+                                        )) {
+                                        $out[$key]['comment_text'] = $change['comment'];
+                                    } else {
+                                        $out[$key][$rkey][$i]['comment'] = _("[Hidden]");
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            break;
+                break;
 
-        default:
-            $out = $in;
-            break;
+            default:
+                $out = $in;
+                break;
         }
 
         return $out;
@@ -680,7 +712,7 @@ class Whups
      */
     public static function getOwnerCriteria($user)
     {
-        $criteria = array('user:' . $user);
+        $criteria = ['user:' . $user];
         $mygroups = $GLOBALS['injector']
             ->getInstance('Horde_Group')
             ->listGroups($GLOBALS['registry']->getAuth());
@@ -704,10 +736,10 @@ class Whups
             $user = $GLOBALS['registry']->getAuth();
         }
         if (empty($user)) {
-            return array('type' => 'user',
-                         'user' => '',
-                         'name' => '',
-                         'email' => '');
+            return ['type' => 'user',
+                'user' => '',
+                'name' => '',
+                'email' => ''];
         }
 
         if (isset(self::$_users[$user])) {
@@ -715,7 +747,7 @@ class Whups
         }
 
         if (strpos($user, ':') !== false) {
-            list($type, $user) = explode(':', $user, 2);
+            [$type, $user] = explode(':', $user, 2);
         } else {
             $type = 'user';
         }
@@ -725,57 +757,57 @@ class Whups
         self::$_users[$user]['type'] = $type;
 
         switch ($type) {
-        case 'user':
-            if (substr($user, 0, 2) == '**') {
-                unset(self::$_users[$user]);
-                $user = substr($user, 2);
+            case 'user':
+                if (substr($user, 0, 2) == '**') {
+                    unset(self::$_users[$user]);
+                    $user = substr($user, 2);
 
-                self::$_users[$user]['user'] = $user;
-                self::$_users[$user]['name'] = '';
-                self::$_users[$user]['email'] = '';
+                    self::$_users[$user]['user'] = $user;
+                    self::$_users[$user]['name'] = '';
+                    self::$_users[$user]['email'] = '';
 
-                $addr_ob = new Horde_Mail_Rfc822_Address($user);
-                if ($addr_ob->valid) {
-                    self::$_users[$user]['name'] = is_null($addr_ob->personal)
-                        ? ''
-                        : $addr_ob->personal;
-                    self::$_users[$user]['email'] = $addr_ob->bare_address;
+                    $addr_ob = new Horde_Mail_Rfc822_Address($user);
+                    if ($addr_ob->valid) {
+                        self::$_users[$user]['name'] = is_null($addr_ob->personal)
+                            ? ''
+                            : $addr_ob->personal;
+                        self::$_users[$user]['email'] = $addr_ob->bare_address;
+                    }
+                } elseif ($user < 0) {
+                    global $whups_driver;
+
+                    self::$_users[$user]['user'] = '';
+                    self::$_users[$user]['name'] = '';
+                    self::$_users[$user]['email'] = $whups_driver->getGuestEmail($user);
+
+                    $addr_ob = new Horde_Mail_Rfc822_Address(self::$_users[$user]['email']);
+                    if ($addr_ob->valid) {
+                        self::$_users[$user]['name'] = is_null($addr_ob->personal)
+                            ? ''
+                            : $addr_ob->personal;
+                        self::$_users[$user]['email'] = $addr_ob->bare_address;
+                    }
+                } else {
+                    $identity = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Identity')->create($user);
+
+                    self::$_users[$user]['name'] = $identity->getName();
+                    self::$_users[$user]['email'] = $identity->getDefaultFromAddress();
                 }
-            } elseif ($user < 0) {
-                global $whups_driver;
+                break;
 
-                self::$_users[$user]['user'] = '';
-                self::$_users[$user]['name'] = '';
-                self::$_users[$user]['email'] = $whups_driver->getGuestEmail($user);
-
-                $addr_ob = new Horde_Mail_Rfc822_Address(self::$_users[$user]['email']);
-                if ($addr_ob->valid) {
-                    self::$_users[$user]['name'] = is_null($addr_ob->personal)
-                        ? ''
-                        : $addr_ob->personal;
-                    self::$_users[$user]['email'] = $addr_ob->bare_address;
+            case 'group':
+                try {
+                    $group = $GLOBALS['injector']
+                        ->getInstance('Horde_Group')
+                        ->getData($user);
+                    self::$_users[$user]['user'] = $group['name'];
+                    self::$_users[$user]['name'] = $group['name'];
+                    self::$_users[$user]['email'] = $group['email'];
+                } catch (Horde_Exception $e) {
+                    self::$_users['user']['name'] = '';
+                    self::$_users['user']['email'] = '';
                 }
-            } else {
-                $identity = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Identity')->create($user);
-
-                self::$_users[$user]['name'] = $identity->getName();
-                self::$_users[$user]['email'] = $identity->getDefaultFromAddress();
-            }
-            break;
-
-        case 'group':
-            try {
-                $group = $GLOBALS['injector']
-                    ->getInstance('Horde_Group')
-                    ->getData($user);
-                self::$_users[$user]['user'] = $group['name'];
-                self::$_users[$user]['name'] = $group['name'];
-                self::$_users[$user]['email'] = $group['email'];
-            } catch (Horde_Exception $e) {
-                self::$_users['user']['name'] = '';
-                self::$_users['user']['email'] = '';
-            }
-            break;
+                break;
         }
 
         return self::$_users[$user];
@@ -793,9 +825,12 @@ class Whups
      *                            escaped for HTML output, and a group icon
      *                            might be added.
      */
-    public static function formatUser($user = null, $showemail = true,
-                                      $showname = true, $html = false)
-    {
+    public static function formatUser(
+        $user = null,
+        $showemail = true,
+        $showname = true,
+        $html = false
+    ) {
         if (!is_null($user) && empty($user)) {
             return '';
         }
@@ -814,9 +849,11 @@ class Whups
             !empty($details['email'])) {
             if ($html && $GLOBALS['conf']['prefs']['obfuscate_email'] &&
                 strpos($details['email'], '@') !== false) {
-                $details['email'] = str_replace(array('@', '.'),
-                                                array(' (at) ', ' (dot) '),
-                                                $details['email']);
+                $details['email'] = str_replace(
+                    ['@', '.'],
+                    [' (at) ', ' (dot) '],
+                    $details['email']
+                );
             }
 
             if (!empty($name) && $showname) {
@@ -831,10 +868,12 @@ class Whups
         if ($html) {
             $name = htmlspecialchars($name);
             if ($details['type'] == 'group') {
-                $name = Horde::img('group.png',
-                                   !empty($details['name'])
+                $name = Horde::img(
+                    'group.png',
+                    !empty($details['name'])
                                    ? $details['name']
-                                   : $details['user'])
+                                   : $details['user']
+                )
                     . $name;
             }
         }
@@ -853,15 +892,16 @@ class Whups
     public static function formatColumn($info, $value)
     {
         $url = self::urlFor('ticket', $info['id']);
-        $thevalue = isset($info[$value]) ? $info[$value] : '';
+        $thevalue = $info[$value] ?? '';
 
         if ($value == 'timestamp' || $value == 'due' ||
             substr($value, 0, 5) == 'date_') {
             require_once 'Horde/Form/Type.php';
-            $thevalue = (new Horde_Form_Type_date)->getFormattedTime(
+            $thevalue = (new Horde_Form_Type_date())->getFormattedTime(
                 $thevalue,
                 $GLOBALS['prefs']->getValue('report_time_format'),
-                false);
+                false
+            );
         } elseif ($value == 'user_id_requester') {
             $thevalue = $info['requester_formatted'];
         } elseif ($value == 'id' || $value == 'summary') {
@@ -887,10 +927,11 @@ class Whups
      * @param array $columns        The columns to return, overriding the
      *                              defaults for some $search_type.
      */
-    public static function getSearchResultColumns($search_type = null,
-                                                  $columns = null)
-    {
-        $all = array(
+    public static function getSearchResultColumns(
+        $search_type = null,
+        $columns = null
+    ) {
+        $all = [
             _("Id")        => 'id',
             _("Summary")   => 'summary',
             _("State")     => 'state_name',
@@ -904,17 +945,17 @@ class Whups
             _("Assigned")  => 'date_assigned',
             _("Due")       => 'due',
             _("Resolved")  => 'date_resolved',
-        );
+        ];
 
         if ($search_type != 'block') {
             return $all;
         }
 
         if (is_null($columns)) {
-            $columns = array('summary', 'priority_name', 'state_name');
+            $columns = ['summary', 'priority_name', 'state_name'];
         }
 
-        $result = array(_("Id") => 'id');
+        $result = [_("Id") => 'id'];
         foreach ($columns as $param) {
             if (($label = array_search($param, $all)) !== false) {
                 $result[$label] = $param;
@@ -943,14 +984,14 @@ class Whups
         global $whups_driver;
 
         if ($vars->get('id')) {
-            $info = array('id' => $vars->get('id'));
+            $info = ['id' => $vars->get('id')];
         } elseif ($vars->get('queue')) {
             $info['queue'] = $vars->get('queue');
             if ($vars->get('category')) {
                 $info['category'] = $vars->get('category');
             } else {
                 // Make sure that resolved tickets aren't returned.
-                $info['category'] = array('unconfirmed', 'new', 'assigned');
+                $info['category'] = ['unconfirmed', 'new', 'assigned'];
             }
         } else {
             throw new Whups_Exception(_("You must select at least one queue to send reminders for."));
@@ -963,7 +1004,7 @@ class Whups
         }
 
         $unassigned = $vars->get('unassigned');
-        $remind = array();
+        $remind = [];
         foreach ($tickets as $info) {
             $info['link'] = self::urlFor('ticket', $info['id'], true, -1);
             $owners = $whups_driver->getOwners($info['id']);
@@ -977,7 +1018,7 @@ class Whups
         }
 
         /* Build message template. */
-        $view = new Horde_View(array('templatePath' => WHUPS_BASE . '/config'));
+        $view = new Horde_View(['templatePath' => WHUPS_BASE . '/config']);
         $view->date = strftime($GLOBALS['prefs']->getValue('date_format'));
 
         /* Get queue specific notification message text, if available. */
@@ -995,11 +1036,11 @@ class Whups
             }
             $view->tickets = $utickets;
             $subject = _("Reminder: Your open tickets");
-            $whups_driver->mail(array('recipients' => array($user => 'owner'),
-                                      'subject' => $subject,
-                                      'view' => $view,
-                                      'template' => $message_file,
-                                      'from' => $user));
+            $whups_driver->mail(['recipients' => [$user => 'owner'],
+                'subject' => $subject,
+                'view' => $view,
+                'template' => $message_file,
+                'from' => $user]);
         }
     }
 
@@ -1043,42 +1084,43 @@ class Whups
     {
         global $injector, $registry;
 
-        $links = array(
+        $links = [
             'view' => Horde::url('view.php')
-                ->add(array(
+                ->add([
                     'actionID' => 'view_message',
                     'message' => $message,
-                    'ticket' => $ticket
-                ))
-                ->link(array('target' => '_blank'))
+                    'ticket' => $ticket,
+                ])
+                ->link(['target' => '_blank'])
                 . _("View original message") . '</a>',
             'download' => $registry->downloadUrl(
                 _("Original Message") . '.eml',
-                array(
+                [
                     'actionID' => 'download_message',
                     'message' => $message,
-                    'ticket' => $ticket
-                ))
+                    'ticket' => $ticket,
+                ]
+            )
                 ->link()
-                . Horde::img('download.png', _("Download")) . '</a>'
-        );
+                . Horde::img('download.png', _("Download")) . '</a>',
+        ];
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
             $links['delete'] = Horde::url('ticket/delete_attachment.php')
                 ->add(
-                    array(
+                    [
                         'message' => $message,
                         'id' => $ticket,
-                        'url' => Horde::selfUrl(true, false, true)
-                    )
+                        'url' => Horde::selfUrl(true, false, true),
+                    ]
                 )
-                ->link(array(
+                ->link([
                     'title' => _("Delete Message"),
                     'onclick' => 'return window.confirm(\''
                         . addslashes(_("Permanently delete original message?"))
-                        . '\');'
-                ))
+                        . '\');',
+                ])
                 . Horde::img('delete.png', _("Delete message")) . '</a>';
         }
 
@@ -1116,7 +1158,7 @@ class Whups
         try {
             $files = $vfs->listFolder(self::VFS_ATTACH_PATH . '/' . $ticket);
         } catch (Horde_Vfs_Exception $e) {
-            $files = array();
+            $files = [];
         }
         if (is_null($name)) {
             return $files;
@@ -1141,7 +1183,7 @@ class Whups
     {
         global $injector, $registry;
 
-        $links = array();
+        $links = [];
 
         // Can we view the attachment online?
         $mime_part = new Horde_Mime_Part();
@@ -1150,46 +1192,46 @@ class Whups
             ->create($mime_part);
         if ($viewer && !($viewer instanceof Horde_Mime_Viewer_Default)) {
             $links['view'] = Horde::url('view.php')
-                ->add(array(
+                ->add([
                     'actionID' => 'view_file',
                     'type' => $file['type'],
                     'file' => $file['name'],
-                    'ticket' => $ticket
-                ))
-                ->link(array('title' => $file['name'], 'target' => '_blank'))
+                    'ticket' => $ticket,
+                ])
+                ->link(['title' => $file['name'], 'target' => '_blank'])
                 . $file['name'] . '</a>';
         } else {
             $links['view'] = $file['name'];
         }
 
         // We can always download attachments.
-        $url_params = array('actionID' => 'download_file',
-                            'file' => $file['name'],
-                            'ticket' => $ticket);
+        $url_params = ['actionID' => 'download_file',
+            'file' => $file['name'],
+            'ticket' => $ticket];
         $links['download'] =
-            $registry->downloadUrl($file['name'], $url_params)->link(array(
-                'title' => $file['name']
-            ))
+            $registry->downloadUrl($file['name'], $url_params)->link([
+                'title' => $file['name'],
+            ])
             . Horde::img('download.png', _("Download")) . '</a>';
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
             $links['delete'] = Horde::url('ticket/delete_attachment.php')
                 ->add(
-                    array(
+                    [
                         'file' => $file['name'],
                         'id' => $ticket,
-                        'url' => Horde::signUrl(Horde::selfUrl(true, false, true))
-                    )
+                        'url' => Horde::signUrl(Horde::selfUrl(true, false, true)),
+                    ]
                 )
-                ->link(array(
+                ->link([
                     'title' => sprintf(_("Delete %s"), $file['name']),
                     'onclick' => 'return window.confirm(\''
                         . addslashes(
                             sprintf(_("Permanently delete %s?"), $file['name'])
                         )
-                        . '\');'
-                ))
+                        . '\');',
+                ])
                 . Horde::img(
                     'delete.png',
                     sprintf(_("Delete %s"), $file['name'])
@@ -1214,14 +1256,17 @@ class Whups
      *
      * @return string  The formatted owner string.
      */
-    public static function getOwners($ticket, $showemail = true,
-                                     $showname = true, $owners = null)
-    {
+    public static function getOwners(
+        $ticket,
+        $showemail = true,
+        $showname = true,
+        $owners = null
+    ) {
         if (is_null($owners)) {
             $owners = $GLOBALS['whups_driver']->getOwners($ticket);
         }
 
-        $results = array();
+        $results = [];
         if ($owners) {
             foreach (reset($owners) as $owner) {
                 $results[] = self::formatUser($owner, $showemail, $showname);
@@ -1248,10 +1293,10 @@ class Whups
         $classes = get_declared_classes();
 
         /* Filter for the Horde_Form_Type classes. */
-        $blacklist = array(
+        $blacklist = [
             'addresslink', 'captcha', 'description', 'figlet', 'header',
-            'image', 'invalid', 'spacer'
-        );
+            'image', 'invalid', 'spacer',
+        ];
         foreach ($classes as $class) {
             if (stripos($class, 'horde_form_type_') !== false) {
                 $field_type = substr($class, 16);
@@ -1259,11 +1304,11 @@ class Whups
                  * usefully. */
                 if (in_array($field_type, $blacklist)) {
                     continue;
-		}
-		// TODO: Ensure proper PSR autoloader class name
-		$className = 'Horde_Form_Type_' . $field_type;
-		$typeObject = new $className;
-		self::$_fieldTypes[$field_type] = $typeObject->about();
+                }
+                // TODO: Ensure proper PSR autoloader class name
+                $className = 'Horde_Form_Type_' . $field_type;
+                $typeObject = new $className();
+                self::$_fieldTypes[$field_type] = $typeObject->about();
             }
         }
 
@@ -1281,7 +1326,7 @@ class Whups
         $fields = self::fieldTypes();
 
         /* Strip out the name element from the array. */
-        $available_fields = array();
+        $available_fields = [];
         foreach ($fields as $field_type => $info) {
             $available_fields[$field_type] = $info['name'];
         }
@@ -1303,9 +1348,8 @@ class Whups
     {
         $fields = self::fieldTypes();
 
-        return isset($fields[$field_type]['params'])
-            ? $fields[$field_type]['params']
-            : array();
+        return $fields[$field_type]['params']
+            ?? [];
     }
 
     /**
@@ -1317,28 +1361,28 @@ class Whups
     {
         $src = json_decode($GLOBALS['prefs']->getValue('search_sources'));
         if (!is_array($src)) {
-            $src = array();
+            $src = [];
         }
 
         $fields = json_decode($GLOBALS['prefs']->getValue('search_fields'), true);
         if (!is_array($fields)) {
-            $fields = array();
+            $fields = [];
         }
 
-        return array(
+        return [
             'fields' => $fields,
-            'sources' => $src
-        );
+            'sources' => $src,
+        ];
     }
 
     public static function addFeedLink()
     {
-        $GLOBALS['page_output']->addLinkTag(array(
+        $GLOBALS['page_output']->addLinkTag([
             'href' => Horde::url('opensearch.php', true, -1),
             'rel' => 'search',
             'type' => 'application/opensearchdescription+xml',
-            'title' => $GLOBALS['registry']->get('name') . ' (' . Horde::url('', true) . ')'
-        ));
+            'title' => $GLOBALS['registry']->get('name') . ' (' . Horde::url('', true) . ')',
+        ]);
     }
 
 }

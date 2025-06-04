@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
@@ -45,45 +46,45 @@ if ($vars->get('qaction1') || $vars->get('qaction2')) {
     $action = $vars->get('qaction1') ? $vars->get('qaction1') : $vars->get('qaction2');
 
     switch ($action) {
-    // Query actions.
-    case 'deleteNode':
-        $whups_query->deleteNode($vars->get('path'));
-        $vars->remove('path');
-        break;
+        // Query actions.
+        case 'deleteNode':
+            $whups_query->deleteNode($vars->get('path'));
+            $vars->remove('path');
+            break;
 
-    case 'hoist':
-        $whups_query->hoist($vars->get('path'));
-        break;
+        case 'hoist':
+            $whups_query->hoist($vars->get('path'));
+            break;
 
-    case 'branch':
-        $form = new Whups_Form_InsertBranch($vars);
-        break;
+        case 'branch':
+            $form = new Whups_Form_InsertBranch($vars);
+            break;
 
-    case 'not':
-        $path = $whups_query->insertBranch($vars->get('path'), Whups_Query::TYPE_NOT);
-        $vars->set('path', $path);
-        break;
+        case 'not':
+            $path = $whups_query->insertBranch($vars->get('path'), Whups_Query::TYPE_NOT);
+            $vars->set('path', $path);
+            break;
 
-    case 'and':
-        $path = $whups_query->insertBranch($vars->get('path'), Whups_Query::TYPE_AND);
-        $vars->set('path', $path);
-        break;
+        case 'and':
+            $path = $whups_query->insertBranch($vars->get('path'), Whups_Query::TYPE_AND);
+            $vars->set('path', $path);
+            break;
 
-    case 'or':
-        $path = $whups_query->insertBranch($vars->get('path'), Whups_Query::TYPE_OR);
-        $vars->set('path', $path);
-        break;
+        case 'or':
+            $path = $whups_query->insertBranch($vars->get('path'), Whups_Query::TYPE_OR);
+            $vars->set('path', $path);
+            break;
 
-    case 'edit':
-        try {
-            $qf = $whups_query->pathToForm($vars);
-        } catch (Whups_Exception $e) {
-            $notification->push($e->getMessage());
-            $qf = 'props';
-        }
-        $session->set('whups', 'query_form', $qf);
-        $vars->set('edit', true);
-        break;
+        case 'edit':
+            try {
+                $qf = $whups_query->pathToForm($vars);
+            } catch (Whups_Exception $e) {
+                $notification->push($e->getMessage());
+                $qf = 'props';
+            }
+            $session->set('whups', 'query_form', $qf);
+            $vars->set('edit', true);
+            break;
     }
 
     $vars->remove('qaction1');
@@ -108,28 +109,28 @@ if ($vars->get('qaction1') || $vars->get('qaction2')) {
     $action = $vars->get('action');
 
     switch ($action) {
-    case 'new':
-        $whups_query = $qManager->newQuery();
-        break;
+        case 'new':
+            $whups_query = $qManager->newQuery();
+            break;
 
-    case 'delete':
-        $showExtraForm = 'Whups_Form_Query_Delete';
-        $showEditQuery = false;
-        break;
+        case 'delete':
+            $showExtraForm = 'Whups_Form_Query_Delete';
+            $showEditQuery = false;
+            break;
 
-    case 'save':
-        $showExtraForm = 'Whups_Form_Query_ChooseNameForSave';
-        $showEditQuery = false;
-        break;
+        case 'save':
+            $showExtraForm = 'Whups_Form_Query_ChooseNameForSave';
+            $showEditQuery = false;
+            break;
 
-    case 'load':
-        $showExtraForm = 'Whups_Form_Query_ChooseNameForLoad';
-        $showEditQuery = false;
-        break;
+        case 'load':
+            $showExtraForm = 'Whups_Form_Query_ChooseNameForLoad';
+            $showEditQuery = false;
+            break;
     }
 }
 if ($vars->get('criteria') != '' &&
-    in_array($vars->get('criteria'), array('props', 'user', 'group', 'date', 'text', 'attribs'))) {
+    in_array($vars->get('criteria'), ['props', 'user', 'group', 'date', 'text', 'attribs'])) {
     $session->set('whups', 'query_form', $vars->get('criteria'));
 }
 
@@ -148,7 +149,7 @@ $criteriaTabs->addTab(_("_Date Criteria"), $queryurl, 'date');
 $criteriaTabs->addTab(_("_Text Criteria"), $queryurl, 'text');
 $criteriaTabs->addTab(_("Attri_bute Criteria"), $queryurl, 'attribs');
 
-$qops = array(
+$qops = [
     ''           => _("Choose Action:"),
     'deleteNode' => _("Delete"),
     'edit'       => _("Edit"),
@@ -156,17 +157,17 @@ $qops = array(
     'and'        => _("Insert And"),
     'or'         => _("Insert Or"),
     'not'        => _("Insert Not"),
-);
+];
 
 // Start the page.
 if ($whups_query->id) {
     $page_output->addLinkTag($whups_query->feedLink());
 }
 Whups::addFeedLink();
-$page_output->header(array(
-    'title' => _("Query Builder")
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => _("Query Builder"),
+]);
+$notification->notify(['listeners' => 'status']);
 
 echo $queryTabs->render(Horde_Util::getFormData('action', 'edit'));
 
@@ -182,34 +183,37 @@ $queryRenderer = new Whups_Form_Renderer_Query();
 if ($showEditQuery) {
     // Get our current form.
     switch ($session->get('whups', 'query_form')) {
-    default:
-        printf(_("Error: Unknown query form \"%s\", defaulting to properties"),
-               $session->get('whups', 'query_form'));
-        // Fall through.
+        default:
+            printf(
+                _("Error: Unknown query form \"%s\", defaulting to properties"),
+                $session->get('whups', 'query_form')
+            );
+            // Fall through.
 
-    case 'props':
-        $form = new Whups_Form_Query_PropertyCriterion($vars);
-        break;
+            // no break
+        case 'props':
+            $form = new Whups_Form_Query_PropertyCriterion($vars);
+            break;
 
-    case 'user':
-        $form = new Whups_Form_Query_UserCriterion($vars);
-        break;
+        case 'user':
+            $form = new Whups_Form_Query_UserCriterion($vars);
+            break;
 
-    case 'group':
-        $form = new Whups_Form_Query_GroupCriterion($vars);
-        break;
+        case 'group':
+            $form = new Whups_Form_Query_GroupCriterion($vars);
+            break;
 
-    case 'text':
-        $form = new Whups_Form_Query_TextCriterion($vars);
-        break;
+        case 'text':
+            $form = new Whups_Form_Query_TextCriterion($vars);
+            break;
 
-    case 'attribs':
-        $form = new Whups_Form_Query_AttributeCriterion($vars);
-        break;
+        case 'attribs':
+            $form = new Whups_Form_Query_AttributeCriterion($vars);
+            break;
 
-    case 'date':
-        $form = new Whups_Form_Query_DateCriterion($vars);
-        break;
+        case 'date':
+            $form = new Whups_Form_Query_DateCriterion($vars);
+            break;
     }
 
     $renderer = $form->getRenderer();

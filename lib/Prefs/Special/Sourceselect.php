@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Special prefs handling for the 'sourceselect' preference.
  *
@@ -26,10 +27,10 @@ class Whups_Prefs_Special_Sourceselect implements Horde_Core_Prefs_Ui_Special
     public function display(Horde_Core_Prefs_Ui $ui)
     {
         $search = Whups::getAddressbookSearchParams();
-        return Horde_Core_Prefs_Ui_Widgets::addressbooks(array(
+        return Horde_Core_Prefs_Ui_Widgets::addressbooks([
             'fields' => $search['fields'],
-            'sources' => $search['sources']
-        ));
+            'sources' => $search['sources'],
+        ]);
     }
 
     /**
