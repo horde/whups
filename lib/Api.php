@@ -182,7 +182,7 @@ class Whups_Api extends Horde_Registry_Api
             $f3 = var_export($form3->getErrors(), true);
             throw new Whups_Exception("Invalid arguments ($f3)");
         }
-
+        $info = [];
         $info = $form1->getInfo($vars, $info);
         $info = $form2->getInfo($vars, $info);
         $info = $form3->getInfo($vars, $info);
@@ -247,7 +247,7 @@ class Whups_Api extends Horde_Registry_Api
             throw new Whups_Exception(sprintf(_("Invalid ticket data supplied: %s"), $form_errors));
         }
 
-        $info = $editform->getInfo($vars, $info);
+        $info = $editform->getInfo($vars);
 
         $ticket->change('summary', $info['summary']);
         $ticket->change('state', $info['state']);

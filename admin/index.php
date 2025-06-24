@@ -1046,7 +1046,7 @@ switch ($vars->get('formname')) {
         $vars->set('action', 'type');
         if ($vars->get('formname') == 'whups_form_admin_editattributesteptwo' &&
             $form->validate($vars)) {
-            $info = $form->getInfo($vars, $info);
+            $info = $form->getInfo($vars);
             try {
                 $whups_driver->updateAttributeDesc(
                     $info['attribute'],

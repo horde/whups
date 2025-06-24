@@ -39,7 +39,7 @@ $doAssignForm = $GLOBALS['registry']->getAuth() &&
 if ($valid1 && $valid2 && $valid3 &&
     // Don't validate the assignment form if it isn't being used.
     (!$doAssignForm || $valid4)) {
-
+    $info = [];
     $info = $form1->getInfo($vars, $info);
     $info = $form2->getInfo($vars, $info);
     $info = $form3->getInfo($vars, $info);
@@ -93,7 +93,7 @@ if ($valid3 && $valid2 && $valid1) {
     echo '<br />';
 
     // Preserve an uploaded file if there was one.
-    $info = $form3->getInfo($vars, $info);
+    $info = $form3->getInfo($vars);
     if (!empty($info['newattachment']['name'])) {
         $file_name = $info['newattachment']['name'];
 

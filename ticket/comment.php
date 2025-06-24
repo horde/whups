@@ -49,7 +49,7 @@ $title = sprintf(_("Comment on %s"), '[#' . $id . '] ' . $ticket->get('summary')
 $commentForm = new Whups_Form_AddComment($vars, $title);
 if ($vars->get('formname') == 'whups_form_addcomment' &&
     $commentForm->validate($vars)) {
-    $info = $commentForm->getInfo($vars, $info);
+    $info = $commentForm->getInfo($vars);
 
     // Add comment.
     if (!empty($info['newcomment'])) {

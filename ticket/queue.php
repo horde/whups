@@ -69,7 +69,7 @@ if ($form == 'whups_form_queue_steptwo') {
 if ($form == 'whups_form_queue_stepthree') {
     $smform3 = new Whups_Form_Queue_StepThree($vars);
     if ($smform3->validate($vars)) {
-        $info = $smform3->getInfo($vars, $info);
+        $info = $smform3->getInfo($vars);
 
         $ticket->change('queue', $info['queue']);
         $ticket->change('type', $info['type']);

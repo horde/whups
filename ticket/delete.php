@@ -35,7 +35,7 @@ $deleteform = new Whups_Form_Ticket_Delete($vars, $title);
 if ($vars->get('formname') == 'whups_form_ticket_delete' &&
     $deleteform->validate($vars)) {
     if ($vars->get('submitbutton') == _("Delete")) {
-        $info = $deleteform->getInfo($vars, $info);
+        $info = $deleteform->getInfo($vars);
         try {
             $ticket->delete();
             $notification->push(sprintf(_("Ticket %d has been deleted."), $info['id']), 'horde.success');

@@ -54,7 +54,7 @@ $results = null;
 if (($vars->get('formname') || $vars->get('summary') || $vars->get('states') ||
      Horde_Util::getFormData('haveSearch', false)) && $form->validate($vars, true)) {
 
-    $info = $form->getInfo($vars, $info);
+    $info = $form->getInfo($vars);
     if ($vars->get('submitbutton') == _("Save as Query")) {
         $qManager = new Whups_Query_Manager();
         $whups_query = $qManager->newQuery();

@@ -22,7 +22,7 @@ $deleteform->setTitle($title);
 if ($vars->get('formname') == 'whups_form_ticket_deletemultiple' &&
     $deleteform->validate($vars)) {
     if ($vars->get('submitbutton') == _("Delete")) {
-        $info = $deleteform->getInfo($vars, $info);
+        $info = $deleteform->getInfo($vars);
         $tickets = @unserialize($info['tickets']);
         foreach ($tickets as $id) {
             try {
