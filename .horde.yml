@@ -32,6 +32,9 @@ license:
   identifier: BSD-2-Clause
   uri: http://www.horde.org/licenses/bsdl.php
 dependencies:
+  suggested:
+    composer:
+      horde/githubapiclient: ^1
   required:
     php: ^8.1
     composer:

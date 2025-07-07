@@ -314,4 +314,21 @@
    </configsection>
   </configsection>
  </configtab>
+ <configtab name="Webhooks" desc="Webhook Settings">
+  <configsection name="webhooks">
+   <configboolean name="enabled" desc="Enable Webhooks?">false</configboolean>
+   <configstring name="url" desc="Webhook URL to send data to"/>
+   <configstring name="secret" desc="Secret key for webhook authentication"/>
+   <configmultienum name="event_types" desc="Incoming Webhook Event Types">ticket_created
+    <values>
+     <value desc="Issue Or Pull Request Created">issue_created</value>
+     <value desc="Issue Or Pull Request Updated">issue_updated</value>
+     <value desc="Issue Or Pull Request Closed">issue_closed</value>
+     <value desc="New Comment">new_comment</value>
+     <value desc="New Commits">new_commits</value>
+    
+    </values>
+   </configmultienum>
+  </configsection>
+</configtab>
 </configuration>
