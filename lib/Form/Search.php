@@ -38,7 +38,7 @@ class Whups_Form_Search extends Horde_Form
                 }
             } else {
                 $modtype = 'invalid';
-                $queue_params = [_("There are no queues which you can search.")];
+                $queue_params = ['message' => _("There are no queues which you can search.")];
             }
             $this->addVariable(
                 _("Queue"),
