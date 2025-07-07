@@ -139,7 +139,7 @@ if (($vars->get('formname') || $vars->get('summary') || $vars->get('states') ||
     }
 }
 
-Whups::addFeedLink();
+//Whups::addFeedLink();
 $page_output->ajax = true;
 $page_output->header(array(
     'title' => _("Search")
