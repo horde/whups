@@ -14,13 +14,13 @@
  */
 
 /**
- * The Horde_Core_Ui_VarRenderer_whups class provides additional methods for
+ * The Whups_Ui_VarRenderer_Html class provides additional methods for
  * rendering Whups_Form_Type_whupsemail fields.
  *
  * @author  Jan Schneider <jan@horde.org>
  * @package Whups
  */
-class Horde_Core_Ui_VarRenderer_whups extends Horde_Core_Ui_VarRenderer_Html
+class Whups_Ui_VarRenderer_Html extends Horde_Core_Ui_VarRenderer_Html
 {
     public function _renderVarInput_whups_form_type_whupsemail($form, $var, $vars)
     {
