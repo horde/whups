@@ -25,7 +25,7 @@ $form2 = new Whups_Form_Ticket_CreateStepTwo($vars);
 $form3 = new Whups_Form_Ticket_CreateStepThree($vars);
 $form4 = new Whups_Form_Ticket_CreateStepFour($vars);
 $r = new Horde_Form_Renderer(
-    ['varrenderer_driver' => ['whups', 'whups']]
+    ['varrenderer_driver' => ['whups', 'html']]
 );
 
 $valid4 = $form4->validate($vars) &&
