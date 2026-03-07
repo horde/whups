@@ -37,7 +37,7 @@ class Whups_Application extends Horde_Registry_Application
 {
     /**
      */
-    public $version = '4.0.0-alpha9';
+    public $version = '4.0.0-alpha10';
 
     /**
      * Global variables defined:
@@ -122,10 +122,15 @@ class Whups_Application extends Horde_Registry_Application
         ];
         $manager = new Whups_Query_Manager();
         $queries = $manager->listQueries($registry->getAuth(), true);
+        $currentQuery = $session->get('whups', 'query');
+        // Extract ID if stored as object
+        if ($currentQuery instanceof Whups_Query) {
+            $currentQuery = $currentQuery->id;
+        }
         foreach ($queries as $id => $query) {
             $row = [
                 'selected' => strpos(strval(Horde::selfUrl()), $registry->get('webroot') . '/query') === 0 &&
-                    $id == $session->get('whups', 'query'),
+                    $id == $currentQuery,
                 'cssClass' => 'whups-sidebar-query',
                 'url' => Whups::urlFor('query', empty($query['slug']) ? ['id' => $id] : ['slug' => $query['slug']]),
                 'label' => $query['name'],

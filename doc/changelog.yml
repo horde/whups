@@ -1,4 +1,25 @@
 ---
+4.0.0-alpha10:
+  api: 4.0.0-alpha10
+  state:
+    release: alpha
+    api: alpha
+  date: 2026-03-07
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: |-
+    Merge pull request #3 from amulet1/fix_hook_class
+    Revert "fix: Make example hook only load if not yet loaded. Users should follow this example"
+    Merge pull request #2 from amulet1/autoload_renderer
+    fix: Modify VarRenderer class name to facilitate autoloading
+    Merge pull request #1 from jcdelepine/FRAMEWORK_6_0
+    Update whups.po
+    feat: update French translation and POT file for Whups
+    feat: Use routes framework for index.php and create a stub for a webhook receiver.
+    f
+    fix: Don't break form if no queues are configured
+    fix: Remove undefined $info parameter
 4.0.0-alpha9:
   api: 4.0.0-alpha1
   state:
