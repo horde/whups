@@ -55,7 +55,7 @@ Whups::addFeedLink();
 $page_output->addLinkTag($ticket->feedLink());
 $page_output->addScriptFile('tables.js', 'horde');
 $page_output->header([
-    'title' => sprintf(_("Attachments for %s"), '[#' . $id . '] ' . $ticket->get('summary')),
+    'title' => sprintf(_("Attachments for %s"), '[#' . $ticket->getId() . '] ' . $ticket->get('summary')),
 ]);
 $notification->notify(['listeners' => 'status']);
 echo Whups::getTicketTabs($vars, $ticket->getId())->render('attachments');
