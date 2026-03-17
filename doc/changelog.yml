@@ -1,4 +1,17 @@
 ---
+4.0.0-beta1:
+  api: 4.0.0-beta1
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-17
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: |-
+    fix: necessary alpha phase BC break in forms library
+    chore: commit metadata after release
+    fix: Don't make webhook related configs mandatory in whups config screen
 4.0.0-alpha11:
   api: 4.0.0-alpha11
   state:
