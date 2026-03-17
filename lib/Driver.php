@@ -163,7 +163,7 @@ abstract class Whups_Driver
                                     $field = new Horde_Form_Variable(
                                         $detail['human_name'],
                                         $type,
-                                        $form->getType(
+                                        Horde_Form_Type::create(
                                             $detail['type'],
                                             $detail['params']
                                         ),
