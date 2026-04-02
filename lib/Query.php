@@ -21,6 +21,8 @@
  *     'value'     => other argument to operator of criterion
  */
 
+use Horde\Util\Variables;
+
 /**
  * @package Whups
  */
@@ -215,7 +217,7 @@ class Whups_Query
      *
      * @params Horde_Variables
      */
-    public function getTabs(Horde_Variables $vars)
+    public function getTabs(Variables|Horde_Variables $vars)
     {
         // Create a few variables that are reused.
         $queryurl = Horde::url('query/index.php');
