@@ -13,6 +13,9 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Whups
  */
+
+use Horde\Util\Variables;
+
 class Whups_Ticket
 {
     /**
@@ -737,7 +740,7 @@ class Whups_Ticket
      *                               $vars var for saving later or otherwise
      *                               $form->validate() will fail
      */
-    public function setDetails(Horde_Variables $vars, $split_owners = false)
+    public function setDetails(Variables|Horde_Variables $vars, $split_owners = false)
     {
         $vars->set('id', $this->getId());
         foreach ($this->getDetails() as $varname => $value) {

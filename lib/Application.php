@@ -29,6 +29,8 @@ if (!defined('HORDE_BASE')) {
     }
 }
 
+use Horde\Util\Variables;
+
 /* Load the Horde Framework core (needed to autoload
  * Horde_Registry_Application::). */
 require_once HORDE_BASE . '/lib/core.php';
@@ -189,7 +191,7 @@ class Whups_Application extends Horde_Registry_Application
     /**
      * @throws Whups_Exception
      */
-    public function download(Horde_Variables $vars)
+    public function download(Variables|Horde_Variables $vars)
     {
         switch ($vars->actionID) {
             case 'download_file':
@@ -209,7 +211,7 @@ class Whups_Application extends Horde_Registry_Application
      *
      * @throws Whups_Exception
      */
-    protected function _downloadAttachment(Horde_Variables $vars)
+    protected function _downloadAttachment(Variables|Horde_Variables $vars)
     {
         global $injector, $whups_driver;
 
@@ -271,7 +273,7 @@ class Whups_Application extends Horde_Registry_Application
      *
      * @throws Whups_Exception
      */
-    protected function _downloadTicket(Horde_Variables $vars)
+    protected function _downloadTicket(Variables|Horde_Variables $vars)
     {
         global $conf, $injector, $page_output, $prefs, $whups_driver;
 
@@ -405,7 +407,7 @@ class Whups_Application extends Horde_Registry_Application
      *
      * @throws Whups_Exception
      */
-    protected function _downloadReport(Horde_Variables $vars)
+    protected function _downloadReport(Variables|Horde_Variables $vars)
     {
         global $injector, $whups_driver;
 
