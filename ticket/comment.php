@@ -95,6 +95,12 @@ require WHUPS_TEMPLATES . '/prevnext.inc';
 $tabs = Whups::getTicketTabs($vars, $id);
 echo $tabs->render('comment');
 
-$commentForm->renderActive(new Horde_Form_Renderer(), $vars, Horde::url('ticket/comment.php'), 'post');
+$commentForm->renderActive(
+    renderer: new Horde_Form_Renderer(),
+    vars: $vars,
+    action: Horde::url('ticket/comment.php'),
+    method: 'post',
+    enctype: 'multipart/form-data'
+);
 
 $page_output->footer();
