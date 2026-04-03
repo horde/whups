@@ -109,7 +109,13 @@ require WHUPS_TEMPLATES . '/prevnext.inc';
 
 echo Whups::getTicketTabs($vars, $id)->render('update');
 
-$editform->renderActive($editform->getRenderer(), $vars, Horde::url('ticket/update.php'), 'post');
+$editform->renderActive(
+    renderer: $editform->getRenderer(),
+    vars: $vars,
+    action: Horde::url('ticket/update.php'),
+    method: 'post',
+    enctype: 'multipart/form-data'
+);
 echo '<br class="spacer" />';
 
 $form = new Whups_Form_TicketDetails($vars, $ticket, $title);
