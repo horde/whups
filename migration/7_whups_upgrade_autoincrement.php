@@ -21,69 +21,58 @@ class WhupsUpgradeAutoIncrement extends Horde_Db_Migration_Base
     public function up()
     {
         $this->changeColumn('whups_tickets', 'ticket_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_tickets_seq', $this->tables())) {
             $this->dropTable('whups_tickets_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_queues', 'queue_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_queues_seq', $this->tables())) {
             $this->dropTable('whups_queues_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_types', 'type_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_types_seq', $this->tables())) {
             $this->dropTable('whups_types_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_states', 'state_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_states_seq', $this->tables())) {
             $this->dropTable('whups_states_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_replies', 'reply_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_replies_seq', $this->tables())) {
             $this->dropTable('whups_replies_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_attributes_desc', 'attribute_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_attributes_desc_seq', $this->tables())) {
             $this->dropTable('whups_attributes_desc_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_comments', 'comment_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_comments_seq', $this->tables())) {
             $this->dropTable('whups_comments_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_logs', 'log_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_logs_seq', $this->tables())) {
             $this->dropTable('whups_logs_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_priorities', 'priority_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_priorities_seq', $this->tables())) {
             $this->dropTable('whups_priorities_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_versions', 'version_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_version_seq', $this->tables())) {
             $this->dropTable('whups_version_seq');
-        } catch (Horde_Db_Exception $e) {
         }
 
         $this->changeColumn('whups_queries', 'query_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_queries_seq', $this->tables())) {
             $this->dropTable('whups_queries_seq');
-        } catch (Horde_Db_Exception $e) {
         }
     }
 

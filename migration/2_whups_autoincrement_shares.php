@@ -21,9 +21,8 @@ class WhupsAutoIncrementShares extends Horde_Db_Migration_Base
     public function up()
     {
         $this->changeColumn('whups_shares', 'share_id', 'autoincrementKey');
-        try {
+        if (in_array('whups_shares_seq', $this->tables())) {
             $this->dropTable('whups_shares_seq');
-        } catch (Horde_Db_Exception $e) {
         }
     }
 
