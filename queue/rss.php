@@ -88,9 +88,9 @@ foreach (array_keys($tickets) as $i) {
     $items[$i]['pubDate'] = htmlspecialchars(date('r', $tickets[$i]['timestamp']));
 }
 
-$template = $injector->createInstance('Horde_Template');
-$template->set('xsl', Horde_Themes::getFeedXsl());
-$template->set('pubDate', htmlspecialchars(date('r')));
+$view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
+$view->xsl = Horde_Themes::getFeedXsl();
+$view->pubDate = htmlspecialchars(date('r'));
 if (isset($type) && isset($queue['name'])) {
     $rss_title = sprintf(
         _("%s %s tickets in %s"),
@@ -113,16 +113,16 @@ if (isset($type) && isset($queue['name'])) {
 } else {
     $rss_title = sprintf(_("%s tickets in all queues"), $state_display);
 }
-$template->set('title', htmlspecialchars($rss_title));
-$template->set('items', $items, true);
-$template->set('url', Horde::url('queue/', true, -1)->add('id', $id));
-$template->set('rss_url', Horde::url('rss.php', true, -1)->add('id', $id));
+$view->title = htmlspecialchars($rss_title);
+$view->items = $items;
+$view->url = Horde::url('queue/', true, -1)->add('id', $id);
+$view->rss_url = Horde::url('rss.php', true, -1)->add('id', $id);
 if (isset($queue['name'])) {
     $description = sprintf(_("Open tickets in %s"), $queue['name']);
 } else {
     $description = _("Open tickets in all queues.");
 }
-$template->set('description', htmlspecialchars($description));
+$view->description = htmlspecialchars($description);
 
 $browser->downloadHeaders(($queue['name'] ?? 'horde') . '.rss', 'text/xml', true);
-echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');
+echo $view->render('items.rss');
