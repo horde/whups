@@ -54,17 +54,17 @@ foreach (array_keys($tickets) as $i) {
     $items[$i]['pubDate'] = htmlspecialchars(date('r', $tickets[$i]['timestamp']));
 }
 
-$template = $injector->createInstance('Horde_Template');
-$template->set('xsl', Horde_Themes::getFeedXsl());
-$template->set('pubDate', htmlspecialchars(date('r')));
-$template->set('title', htmlspecialchars($whups_query->name ? $whups_query->name : _("Query Results")));
-$template->set('items', $items, true);
+$view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
+$view->xsl = Horde_Themes::getFeedXsl();
+$view->pubDate = htmlspecialchars(date('r'));
+$view->title = htmlspecialchars($whups_query->name ? $whups_query->name : _("Query Results"));
+$view->items = $items;
 $url_param = isset($slug)
     ? ['slug' => $slug]
     : ['id' => Horde_Util::getFormData('query')];
-$template->set('url', Whups::urlFor('query', $url_param, true, -1));
-$template->set('rss_url', Whups::urlFor('query_rss', $url_param, true, -1));
-$template->set('description', htmlspecialchars(sprintf(_("Tickets matching the query \"%s\"."), $whups_query->name)));
+$view->url = Whups::urlFor('query', $url_param, true, -1);
+$view->rss_url = Whups::urlFor('query_rss', $url_param, true, -1);
+$view->description = htmlspecialchars(sprintf(_("Tickets matching the query \"%s\"."), $whups_query->name));
 
 $browser->downloadHeaders(($slug ?? 'query') . '.rss', 'text/xml', true);
-echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');
+echo $view->render('items.rss');
