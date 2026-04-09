@@ -3,7 +3,7 @@
 /**
  * Whups mail processing library.
  *
- * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -53,16 +53,16 @@ class Whups_Mail
 
         // Try to avoid bounces, auto-replies, and mailing list responses.
         $from = $headers->getValue('from') ?? '';
-        if (strpos($headers->getValue('Content-Type') ?? '', 'multipart/report') !== false ||
-            stripos($from, 'mailer-daemon@') !== false ||
-            stripos($from, 'postmaster@') !== false ||
-            !is_null($headers->getValue('X-Failed-Recipients')) ||
-            !is_null($headers->getValue('X-Autoreply-Domain')) ||
-            $headers->getValue('Auto-Submitted') == 'auto-replied' ||
-            $headers->getValue('Precedence') == 'auto_reply' ||
-            $headers->getValue('X-Precedence') == 'auto_reply' ||
-            $headers->getValue('X-Auto-Response-Suppress') == 'All' ||
-            $headers->getValue('X-List-Administrivia') == 'Yes') {
+        if (strpos($headers->getValue('Content-Type') ?? '', 'multipart/report') !== false
+            || stripos($from, 'mailer-daemon@') !== false
+            || stripos($from, 'postmaster@') !== false
+            || !is_null($headers->getValue('X-Failed-Recipients'))
+            || !is_null($headers->getValue('X-Autoreply-Domain'))
+            || $headers->getValue('Auto-Submitted') == 'auto-replied'
+            || $headers->getValue('Precedence') == 'auto_reply'
+            || $headers->getValue('X-Precedence') == 'auto_reply'
+            || $headers->getValue('X-Auto-Response-Suppress') == 'All'
+            || $headers->getValue('X-List-Administrivia') == 'Yes') {
             return true;
         }
         if ($reply_to = $headers->getValue('reply-to')) {

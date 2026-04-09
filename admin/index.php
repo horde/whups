@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -366,8 +366,8 @@ switch ($vars->get('formname')) {
     case 'whups_form_admin_editqueuesteptwo':
         $form = new Whups_Form_Admin_EditQueueStepTwo($vars);
 
-        if ($vars->get('formname') == 'whups_form_admin_editqueuesteptwo' &&
-            $form->validate($vars)) {
+        if ($vars->get('formname') == 'whups_form_admin_editqueuesteptwo'
+            && $form->validate($vars)) {
             try {
                 $whups_driver->updateQueue(
                     $vars->get('queue'),
@@ -968,8 +968,8 @@ switch ($vars->get('formname')) {
     case 'whups_form_admin_addattribute_reload':
         $form = new Whups_Form_Admin_AddAttribute($vars);
         $vars->set('action', 'type');
-        if ($vars->get('formname') == 'whups_form_admin_addattribute' &&
-            $form->validate($vars)) {
+        if ($vars->get('formname') == 'whups_form_admin_addattribute'
+            && $form->validate($vars)) {
 
             try {
                 $whups_driver->addAttributeDesc(
@@ -1044,8 +1044,8 @@ switch ($vars->get('formname')) {
     case 'whups_form_admin_editattributesteptwo_reload':
         $form = new Whups_Form_Admin_EditAttributeStepTwo($vars);
         $vars->set('action', 'type');
-        if ($vars->get('formname') == 'whups_form_admin_editattributesteptwo' &&
-            $form->validate($vars)) {
+        if ($vars->get('formname') == 'whups_form_admin_editattributesteptwo'
+            && $form->validate($vars)) {
             $info = $form->getInfo($vars);
             try {
                 $whups_driver->updateAttributeDesc(
@@ -1192,8 +1192,8 @@ switch ($vars->get('formname')) {
     case 'whups_form_admin_editreplysteptwo':
         $form = new Whups_Form_Admin_EditReplyStepTwo($vars);
         $vars->set('action', 'type');
-        if ($vars->get('formname') == 'whups_form_admin_editreplysteptwo' &&
-            $form->validate($vars)) {
+        if ($vars->get('formname') == 'whups_form_admin_editreplysteptwo'
+            && $form->validate($vars)) {
             try {
                 $whups_driver->updateReply(
                     $vars->get('reply'),

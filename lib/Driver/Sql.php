@@ -3,8 +3,8 @@
 /**
  * Whups backend driver for the Horde_Db abstraction layer.
  *
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -74,16 +74,16 @@ class Whups_Driver_Sql extends Whups_Driver
     /**
      * PSR-16 cache for metadata.
      *
-     * @var \Psr\SimpleCache\CacheInterface|null
+     * @var Psr\SimpleCache\CacheInterface|null
      */
     protected $_cache = null;
 
     /**
      * Sets the PSR-16 cache for metadata.
      *
-     * @param \Psr\SimpleCache\CacheInterface|null $cache
+     * @param Psr\SimpleCache\CacheInterface|null $cache
      */
-    public function setCache(?\Psr\SimpleCache\CacheInterface $cache): void
+    public function setCache(?Psr\SimpleCache\CacheInterface $cache): void
     {
         $this->_cache = $cache;
     }
@@ -144,8 +144,8 @@ class Whups_Driver_Sql extends Whups_Driver
     public function addQueue($name, $description, $slug = '', $email = '')
     {
         // Check for slug uniqueness.
-        if (strlen($slug) &&
-            $this->_db->selectValue('SELECT 1 FROM whups_queues WHERE queue_slug = ?', [$slug])) {
+        if (strlen($slug)
+            && $this->_db->selectValue('SELECT 1 FROM whups_queues WHERE queue_slug = ?', [$slug])) {
             throw new Whups_Exception(
                 _("That queue slug is already taken. Please select another.")
             );
@@ -1130,8 +1130,8 @@ class Whups_Driver_Sql extends Whups_Driver
             ? " AND whups_states.state_category = 'assigned'" : '';
 
         // If there are any state filters, add them in.
-        if ($nouc || $nores || $nonew || $noass ||
-            $uc || $res || $new || $ass || $cat) {
+        if ($nouc || $nores || $nonew || $noass
+            || $uc || $res || $new || $ass || $cat) {
             $where = $this->_addWhere($where, 1, "(whups_tickets.type_id = whups_states.type_id AND whups_tickets.state_id = whups_states.state_id$nouc$nores$nonew$noass$uc$res$new$ass$cat)");
         }
 
@@ -1170,17 +1170,17 @@ class Whups_Driver_Sql extends Whups_Driver
         if ($munge) {
             $myqueues = $GLOBALS['registry']->hasMethod('tickets/listQueues') == $GLOBALS['registry']->getApp();
             $myversions = $GLOBALS['registry']->hasMethod('tickets/listVersions') == $GLOBALS['registry']->getApp();
-            $fields = "$fields, " .
-                'whups_types.type_name AS type_name, ' .
-                'whups_states.state_name AS state_name, ' .
-                'whups_states.state_category AS state_category, ' .
-                'whups_priorities.priority_name AS priority_name';
+            $fields = "$fields, "
+                . 'whups_types.type_name AS type_name, '
+                . 'whups_states.state_name AS state_name, '
+                . 'whups_states.state_category AS state_category, '
+                . 'whups_priorities.priority_name AS priority_name';
 
-            $join .=
-                ' INNER JOIN whups_types ON whups_tickets.type_id = whups_types.type_id' .
-                ' INNER JOIN whups_states ON whups_tickets.state_id = whups_states.state_id' .
-                ' INNER JOIN whups_priorities ON whups_tickets.priority_id = whups_priorities.priority_id' .
-                ' INNER JOIN whups_states state2 ON whups_tickets.type_id = state2.type_id';
+            $join
+                .= ' INNER JOIN whups_types ON whups_tickets.type_id = whups_types.type_id'
+                . ' INNER JOIN whups_states ON whups_tickets.state_id = whups_states.state_id'
+                . ' INNER JOIN whups_priorities ON whups_tickets.priority_id = whups_priorities.priority_id'
+                . ' INNER JOIN whups_states state2 ON whups_tickets.type_id = state2.type_id';
 
             $groupby .= ', whups_types.type_name, whups_states.state_name, whups_states.state_category';
             if ($myversions) {
@@ -1302,8 +1302,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $result[0]['user_id_requester']
         );
 
-        if ($checkPerms &&
-            !in_array($result[0]['queue'], array_flip($queues))) {
+        if ($checkPerms
+            && !in_array($result[0]['queue'], array_flip($queues))) {
             throw new Horde_Exception_PermissionDenied(
                 sprintf(_("You do not have permission to access this ticket (%s)."), $ticket)
             );
@@ -3024,8 +3024,8 @@ class Whups_Driver_Sql extends Whups_Driver
         }
 
         if (!$withrequester) {
-            if (isset($users[$requester]) &&
-                (!$withowners || $owner_is_requester)) {
+            if (isset($users[$requester])
+                && (!$withowners || $owner_is_requester)) {
                 unset($users[$requester]);
             }
         } elseif (!empty($requester) && !isset($users[$requester])) {
@@ -3248,22 +3248,22 @@ class Whups_Driver_Sql extends Whups_Driver
         foreach ($attributes as $attribute) {
             $id = $attribute['attribute_id'];
             $results[$id] = $attribute;
-            $results[$id]['attribute_name'] =
-                $this->_fromBackend($attribute['attribute_name']);
+            $results[$id]['attribute_name']
+                = $this->_fromBackend($attribute['attribute_name']);
             if (empty($type)) {
-                $results[$id]['attribute_name'] .=
-                    ' (' . $attribute['type_name'] . ')';
+                $results[$id]['attribute_name']
+                    .= ' (' . $attribute['type_name'] . ')';
             }
-            $results[$id]['attribute_description'] =
-                $this->_fromBackend($attribute['attribute_description']);
-            $results[$id]['attribute_type'] =
-                empty($attribute['attribute_type'])
+            $results[$id]['attribute_description']
+                = $this->_fromBackend($attribute['attribute_description']);
+            $results[$id]['attribute_type']
+                = empty($attribute['attribute_type'])
                     ? 'text'
                     : $attribute['attribute_type'];
-            $results[$id]['attribute_params'] =
-                $this->_fromBackend(@unserialize($attribute['attribute_params']));
-            $results[$id]['attribute_required'] =
-                (bool) $attribute['attribute_required'];
+            $results[$id]['attribute_params']
+                = $this->_fromBackend(@unserialize($attribute['attribute_params']));
+            $results[$id]['attribute_required']
+                = (bool) $attribute['attribute_required'];
         }
 
         return $results;
@@ -3504,18 +3504,18 @@ class Whups_Driver_Sql extends Whups_Driver
         }
 
         foreach ($attributes as &$attribute) {
-            $attribute['attribute_name'] =
-                $this->_fromBackend($attribute['attribute_name']);
-            $attribute['attribute_description'] =
-                $this->_fromBackend($attribute['attribute_description']);
-            $attribute['attribute_type'] =
-                empty($attribute['attribute_type'])
+            $attribute['attribute_name']
+                = $this->_fromBackend($attribute['attribute_name']);
+            $attribute['attribute_description']
+                = $this->_fromBackend($attribute['attribute_description']);
+            $attribute['attribute_type']
+                = empty($attribute['attribute_type'])
                     ? 'text'
                     : $attribute['attribute_type'];
-            $attribute['attribute_params'] =
-                $this->_fromBackend(@unserialize($attribute['attribute_params']));
-            $attribute['attribute_required'] =
-                (bool) $attribute['attribute_required'];
+            $attribute['attribute_params']
+                = $this->_fromBackend(@unserialize($attribute['attribute_params']));
+            $attribute['attribute_required']
+                = (bool) $attribute['attribute_required'];
             $attribute['attribute_value'] = $this->_json_decode($attribute['attribute_value']);
         }
 
@@ -3708,10 +3708,10 @@ class Whups_Driver_Sql extends Whups_Driver
             if ($key === 'id') {
                 $info['ticket_id'] = $info['id'];
                 unset($info['id']);
-            } elseif ($key === 'state' ||
-                      $key === 'type' ||
-                      $key === 'queue' ||
-                      $key === 'priority') {
+            } elseif ($key === 'state'
+                      || $key === 'type'
+                      || $key === 'queue'
+                      || $key === 'priority') {
                 $info[$key . '_id'] = $info[$key];
                 unset($info[$key]);
             } elseif ($key === 'requester') {

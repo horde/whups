@@ -30,7 +30,12 @@ class Whups_Form_TicketDetails extends Horde_Form
         $grouped_fields = [$fields];
         $grouped_hook = false;
         try {
-            $grouped_fields = Horde::callHook(
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+             * @see Horde_Deprecated::callHook()
+             */
+$grouped_fields = Horde::callHook(
                 'group_fields',
                 [$ticket->get('type'), $fields],
                 'whups'
@@ -204,8 +209,8 @@ class Whups_Form_TicketDetails extends Horde_Form
                         break;
 
                     default:
-                        if (substr($field, 0, 10) == 'attribute_' &&
-                            isset($attributes[substr($field, 10)])) {
+                        if (substr($field, 0, 10) == 'attribute_'
+                            && isset($attributes[substr($field, 10)])) {
                             $attribute = $attributes[substr($field, 10)];
                             if (!$attribute['params']) {
                                 $attribute['params'] = [];

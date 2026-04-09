@@ -4,7 +4,7 @@
  * The Whups_Mime_Viewer_Zip class renders out the contents of ZIP files
  * in HTML format and allows downloading of extractable files.
  *
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (GPL). If you
  * did not receive this file, see http://www.horde.org/licenses/gpl.
@@ -93,9 +93,9 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
     {
         $name = preg_replace('/(&nbsp;)+$/', '', $val['name']);
 
-        if (!empty($val['size']) && (strstr($val['attr'], 'D') === false) &&
-            ((($val['method'] == 0x8) && Horde_Util::extensionExists('zlib')) ||
-             ($val['method'] == 0x0))) {
+        if (!empty($val['size']) && (strstr($val['attr'], 'D') === false)
+            && ((($val['method'] == 0x8) && Horde_Util::extensionExists('zlib'))
+             || ($val['method'] == 0x0))) {
             $mime_part = $this->_mimepart;
             $mime_part->setName(basename($name));
             $val['name'] = str_replace($name, Horde::url('view.php')->add(['actionID' => 'view_file', 'type' => Horde_Util::getFormData('type') ?? '', 'file' => Horde_Util::getFormData('file') ?? '', 'ticket' => Horde_Util::getFormData('ticket') ?? '', 'zip_attachment' => $key + 1])->link() . $name . '</a>', $val['name']);

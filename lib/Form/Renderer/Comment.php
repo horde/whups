@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -29,8 +29,8 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
         static $canUpdate, $comment_count = 0;
 
         if (!isset($canUpdate)) {
-            $canUpdate = $GLOBALS['registry']->getAuth() &&
-                Whups::hasPermission($vars->get('queue'), 'queue', 'update');
+            $canUpdate = $GLOBALS['registry']->getAuth()
+                && Whups::hasPermission($vars->get('queue'), 'queue', 'update');
         }
 
         $comment = '';
@@ -198,8 +198,8 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                         ['html' => true],
                         ['hideBlocks' => true]]
                 );
-            if ($prefs->getValue('autolink_tickets') &&
-                $conf['prefs']['autolink_terms']) {
+            if ($prefs->getValue('autolink_tickets')
+                && $conf['prefs']['autolink_terms']) {
                 // Replace existing links by tokens to avoid double linking.
                 $comment = preg_replace_callback(
                     '/<a.*?<\/a>/',
@@ -220,7 +220,12 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
 
             $comment_count++;
             if ($private) {
-                $comment_label = Horde::img('locked.png')
+                /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+$comment_label = Horde::img('locked.png')
                     . sprintf(_("Comment #%d (Private)"), $comment_count);
             } else {
                 $comment_label = sprintf(_("Comment #%d"), $comment_count);
@@ -235,7 +240,12 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
             // Admins can delete entries.
             $delete_link = '';
             if (Whups::hasPermission($vars->get('queue'), 'queue', Horde_Perms::DELETE)) {
-                $delete_link = Horde::url('ticket/delete_history.php')
+                /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+$delete_link = Horde::url('ticket/delete_history.php')
                     ->add(['transaction' => $transaction,
                         'id' => $vars->get('ticket_id'),
                         'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))])

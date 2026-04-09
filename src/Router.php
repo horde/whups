@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Horde\Whups;
 
 /**
@@ -9,6 +11,4 @@ namespace Horde\Whups;
  * @package  Whups
  * @author   Ralf Lang <ralf.lang@ralf-lang.de>
  */
-class Router
-{
-}
+class Router {}

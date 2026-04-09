@@ -220,8 +220,8 @@ class Whups_Api extends Horde_Registry_Api
         $ticket = Whups_Ticket::makeTicket((int) $ticket_id);
 
         // Check that we have permission to update the ticket
-        if (!$GLOBALS['registry']->getAuth() ||
-            !Whups::hasPermission($ticket->get('queue'), 'queue', 'update')) {
+        if (!$GLOBALS['registry']->getAuth()
+            || !Whups::hasPermission($ticket->get('queue'), 'queue', 'update')) {
             throw new Whups_Exception_PermissionDenied(_('You do not have permission to update this ticket.'));
         }
 
@@ -569,8 +569,8 @@ class Whups_Api extends Horde_Registry_Api
                 'ticket_id'         => $tickets[$i]['id'],
                 'completed'         => ($tickets[$i]['state_category'] == 'resolved'),
                 'assigned'          => ($tickets[$i]['state_category'] == 'assigned'),
-                'name'              => $tickets[$i]['queue_name'] . ' #' .
-                                       $tickets[$i]['id'] . ' - ' . $tickets[$i]['summary'],
+                'name'              => $tickets[$i]['queue_name'] . ' #'
+                                       . $tickets[$i]['id'] . ' - ' . $tickets[$i]['summary'],
                 'state'             => $tickets[$i]['state_name'],
                 'type'              => $tickets[$i]['type_name'],
                 'priority'          => $tickets[$i]['priority_name'],
@@ -602,7 +602,9 @@ class Whups_Api extends Horde_Registry_Api
         if (!empty($criteria['user'])) {
             if (is_array($criteria['user'])) {
                 $info['owner'] = array_map(
-                    function ($input) { return 'user:' . $input; },
+                    function ($input) {
+                        return 'user:' . $input;
+                    },
                     $criteria['user']
                 );
             } else {

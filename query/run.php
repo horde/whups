@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -37,8 +37,8 @@ Whups::addTopbarSearch();
 
 // If we have an error, or if we still don't have a query, or if we don't have
 // read permissions on the requested query, go to the initial Whups page.
-if (!isset($whups_query) ||
-    !$whups_query->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::READ)) {
+if (!isset($whups_query)
+    || !$whups_query->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::READ)) {
     if (isset($whups_query)) {
         $notification->push(_("Permission denied."), 'horde.error');
     }
@@ -86,7 +86,12 @@ if (!is_null($tickets)) {
         $params = empty($whups_query->slug)
             ? ['id' => $whups_query->id]
             : ['slug' => $whups_query->slug];
-        $subscription = Horde::link(
+        /**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+         * @deprecated Use Horde_Themes_Image::tag() instead
+         * @see Horde_Deprecated::img()
+         */
+$subscription = Horde::link(
             Whups::urlFor('query_rss', $params, true, -1),
             _("Subscribe to this query")
         )

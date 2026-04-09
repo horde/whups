@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Horde\Whups\Webhook;
+
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,9 +19,7 @@ class Github implements MiddlewareInterface
     public function __construct(
         private readonly StreamFactoryInterface $streamFactory,
         private readonly ResponseFactoryInterface $responseFactory
-    ) {
-
-    }
+    ) {}
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $returnCode = 200;

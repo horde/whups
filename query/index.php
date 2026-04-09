@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -129,8 +129,8 @@ if ($vars->get('qaction1') || $vars->get('qaction2')) {
             break;
     }
 }
-if ($vars->get('criteria') != '' &&
-    in_array($vars->get('criteria'), ['props', 'user', 'group', 'date', 'text', 'attribs'])) {
+if ($vars->get('criteria') != ''
+    && in_array($vars->get('criteria'), ['props', 'user', 'group', 'date', 'text', 'attribs'])) {
     $session->set('whups', 'query_form', $vars->get('criteria'));
 }
 

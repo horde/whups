@@ -18,7 +18,12 @@ class Whups_Scheduler extends Horde_Scheduler
         // See if we need to include the reminders config file.
         if (filemtime(WHUPS_BASE . '/config/reminders.php') > $this->_filestamp) {
             $this->_filestamp = $this->_runtime;
-            $this->_reminders = Horde::loadConfiguration('reminders.php', 'reminders', 'whups');
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+             * @deprecated Use $registry->loadConfigFile() instead
+             * @see Horde_Deprecated::loadConfiguration()
+             */
+$this->_reminders = Horde::loadConfiguration('reminders.php', 'reminders', 'whups');
         }
 
         foreach ($this->_reminders as $reminder) {

@@ -3,8 +3,8 @@
 /**
  * The whups query manager.
  *
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -30,8 +30,8 @@ class Whups_Query_Manager
      */
     public function __construct()
     {
-        $this->_shareManager =
-            $GLOBALS['injector']->getInstance('Horde_Core_Factory_Share')->create();
+        $this->_shareManager
+            = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Share')->create();
     }
 
     /**
@@ -161,8 +161,8 @@ class Whups_Query_Manager
                 // error.
                 throw new Whups_Exception($e);
             }
-            if ($share->get('name') != $query->name ||
-                $share->get('slug') != $query->slug) {
+            if ($share->get('name') != $query->name
+                || $share->get('slug') != $query->slug) {
                 $share->set('name', $query->name);
                 $share->set('slug', $query->slug);
                 $share->save();

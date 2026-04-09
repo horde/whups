@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -246,8 +246,8 @@ class Whups_Query
         }
         $tabs->addTab(_("E_xecute Query"), Horde::url('query/run.php'), 'run');
         $tabs->addTab(_("_Load Query"), $queryurl, 'load');
-        if ((!$this->id && $GLOBALS['registry']->getAuth()) ||
-            ($this->id && $edit)) {
+        if ((!$this->id && $GLOBALS['registry']->getAuth())
+            || ($this->id && $edit)) {
             $tabs->addTab(_("Sa_ve Query"), $queryurl, 'save');
         }
         if ($this->id && $delete) {
@@ -284,8 +284,8 @@ class Whups_Query
                     // Search for multiple ids.
                     $criteria = [];
                     foreach ($qobj['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            $child['criterion'] != Whups_Query::CRITERION_ID) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || $child['criterion'] != Whups_Query::CRITERION_ID) {
                             $criteria = false;
                             break;
                         }
@@ -300,12 +300,12 @@ class Whups_Query
                     $criteria = [];
                     $operator = $value = null;
                     foreach ($qobj['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            ($child['criterion'] != Whups_Query::CRITERION_OWNERS &&
-                             $child['criterion'] != Whups_Query::CRITERION_REQUESTER &&
-                             $child['criterion'] != Whups_Query::CRITERION_ADDED_COMMENT) ||
-                            (isset($operator) && $operator != $child['operator']) ||
-                            (isset($value) && $value != $child['value'])) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || ($child['criterion'] != Whups_Query::CRITERION_OWNERS
+                             && $child['criterion'] != Whups_Query::CRITERION_REQUESTER
+                             && $child['criterion'] != Whups_Query::CRITERION_ADDED_COMMENT)
+                            || (isset($operator) && $operator != $child['operator'])
+                            || (isset($value) && $value != $child['value'])) {
                             $criteria = false;
                             break;
                         }
@@ -336,11 +336,11 @@ class Whups_Query
                     $criteria = [];
                     $operator = $value = null;
                     foreach ($qobj['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            ($child['criterion'] != Whups_Query::CRITERION_COMMENT &&
-                             $child['criterion'] != Whups_Query::CRITERION_SUMMARY) ||
-                            (isset($operator) && $operator != $child['operator']) ||
-                            (isset($value) && $value != $child['value'])) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || ($child['criterion'] != Whups_Query::CRITERION_COMMENT
+                             && $child['criterion'] != Whups_Query::CRITERION_SUMMARY)
+                            || (isset($operator) && $operator != $child['operator'])
+                            || (isset($value) && $value != $child['value'])) {
                             $criteria = false;
                             break;
                         }
@@ -366,11 +366,11 @@ class Whups_Query
                     $criteria = [];
                     $operator = $value = null;
                     foreach ($qobj['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            $child['criterion'] != Whups_Query::CRITERION_ATTRIBUTE ||
-                            (isset($operator) && $operator != $child['operator']) ||
-                            (isset($value) && $value != $child['value']) ||
-                            !in_array($child['cvalue'], $attribs)) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || $child['criterion'] != Whups_Query::CRITERION_ATTRIBUTE
+                            || (isset($operator) && $operator != $child['operator'])
+                            || (isset($value) && $value != $child['value'])
+                            || !in_array($child['cvalue'], $attribs)) {
                             $criteria = false;
                             break;
                         }
@@ -392,12 +392,12 @@ class Whups_Query
                     // Search for date criteria.
                     $criteria = false;
                     foreach ($qobj['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            ($child['criterion'] != Whups_Query::CRITERION_TIMESTAMP &&
-                             $child['criterion'] != Whups_Query::CRITERION_UPDATED &&
-                             $child['criterion'] != Whups_Query::CRITERION_RESOLVED &&
-                             $child['criterion'] != Whups_Query::CRITERION_ASSIGNED &&
-                             $child['criterion'] != Whups_Query::CRITERION_DUE)) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || ($child['criterion'] != Whups_Query::CRITERION_TIMESTAMP
+                             && $child['criterion'] != Whups_Query::CRITERION_UPDATED
+                             && $child['criterion'] != Whups_Query::CRITERION_RESOLVED
+                             && $child['criterion'] != Whups_Query::CRITERION_ASSIGNED
+                             && $child['criterion'] != Whups_Query::CRITERION_DUE)) {
                             $criteria = false;
                             break;
                         }
@@ -442,11 +442,11 @@ class Whups_Query
                     }
 
                     // Search for version criterion.
-                    if (count($qobj['children']) == 2 &&
-                        $qobj['children'][0]['type'] == Whups_Query::TYPE_CRITERION &&
-                        $qobj['children'][0]['criterion'] == Whups_Query::CRITERION_QUEUE &&
-                        $qobj['children'][1]['type'] == Whups_Query::TYPE_CRITERION &&
-                        $qobj['children'][1]['criterion'] == Whups_Query::CRITERION_VERSION) {
+                    if (count($qobj['children']) == 2
+                        && $qobj['children'][0]['type'] == Whups_Query::TYPE_CRITERION
+                        && $qobj['children'][0]['criterion'] == Whups_Query::CRITERION_QUEUE
+                        && $qobj['children'][1]['type'] == Whups_Query::TYPE_CRITERION
+                        && $qobj['children'][1]['criterion'] == Whups_Query::CRITERION_VERSION) {
                         $vars->set('queue', $qobj['children'][0]['value']);
                         $vars->set('version', $qobj['children'][1]['value']);
                         return 'props';
@@ -462,8 +462,8 @@ class Whups_Query
                 if ($parent && $parent['type'] == Whups_Query::TYPE_OR) {
                     $multiple = [];
                     foreach ($parent['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            $child['criterion'] != Whups_Query::CRITERION_ID) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || $child['criterion'] != Whups_Query::CRITERION_ID) {
                             $multiple = false;
                             break;
                         }
@@ -480,10 +480,10 @@ class Whups_Query
                 return 'props';
 
             case Whups_Query::CRITERION_QUEUE:
-                if ($parent && $parent['type'] == Whups_Query::TYPE_AND &&
-                    count($parent['children']) == 2 &&
-                    $parent['children'][1]['type'] == Whups_Query::TYPE_CRITERION &&
-                    $parent['children'][1]['criterion'] == Whups_Query::CRITERION_VERSION) {
+                if ($parent && $parent['type'] == Whups_Query::TYPE_AND
+                    && count($parent['children']) == 2
+                    && $parent['children'][1]['type'] == Whups_Query::TYPE_CRITERION
+                    && $parent['children'][1]['criterion'] == Whups_Query::CRITERION_VERSION) {
                     array_pop($path);
                     $vars->set('path', Whups_Query::pathToString($path));
                     $vars->set('version', $parent['children'][1]['value']);
@@ -518,12 +518,12 @@ class Whups_Query
                 $criteria = false;
                 if ($parent && $parent['type'] == Whups_Query::TYPE_AND) {
                     foreach ($parent['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            ($child['criterion'] != Whups_Query::CRITERION_TIMESTAMP &&
-                             $child['criterion'] != Whups_Query::CRITERION_UPDATED &&
-                             $child['criterion'] != Whups_Query::CRITERION_RESOLVED &&
-                             $child['criterion'] != Whups_Query::CRITERION_ASSIGNED &&
-                             $child['criterion'] != Whups_Query::CRITERION_DUE)) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || ($child['criterion'] != Whups_Query::CRITERION_TIMESTAMP
+                             && $child['criterion'] != Whups_Query::CRITERION_UPDATED
+                             && $child['criterion'] != Whups_Query::CRITERION_RESOLVED
+                             && $child['criterion'] != Whups_Query::CRITERION_ASSIGNED
+                             && $child['criterion'] != Whups_Query::CRITERION_DUE)) {
                             $criteria = false;
                             break;
                         }
@@ -577,8 +577,8 @@ class Whups_Query
                 if ($parent && $parent['type'] == Whups_Query::TYPE_OR) {
                     $criteria = [];
                     foreach ($parent['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            !in_array($child['criterion'], [Whups_Query::CRITERION_OWNERS, Whups_Query::CRITERION_REQUESTER, Whups_Query::CRITERION_ADDED_COMMENT])) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || !in_array($child['criterion'], [Whups_Query::CRITERION_OWNERS, Whups_Query::CRITERION_REQUESTER, Whups_Query::CRITERION_ADDED_COMMENT])) {
                             $criteria = false;
                             break;
                         }
@@ -620,11 +620,11 @@ class Whups_Query
                     $criteria = [];
                     $operator = $value = null;
                     foreach ($parent['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            ($child['criterion'] != Whups_Query::CRITERION_COMMENT &&
-                             $child['criterion'] != Whups_Query::CRITERION_SUMMARY) ||
-                            (isset($operator) && $operator != $child['operator']) ||
-                            (isset($value) && $value != $child['value'])) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || ($child['criterion'] != Whups_Query::CRITERION_COMMENT
+                             && $child['criterion'] != Whups_Query::CRITERION_SUMMARY)
+                            || (isset($operator) && $operator != $child['operator'])
+                            || (isset($value) && $value != $child['value'])) {
                             $criteria = false;
                             break;
                         }
@@ -661,11 +661,11 @@ class Whups_Query
                     $criteria = [];
                     $operator = $value = null;
                     foreach ($parent['children'] as $child) {
-                        if ($child['type'] != Whups_Query::TYPE_CRITERION ||
-                            $child['criterion'] != Whups_Query::CRITERION_ATTRIBUTE ||
-                            (isset($operator) && $operator != $child['operator']) ||
-                            (isset($value) && $value != $child['value']) ||
-                            !in_array($child['cvalue'], $attribs)) {
+                        if ($child['type'] != Whups_Query::TYPE_CRITERION
+                            || $child['criterion'] != Whups_Query::CRITERION_ATTRIBUTE
+                            || (isset($operator) && $operator != $child['operator'])
+                            || (isset($value) && $value != $child['value'])
+                            || !in_array($child['cvalue'], $attribs)) {
                             $criteria = false;
                             break;
                         }
@@ -710,8 +710,8 @@ class Whups_Query
                 $qobj = &$qobj['children'][$path[$i]];
             }
 
-            if (!empty($qobj['children'][$path[$count]]['value']) &&
-                $this->_getParameterName($qobj['children'][$path[$count]]['value']) !== null) {
+            if (!empty($qobj['children'][$path[$count]]['value'])
+                && $this->_getParameterName($qobj['children'][$path[$count]]['value']) !== null) {
                 unset($this->parameters[array_search($pn, $this->parameters)]);
             }
 
@@ -756,8 +756,8 @@ class Whups_Query
             $qobj = &$qobj['children'][$path[$i]];
         }
 
-        if (!isset($qobj['children']) ||
-            !is_array($qobj['children'])) {
+        if (!isset($qobj['children'])
+            || !is_array($qobj['children'])) {
             $qobj['children'] = [];
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file defines reminders sent automatically by Whups (if you schedule the
  * whups-reminders script in your crontab).
@@ -38,12 +39,12 @@
  *                 resolved tickets.
  */
 
-$reminders = array();
+$reminders = [];
 
 // Here's an example entry that will send reminders for queue number 1
 // every Monday at 5am, for everything but resolved tickets.
-$reminders[] = array('frequency' => '* 0 5 1-31&Mon *',
-                     'server_name' => 'www.example.com',
-                     'queue' => 1,
-                     'unassigned' => false,
-                     'category' => array('unconfirmed', 'new', 'assigned'));
+$reminders[] = ['frequency' => '* 0 5 1-31&Mon *',
+    'server_name' => 'www.example.com',
+    'queue' => 1,
+    'unassigned' => false,
+    'category' => ['unconfirmed', 'new', 'assigned']];
