@@ -55,7 +55,7 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
     protected function _title()
     {
         if ($queue = $this->_getQueue()) {
-            return sprintf(_("Open Tickets in %s"), htmlspecialchars($queue['name']));
+            return sprintf(_("Open Tickets in %s"), htmlspecialchars($queue['name'] ?? ''));
         }
 
         return $this->getName();

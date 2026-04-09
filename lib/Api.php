@@ -33,7 +33,7 @@ class Whups_Api extends Horde_Registry_Api
         if (substr($path, 0, 5) == 'whups') {
             $path = substr($path, 5);
         }
-        $path = trim($path, '/');
+        $path = trim($path ?? '', '/');
 
         if (empty($path)) {
             $results = [
@@ -636,7 +636,7 @@ class Whups_Api extends Horde_Registry_Api
         $att_list = $whups_driver->getTicketAttributesWithNames($ticket_ids);
         foreach ($att_list as $attributes) {
             foreach ($attributes as $k => $v) {
-                if (strtolower($v['attribute_name']) == _("estimated time")) {
+                if (strtolower($v['attribute_name'] ?? '') == _("estimated time")) {
                     if (!empty($v['attribute_value'])) {
                         $result[$k['id']]['estimate'] = (float) $v['attribute_value'];
                     }
