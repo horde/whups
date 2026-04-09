@@ -4,7 +4,7 @@
  * This file contains all Horde_Core_Ui_VarRenderer extensions for Whups
  * specific form fields.
  *
- * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2008-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -32,7 +32,12 @@ class Whups_Ui_VarRenderer_Html extends Horde_Core_Ui_VarRenderer_Html
                 ['id' => $name]
             );
 
-        return sprintf(
+        /**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+         * @deprecated Use Horde_Themes_Image::tag() instead
+         * @see Horde_Deprecated::img()
+         */
+return sprintf(
             '<input type="text" name="%s" id="%s" value="%s" autocomplete="off"%s />',
             $name,
             $name,

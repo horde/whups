@@ -3,8 +3,8 @@
 /**
  * Base class for Whups' storage backend.
  *
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -46,8 +46,8 @@ abstract class Whups_Driver
         $ticket_id = $ticket->getId();
 
         foreach ($info as $name => $value) {
-            if (substr($name, 0, 10) == 'attribute_' &&
-                $ticket->get($name) != $value) {
+            if (substr($name, 0, 10) == 'attribute_'
+                && $ticket->get($name) != $value) {
                 $attribute_id = (int) substr($name, 10);
                 $serialized = $this->_serializeAttribute($value);
                 $ticket->change($name, $value);
@@ -88,8 +88,8 @@ abstract class Whups_Driver
         $rows = $this->_getHistory($ticket_id);
         $attributes = $attributeDetails = [];
         foreach ($rows as $row) {
-            if ($row['log_type'] == 'attribute' &&
-                strpos($row['log_value'] ?? '', ':')) {
+            if ($row['log_type'] == 'attribute'
+                && strpos($row['log_value'] ?? '', ':')) {
                 $attributes[(int) $row['log_value']] = $row['attribute_name'];
             }
             if ($row['log_type'] == 'type') {
@@ -483,9 +483,9 @@ abstract class Whups_Driver
             }
         }
 
-        if ($opts['ticket'] &&
-            ($queue = $this->getQueue($opts['ticket']->get('queue'))) &&
-             !empty($queue['email'])) {
+        if ($opts['ticket']
+            && ($queue = $this->getQueue($opts['ticket']->get('queue')))
+             && !empty($queue['email'])) {
             $mail->addHeader('From', $queue['email']);
         } elseif (!empty($conf['mail']['from_addr'])) {
             $mail->addHeader('From', $conf['mail']['from_addr']);
@@ -565,16 +565,16 @@ abstract class Whups_Driver
                 continue;
             }
 
-            if ($details &&
-                $details['type'] == 'user') {
+            if ($details
+                && $details['type'] == 'user') {
                 $user_prefs = $GLOBALS['injector']
                     ->getInstance('Horde_Core_Factory_Prefs')
                     ->create('whups', ['user' => $details['user']]);
-                if (($details['user'] == $registry->getAuth() ||
-                     (!$registry->getAuth())) &&
-                    $from['type'] == 'user' &&
-                    $details['user'] == $from['user'] &&
-                    $user_prefs->getValue('email_others_only')) {
+                if (($details['user'] == $registry->getAuth()
+                     || (!$registry->getAuth()))
+                    && $from['type'] == 'user'
+                    && $details['user'] == $from['user']
+                    && $user_prefs->getValue('email_others_only')) {
                     continue;
                 }
             }
@@ -615,11 +615,11 @@ abstract class Whups_Driver
                     $opts['ticket']->getId()
                 );
 
-                if (!$attachmentAdded &&
-                    !strlen(trim($formattedComment ?? '')) &&
-                    $details &&
-                    $details['type'] == 'user' &&
-                    $user_prefs->getValue('email_comments_only')) {
+                if (!$attachmentAdded
+                    && !strlen(trim($formattedComment ?? ''))
+                    && $details
+                    && $details['type'] == 'user'
+                    && $user_prefs->getValue('email_comments_only')) {
                     continue;
                 }
 

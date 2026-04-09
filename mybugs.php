@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -13,8 +13,8 @@ require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
 // Get refresh interval.
-if ($r_time = $prefs->getValue('summary_refresh_time') &&
-    !$browser->hasFeature('xmlhttpreq')) {
+if ($r_time = $prefs->getValue('summary_refresh_time')
+    && !$browser->hasFeature('xmlhttpreq')) {
     $page_output->metaRefresh($r_time, Horde::url('mybugs.php'));
 }
 

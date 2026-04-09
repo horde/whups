@@ -3,7 +3,7 @@
 /**
  * Whups RSS feed.
  *
- * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2008-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -27,9 +27,9 @@ if ($slug) {
     $whups_query = $qManager->getQuery(Horde_Util::getFormData('query'));
 }
 
-if (!isset($whups_query) ||
-    $whups_query->parameters ||
-    !$whups_query->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::READ)) {
+if (!isset($whups_query)
+    || $whups_query->parameters
+    || !$whups_query->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::READ)) {
     exit;
 }
 

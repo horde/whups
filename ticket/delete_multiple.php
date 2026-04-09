@@ -3,7 +3,7 @@
 /**
  * Handles the form to delete multiple tickets.
  *
- * Copyright 2016-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2016-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -19,8 +19,8 @@ $deleteform = new Whups_Form_Ticket_DeleteMultiple($vars);
 $title = sprintf(_("Delete %d tickets?"), count($deleteform->getTickets()));
 $deleteform->setTitle($title);
 
-if ($vars->get('formname') == 'whups_form_ticket_deletemultiple' &&
-    $deleteform->validate($vars)) {
+if ($vars->get('formname') == 'whups_form_ticket_deletemultiple'
+    && $deleteform->validate($vars)) {
     if ($vars->get('submitbutton') == _("Delete")) {
         $info = $deleteform->getInfo($vars);
         $tickets = @unserialize($info['tickets']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MIME Viewer configuration for Whups.
  *
@@ -13,17 +14,17 @@
  * use var/config/whups/mime_drivers-servername.php.
  */
 
-$mime_drivers = array(
+$mime_drivers = [
     /* Zip File archive viewer. */
-    'zip' => array(
-        'handles' => array(
+    'zip' => [
+        'handles' => [
             'application/x-compressed',
             'application/x-zip-compressed',
             'application/zip',
             'x-extension/zip',
-        ),
-        'icons' => array(
-            'default' => 'compressed.png'
-        )
-    )
-);
+        ],
+        'icons' => [
+            'default' => 'compressed.png',
+        ],
+    ],
+];

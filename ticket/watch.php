@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -25,8 +25,8 @@ Whups::addTopbarSearch();
 $addform = new Whups_Form_AddListener($vars, _("Add Watcher"));
 $delform = new Whups_Form_DeleteListener($vars, _("Remove Watcher"));
 
-if ($vars->get('formname') == 'whups_form_addlistener' &&
-    $addform->validate($vars)) {
+if ($vars->get('formname') == 'whups_form_addlistener'
+    && $addform->validate($vars)) {
     $info = $addform->getInfo($vars);
     try {
         $whups_driver->addListener($id, '**' . $info['add_listener']);
@@ -83,6 +83,11 @@ if ($owners) {
     $owners = [];
 }
 $delurl = Horde::url('ticket/watch.php')->add('id', $id);
+/**
+ * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+ * @deprecated Use Horde_Themes_Image::tag() instead
+ * @see Horde_Deprecated::img()
+ */
 $delimg = Horde::img('delete.png');
 
 $r = new Horde_Form_Renderer();

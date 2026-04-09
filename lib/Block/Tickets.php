@@ -64,8 +64,8 @@ class Whups_Block_Tickets extends Horde_Core_Block
             foreach (Whups::getSearchResultColumns('block', $columns) as $column) {
                 $thevalue = Whups::formatColumn($ticket, $column);
                 $sortval = '';
-                if ($column == 'timestamp' || $column == 'due' ||
-                    substr($column, 0, 5) == 'date_') {
+                if ($column == 'timestamp' || $column == 'due'
+                    || substr($column, 0, 5) == 'date_') {
                     $sortval = (strlen($ticket[$column] ?? '') ? ' sortval="' . $ticket[$column] . '"' : '');
                 }
 
