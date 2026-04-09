@@ -32,21 +32,6 @@ class Whups_Ui_VarRenderer_Html extends Horde_Core_Ui_VarRenderer_Html
                 ['id' => $name]
             );
 
-        /**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-/**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-        /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
         return sprintf(
             '<input type="text" name="%s" id="%s" value="%s" autocomplete="off"%s />',
             $name,
@@ -55,7 +40,7 @@ class Whups_Ui_VarRenderer_Html extends Horde_Core_Ui_VarRenderer_Html
             $this->_getActionScripts($form, $var)
         )
                     . '<span id="' . $name . '_loading_img" style="display:none;">'
-                    . Horde::img('loading.gif', _("Loading..."))
+                    . Horde_Themes_Image::tag('loading.gif', ['alt' => _("Loading...")])
                     . '</span>';
     }
 

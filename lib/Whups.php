@@ -368,22 +368,11 @@ class Whups
     {
         $templates = [];
 
-        /**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
-         * @deprecated Use $registry->loadConfigFile() instead
-         * @see Horde_Deprecated::loadConfiguration()
-         */
-/**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
-         * @deprecated Use $registry->loadConfigFile() instead
-         * @see Horde_Deprecated::loadConfiguration()
-         */
-        /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
-                 * @deprecated Use $registry->loadConfigFile() instead
-                 * @see Horde_Deprecated::loadConfiguration()
-                 */
-        $_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
+        $_templates = $GLOBALS['registry']->loadConfigFile(
+            'templates.php',
+            '_templates',
+            'whups'
+        )->config['_templates'];
         foreach ($_templates as $name => $info) {
             if ($info['type'] == $type) {
                 $templates[$name] = $info['name'];
@@ -885,26 +874,11 @@ class Whups
         if ($html) {
             $name = htmlspecialchars($name);
             if ($details['type'] == 'group') {
-                /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-/**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-                /**
-                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                 * @deprecated Use Horde_Themes_Image::tag() instead
-                                 * @see Horde_Deprecated::img()
-                                 */
-                $name = Horde::img(
+                $name = Horde_Themes_Image::tag(
                     'group.png',
-                    !empty($details['name'])
+                    ['alt' => !empty($details['name'])
                                                    ? $details['name']
-                                                   : $details['user']
+                                                   : $details['user']]
                 )
                                     . $name;
             }
@@ -1116,21 +1090,6 @@ class Whups
     {
         global $injector, $registry;
 
-        /**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-/**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-        /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
         $links = [
             'view' => Horde::url('view.php')
                 ->add([
@@ -1149,26 +1108,11 @@ class Whups
                 ]
             )
                 ->link()
-                . Horde::img('download.png', _("Download")) . '</a>',
+                . Horde_Themes_Image::tag('download.png', ['alt' => _("Download")]) . '</a>',
         ];
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
-            /**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-             * @deprecated Use Horde_Themes_Image::tag() instead
-             * @see Horde_Deprecated::img()
-             */
-/**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-             * @deprecated Use Horde_Themes_Image::tag() instead
-             * @see Horde_Deprecated::img()
-             */
-            /**
-                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                         * @deprecated Use Horde_Themes_Image::tag() instead
-                         * @see Horde_Deprecated::img()
-                         */
             $links['delete'] = Horde::url('ticket/delete_attachment.php')
                             ->add(
                                 [
@@ -1183,7 +1127,7 @@ class Whups
                                     . addslashes(_("Permanently delete original message?"))
                                     . '\');',
                             ])
-                            . Horde::img('delete.png', _("Delete message")) . '</a>';
+                            . Horde_Themes_Image::tag('delete.png', ['alt' => _("Delete message")]) . '</a>';
         }
 
         return $links;
@@ -1270,44 +1214,14 @@ class Whups
         $url_params = ['actionID' => 'download_file',
             'file' => $file['name'],
             'ticket' => $ticket];
-        /**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-/**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-        /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
         $links['download']
                     = $registry->downloadUrl($file['name'], $url_params)->link([
                         'title' => $file['name'],
                     ])
-                    . Horde::img('download.png', _("Download")) . '</a>';
+                    . Horde_Themes_Image::tag('download.png', ['alt' => _("Download")]) . '</a>';
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
-            /**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-             * @deprecated Use Horde_Themes_Image::tag() instead
-             * @see Horde_Deprecated::img()
-             */
-/**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-             * @deprecated Use Horde_Themes_Image::tag() instead
-             * @see Horde_Deprecated::img()
-             */
-            /**
-                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                         * @deprecated Use Horde_Themes_Image::tag() instead
-                         * @see Horde_Deprecated::img()
-                         */
             $links['delete'] = Horde::url('ticket/delete_attachment.php')
                             ->add(
                                 [
@@ -1324,9 +1238,9 @@ class Whups
                                     )
                                     . '\');',
                             ])
-                            . Horde::img(
+                            . Horde_Themes_Image::tag(
                                 'delete.png',
-                                sprintf(_("Delete %s"), $file['name'])
+                                ['alt' => sprintf(_("Delete %s"), $file['name'])]
                             )
                             . '</a>';
         }

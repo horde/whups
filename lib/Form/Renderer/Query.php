@@ -238,99 +238,24 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
         $count = count($more);
 
         if ($count == 0) {
-            /**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-             * @deprecated Use Horde_Themes_Image::tag() instead
-             * @see Horde_Deprecated::img()
-             */
-/**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-             * @deprecated Use Horde_Themes_Image::tag() instead
-             * @see Horde_Deprecated::img()
-             */
-            /**
-                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                         * @deprecated Use Horde_Themes_Image::tag() instead
-                         * @see Horde_Deprecated::img()
-                         */
             // Always have at least one image to make sure all rows are the
             // same height.
-            $space = Horde::img('tree/blank.png', '', $fimgattrs) . "\n";
+            $space = Horde_Themes_Image::tag('tree/blank.png', ['attr' => $fimgattrs]) . "\n";
         } else {
             for ($i = 0; $i < $count - 1; $i++) {
                 if ($more[$i] == 1) {
-                    /**
-                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                     * @deprecated Use Horde_Themes_Image::tag() instead
-                     * @see Horde_Deprecated::img()
-                     */
-/**
-                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                     * @deprecated Use Horde_Themes_Image::tag() instead
-                     * @see Horde_Deprecated::img()
-                     */
-                    /**
-                                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                         * @deprecated Use Horde_Themes_Image::tag() instead
-                                         * @see Horde_Deprecated::img()
-                                         */
-                    $space .= Horde::img('tree/line.png', '|', $imgattrs) . "\n";
+                    $space .= Horde_Themes_Image::tag('tree/line.png', ['alt' => '|', 'attr' => $imgattrs]) . "\n";
                 } else {
-                    /**
-                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                     * @deprecated Use Horde_Themes_Image::tag() instead
-                     * @see Horde_Deprecated::img()
-                     */
-/**
-                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                     * @deprecated Use Horde_Themes_Image::tag() instead
-                     * @see Horde_Deprecated::img()
-                     */
-                    /**
-                                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                         * @deprecated Use Horde_Themes_Image::tag() instead
-                                         * @see Horde_Deprecated::img()
-                                         */
-                    $space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
+                    $space .= Horde_Themes_Image::tag('tree/blank.png', ['attr' => $imgattrs]) . "\n";
                 }
             }
         }
 
         if ($count > 0) {
             if ($more[$count - 1] == 1) {
-                /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-/**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-                /**
-                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                 * @deprecated Use Horde_Themes_Image::tag() instead
-                                 * @see Horde_Deprecated::img()
-                                 */
-                $space .= Horde::img('tree/join.png', '+', $imgattrs) . "\n";
+                $space .= Horde_Themes_Image::tag('tree/join.png', ['alt' => '+', 'attr' => $imgattrs]) . "\n";
             } else {
-                /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-/**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-                /**
-                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                 * @deprecated Use Horde_Themes_Image::tag() instead
-                                 * @see Horde_Deprecated::img()
-                                 */
-                $space .= Horde::img('tree/joinbottom.png', '-', $imgattrs) . "\n";
+                $space .= Horde_Themes_Image::tag('tree/joinbottom.png', ['alt' => '-', 'attr' => $imgattrs]) . "\n";
             }
         }
 

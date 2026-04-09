@@ -434,28 +434,13 @@ class Whups_Application extends Horde_Registry_Application
      */
     protected function _downloadReport(Variables|Horde_Variables $vars)
     {
-        global $whups_driver;
+        global $registry, $whups_driver;
 
-        /**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
-         * @deprecated Use $registry->loadConfigFile() instead
-         * @see Horde_Deprecated::loadConfiguration()
-         */
-/**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
-         * @deprecated Use $registry->loadConfigFile() instead
-         * @see Horde_Deprecated::loadConfiguration()
-         */
-        /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
-                 * @deprecated Use $registry->loadConfigFile() instead
-                 * @see Horde_Deprecated::loadConfiguration()
-                 */
-        $_templates = Horde::loadConfiguration(
+        $_templates = $registry->loadConfigFile(
             'templates.php',
             '_templates',
             'whups'
-        );
+        )->config['_templates'];
         $tpl = $vars->template;
         if (empty($_templates[$tpl])) {
             throw new Whups_Exception(
