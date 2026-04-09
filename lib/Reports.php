@@ -276,7 +276,7 @@ class Whups_Reports
                         $dataset[0][] = $diff;
                     } else {
                         if (!isset($info[$group_by])) {
-                            continue;
+                            continue 2;
                         }
                         if (!isset($dataset[$info[$group_by]])) {
                             $dataset[$info[$group_by]] = [];
