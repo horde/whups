@@ -33,6 +33,10 @@ $stats = ['avg|open' => _("Average time a ticket is unresolved"),
 $queues = Whups::permissionsFilter($whups_driver->getQueues(), 'queue', Horde_Perms::READ);
 
 $reporter = new Whups_Reports($whups_driver);
+$reportCache = $whups_driver->getReportCache();
+if ($reportCache !== null) {
+    $reporter->setCache($reportCache);
+}
 
 $page_output->header([
     'title' => _("Reports"),

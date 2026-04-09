@@ -64,6 +64,17 @@ class Whups_Application extends Horde_Registry_Application
             $GLOBALS['whups_driver']->setCache($cache);
         }
 
+        /* Inject report cache into driver if configured. */
+        $reportLifetime = (int) ($GLOBALS['conf']['cache']['report_lifetime'] ?? 0);
+        if ($reportLifetime > 0) {
+            $cacheDir = $cacheDir ?? ($GLOBALS['conf']['cache']['params']['dir'] ?? '');
+            $reportCache = new HordeCache(
+                new FileStorage(dir: $cacheDir),
+                ['namespace' => 'whups_reports', 'lifetime' => $reportLifetime],
+            );
+            $GLOBALS['whups_driver']->setReportCache($reportCache);
+        }
+
         /* Set the timezone variable, if available. */
         $GLOBALS['registry']->setTimeZone();
     }

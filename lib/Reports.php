@@ -41,6 +41,13 @@ class Whups_Reports
     protected $_alltickets;
 
     /**
+     * PSR-16 cache for report output.
+     *
+     * @var Psr\SimpleCache\CacheInterface|null
+     */
+    protected $_cache = null;
+
+    /**
      * Constructor
      *
      * @param Whups_Driver $whups_driver  The backend driver
@@ -53,6 +60,14 @@ class Whups_Reports
     }
 
     /**
+     * Sets the PSR-16 cache for report output.
+     */
+    public function setCache(?Psr\SimpleCache\CacheInterface $cache): void
+    {
+        $this->_cache = $cache;
+    }
+
+    /**
      * Get the data set
      *
      * @param string $report  The report
@@ -61,6 +76,15 @@ class Whups_Reports
      */
     public function getDataSet($report)
     {
+        /* Check persistent cache. */
+        $cacheKey = 'whups.report.dataset.' . md5($report ?? '');
+        if ($this->_cache !== null) {
+            $cached = $this->_cache->get($cacheKey);
+            if ($cached !== null) {
+                return unserialize($cached);
+            }
+        }
+
         $operation = 'inc';
         $state = null;
         [$type, $field] = explode('|', $report ?? '');
@@ -112,6 +136,9 @@ class Whups_Reports
 
         // Sort
         ksort($dataset);
+
+        // Store in persistent cache.
+        $this->_cache?->set($cacheKey, serialize($dataset));
 
         // Return the final data.
         return $dataset;
@@ -170,6 +197,15 @@ class Whups_Reports
      */
     public function getTime($stat, $group_by = null)
     {
+        /* Check persistent cache. */
+        $cacheKey = 'whups.report.time.' . md5(($stat ?? '') . '|' . ($group_by ?? ''));
+        if ($this->_cache !== null) {
+            $cached = $this->_cache->get($cacheKey);
+            if ($cached !== null) {
+                return unserialize($cached);
+            }
+        }
+
         [$operation, $state] = explode('|', $stat ?? '');
 
         $tickets = $this->_getTicketSet('closed');
@@ -228,6 +264,9 @@ class Whups_Reports
         if (empty($group_by)) {
             $dataset = $dataset[0];
         }
+
+        /* Store in persistent cache. */
+        $this->_cache?->set($cacheKey, serialize($dataset));
 
         return $dataset;
     }
