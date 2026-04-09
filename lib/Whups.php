@@ -83,91 +83,48 @@ class Whups
         $full = false,
         $append_session = 0
     ) {
-        $rewrite = isset($GLOBALS['conf']['urls']['pretty'])
-            && $GLOBALS['conf']['urls']['pretty'] == 'rewrite';
+        $mapper = $GLOBALS['injector']->getInstance('Horde\Routes\Mapper');
 
         switch ($controller) {
-            case 'queue':
-                if ($rewrite) {
-                    if (is_array($data)) {
-                        if (empty($data['slug'])) {
-                            $slug = (int) $data['id'];
-                        } else {
-                            $slug = $data['slug'];
-                        }
-                    } else {
-                        $slug = (int) $data;
-                    }
-                    return Horde::url('queue/' . $slug, $full, $append_session);
-                } else {
-                    if (is_array($data)) {
-                        $id = $data['id'];
-                    } else {
-                        $id = $data;
-                    }
-                    return Horde::url('queue/?id=' . $id, $full, $append_session);
-                }
-                break;
-
             case 'ticket':
-                $id = (int) $data;
-                if ($rewrite) {
-                    return Horde::url('ticket/' . $id, $full, $append_session);
-                } else {
-                    return Horde::url('ticket/?id=' . $id, $full, $append_session);
-                }
+                $url = $mapper->utils->urlFor('TicketView', ['id' => (int) $data]);
                 break;
 
             case 'ticket_rss':
-                $id = (int) $data;
-                if ($rewrite) {
-                    return Horde::url('ticket/' . $id . '/rss', $full, $append_session);
-                } else {
-                    return Horde::url('ticket/rss.php?id=' . $id, $full, $append_session);
-                }
+                $url = $mapper->utils->urlFor('TicketRss', ['id' => (int) $data]);
                 break;
 
             case 'ticket_action':
-                [$controller, $id] = $data;
-                if ($rewrite) {
-                    return Horde::url('ticket/' . $id . '/' . $controller, $full, $append_session = 0);
-                } else {
-                    return Horde::url('ticket/' . $controller . '.php?id=' . $id, $full, $append_session = 0);
-                }
-
-                // no break
-            case 'query':
-            case 'query_rss':
-                if ($rewrite) {
-                    if (is_array($data)) {
-                        if (isset($data['slug'])) {
-                            $slug = $data['slug'];
-                        } else {
-                            $slug = $data['id'];
-                        }
-                    } else {
-                        $slug = (int) $data;
-                    }
-                    $url = 'query/' . $slug;
-                    if ($controller == 'query_rss') {
-                        $url .= '/rss';
-                    }
-                    return Horde::url($url, $full, $append_session);
-                } else {
-                    if (is_array($data)) {
-                        if (isset($data['slug'])) {
-                            $param = ['slug' => $data['slug']];
-                        } else {
-                            $param = ['query' => $data['id']];
-                        }
-                    } else {
-                        $param = ['query' => $data];
-                    }
-                    $url = $controller == 'query' ? 'query/run.php' : 'query/rss.php';
-                    return Horde::url($url, $full, $append_session)->add($param);
-                }
+                [$action, $id] = $data;
+                $url = $mapper->utils->urlFor('TicketAction', ['id' => (int) $id, 'action' => $action]);
                 break;
+
+            case 'queue':
+                $slug = is_array($data)
+                    ? ($data['slug'] ?? (int) $data['id'])
+                    : (int) $data;
+                $url = $mapper->utils->urlFor('QueueView', ['slug' => $slug]);
+                break;
+
+            case 'query':
+                $slug = is_array($data)
+                    ? ($data['slug'] ?? $data['id'])
+                    : (int) $data;
+                $url = $mapper->utils->urlFor('QueryRun', ['slug' => $slug]);
+                break;
+
+            case 'query_rss':
+                $slug = is_array($data)
+                    ? ($data['slug'] ?? $data['id'])
+                    : (int) $data;
+                $url = $mapper->utils->urlFor('QueryRss', ['slug' => $slug]);
+                break;
+
+            default:
+                return new Horde_Url('');
         }
+
+        return new Horde_Url($url, $full);
     }
 
     /**
