@@ -31,6 +31,7 @@ if (!defined('HORDE_BASE')) {
 
 use Horde\Cache\Cache as HordeCache;
 use Horde\Cache\FileStorage;
+use Horde\Date\Format as DateFormat;
 use Horde\Util\Variables;
 
 /* Load the Horde Framework core (needed to autoload
@@ -389,10 +390,10 @@ class Whups_Application extends Horde_Registry_Application
                     : htmlspecialchars(
                         Whups::formatUser($transaction['user_id'])
                     );
-                $time = strftime(
+                $time = DateFormat::formatDate(
+                    $transaction['timestamp'],
                     $prefs->getValue('date_format') . ' '
-                        . $prefs->getValue('time_format'),
-                    $transaction['timestamp']
+                        . $prefs->getValue('time_format')
                 );
                 echo <<<COMMENT
                     <table width="100%">
@@ -445,6 +446,11 @@ class Whups_Application extends Horde_Registry_Application
          * @deprecated Use $registry->loadConfigFile() instead
          * @see Horde_Deprecated::loadConfiguration()
          */
+        /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+                 * @deprecated Use $registry->loadConfigFile() instead
+                 * @see Horde_Deprecated::loadConfiguration()
+                 */
         $_templates = Horde::loadConfiguration(
             'templates.php',
             '_templates',
@@ -477,7 +483,7 @@ class Whups_Application extends Horde_Registry_Application
                 true,
                 -1
             );
-            $tickets[$id]['date_created'] = strftime('%x', $info['timestamp']);
+            $tickets[$id]['date_created'] = DateFormat::formatDate($info['timestamp'], '%x');
             $tickets[$id]['owners'] = Whups::getOwners($info['id']);
             $tickets[$id]['owner_name'] = Whups::getOwners(
                 $info['id'],
@@ -490,15 +496,15 @@ class Whups_Application extends Horde_Registry_Application
                 false
             );
             if (!empty($info['date_assigned'])) {
-                $tickets[$id]['date_assigned'] = strftime(
-                    '%x',
-                    $info['date_assigned']
+                $tickets[$id]['date_assigned'] = DateFormat::formatDate(
+                    $info['date_assigned'],
+                    '%x'
                 );
             }
             if (!empty($info['date_resolved'])) {
-                $tickets[$id]['date_resolved'] = strftime(
-                    '%x',
-                    $info['date_resolved']
+                $tickets[$id]['date_resolved'] = DateFormat::formatDate(
+                    $info['date_resolved'],
+                    '%x'
                 );
             }
 
@@ -519,7 +525,7 @@ class Whups_Application extends Horde_Registry_Application
 
         $view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/reports']);
         $view->tickets = $tickets;
-        $view->now = strftime('%x');
+        $view->now = DateFormat::formatDate(time(), '%x');
         $view->values = Whups::getSearchResultColumns(null, true);
 
         return [

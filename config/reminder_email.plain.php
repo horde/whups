@@ -20,7 +20,7 @@
 
 <?php echo _("Ticket #") ?><?php echo $ticket['id'] ?>: <?php echo $ticket['summary'] ?>
 
-<?php echo _("Opened:") ?> <?php echo strftime('%a %d %B', $ticket['timestamp']) ?><?php echo Horde_Form_Type_date::getAgo($ticket['timestamp']) ?>
+<?php echo _("Opened:") ?> <?php echo Horde\Date\Format::formatDate($ticket['timestamp'], '%a %d %B') ?><?php echo Horde_Form_Type_date::getAgo($ticket['timestamp']) ?>
 
 <?php echo _("State:") ?> <?php echo $ticket['state_name'] ?>
 

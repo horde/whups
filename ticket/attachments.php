@@ -12,6 +12,8 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+use Horde\Date\Format as DateFormat;
+
 $vars = Horde_Variables::getDefaultVariables();
 $ticket = Whups::getCurrentTicket();
 
@@ -32,8 +34,10 @@ if ($files) {
         $view->attachments[] = array_merge(
             [
                 'timestamp' => $file['timestamp'],
-                'date' => strftime($format[0], $file['timestamp'])
-                    . ' ' . strftime($format[1], $file['timestamp']),
+                'date' => DateFormat::formatDate(
+                    $file['timestamp'],
+                    $format[0] . ' ' . $format[1]
+                ),
                 'user' => Whups::formatUser(
                     Whups::getUserAttributes($file['user_id']),
                     true,
