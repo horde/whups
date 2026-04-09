@@ -46,14 +46,14 @@ foreach (array_keys($tickets) as $i) {
     $items[$i]['pubDate'] = htmlspecialchars(date('r', $tickets[$i]['timestamp']));
 }
 
-$template = $injector->createInstance('Horde_Template');
-$template->set('xsl', Horde_Themes::getFeedXsl());
-$template->set('pubDate', htmlspecialchars(date('r')));
-$template->set('title', _("Search Results"));
-$template->set('items', $items, true);
-$template->set('url', Horde::url('search.php'));
-$template->set('rss_url', Horde::selfUrl());
-$template->set('description', _("Search Results"));
+$view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
+$view->xsl = Horde_Themes::getFeedXsl();
+$view->pubDate = htmlspecialchars(date('r'));
+$view->title = _("Search Results");
+$view->items = $items;
+$view->url = Horde::url('search.php');
+$view->rss_url = Horde::selfUrl();
+$view->description = _("Search Results");
 
 $browser->downloadHeaders('search.rss', 'text/xml', true);
-echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');
+echo $view->render('items.rss');

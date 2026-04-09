@@ -20,26 +20,7 @@ $_templates['html-simple'] = array(
     'name' => _("Simple HTML Report"),
     'sortby' => array('type_name', 'timestamp'),
     'sortdir' => array(0, 1),
-    'template' => '<table>
-<tr>
-  <th>#</th>
-  <th>Type</th>
-  <th>Owners</th>
-  <th>Open Date</th>
-  <th>Description</th>
-</tr>
-
-<loop:tickets>
-<tr>
-  <td><a href="<tag:tickets.link />"><tag:tickets.id /></a></td>
-  <td><tag:tickets.type_name /></td>
-  <td><tag:tickets.owner_name /></td>
-  <td><tag:tickets.date_created /></td>
-  <td><tag:tickets.summary /></td>
-</tr>
-</loop:tickets>
-
-</table>'
+    'view_template' => 'html-simple',
 );
 
 $_templates['csv'] = array(
@@ -47,10 +28,7 @@ $_templates['csv'] = array(
     'name' => _("Comma Separated Values (CSV file)"),
     'filename' => 'report.csv',
     'callback' => '_csvQuote',
-    'template' => 'ID,Summary,State,Type,Priority,Queue,Version,Owners,Created,Assigned,Resolved<loop:tickets>
-<tag:tickets.id />,<tag:tickets.summary />,<tag:tickets.state_name />,<tag:tickets.type_name />,<tag:tickets.priority_name />,<tag:tickets.queue_name />,<tag:tickets.version_name />,<tag:tickets.owner_name />,<tag:tickets.date_created />,<tag:tickets.date_assigned />,<tag:tickets.date_resolved />
-</loop:tickets>
-'
+    'view_template' => 'csv',
 );
 
 if (!function_exists('_csvQuote')) {

@@ -409,7 +409,7 @@ class Whups_Application extends Horde_Registry_Application
      */
     protected function _downloadReport(Variables|Horde_Variables $vars)
     {
-        global $injector, $whups_driver;
+        global $whups_driver;
 
         $_templates = Horde::loadConfiguration(
             'templates.php',
@@ -483,13 +483,13 @@ class Whups_Application extends Horde_Registry_Application
                 ?? null
         );
 
-        $template = $injector->createInstance('Horde_Template');
-        $template->set('tickets', $tickets);
-        $template->set('now', strftime('%x'));
-        $template->set('values', Whups::getSearchResultColumns(null, true));
+        $view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/reports']);
+        $view->tickets = $tickets;
+        $view->now = strftime('%x');
+        $view->values = Whups::getSearchResultColumns(null, true);
 
         return [
-            'data' => $template->parse($_templates[$tpl]['template']),
+            'data' => $view->render($_templates[$tpl]['view_template']),
             'name' => $_templates[$tpl]['filename']
                 ?? 'report.html',
         ];
