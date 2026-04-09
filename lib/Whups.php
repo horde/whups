@@ -371,7 +371,12 @@ class Whups
          * @deprecated Use $registry->loadConfigFile() instead
          * @see Horde_Deprecated::loadConfiguration()
          */
-$_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
+/**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+         * @deprecated Use $registry->loadConfigFile() instead
+         * @see Horde_Deprecated::loadConfiguration()
+         */
+        $_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
         foreach ($_templates as $name => $info) {
             if ($info['type'] == $type) {
                 $templates[$name] = $info['name'];
@@ -878,13 +883,18 @@ $_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
-$name = Horde::img(
+/**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+                $name = Horde::img(
                     'group.png',
                     !empty($details['name'])
-                                   ? $details['name']
-                                   : $details['user']
+                                                   ? $details['name']
+                                                   : $details['user']
                 )
-                    . $name;
+                                    . $name;
             }
         }
 
@@ -1099,7 +1109,12 @@ $name = Horde::img(
          * @deprecated Use Horde_Themes_Image::tag() instead
          * @see Horde_Deprecated::img()
          */
-$links = [
+/**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+         * @deprecated Use Horde_Themes_Image::tag() instead
+         * @see Horde_Deprecated::img()
+         */
+        $links = [
             'view' => Horde::url('view.php')
                 ->add([
                     'actionID' => 'view_message',
@@ -1127,21 +1142,26 @@ $links = [
              * @deprecated Use Horde_Themes_Image::tag() instead
              * @see Horde_Deprecated::img()
              */
-$links['delete'] = Horde::url('ticket/delete_attachment.php')
-                ->add(
-                    [
-                        'message' => $message,
-                        'id' => $ticket,
-                        'url' => Horde::selfUrl(true, false, true),
-                    ]
-                )
-                ->link([
-                    'title' => _("Delete Message"),
-                    'onclick' => 'return window.confirm(\''
-                        . addslashes(_("Permanently delete original message?"))
-                        . '\');',
-                ])
-                . Horde::img('delete.png', _("Delete message")) . '</a>';
+/**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+             * @deprecated Use Horde_Themes_Image::tag() instead
+             * @see Horde_Deprecated::img()
+             */
+            $links['delete'] = Horde::url('ticket/delete_attachment.php')
+                            ->add(
+                                [
+                                    'message' => $message,
+                                    'id' => $ticket,
+                                    'url' => Horde::selfUrl(true, false, true),
+                                ]
+                            )
+                            ->link([
+                                'title' => _("Delete Message"),
+                                'onclick' => 'return window.confirm(\''
+                                    . addslashes(_("Permanently delete original message?"))
+                                    . '\');',
+                            ])
+                            . Horde::img('delete.png', _("Delete message")) . '</a>';
         }
 
         return $links;
@@ -1233,11 +1253,16 @@ $links['delete'] = Horde::url('ticket/delete_attachment.php')
          * @deprecated Use Horde_Themes_Image::tag() instead
          * @see Horde_Deprecated::img()
          */
-$links['download']
-            = $registry->downloadUrl($file['name'], $url_params)->link([
-                'title' => $file['name'],
-            ])
-            . Horde::img('download.png', _("Download")) . '</a>';
+/**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+         * @deprecated Use Horde_Themes_Image::tag() instead
+         * @see Horde_Deprecated::img()
+         */
+        $links['download']
+                    = $registry->downloadUrl($file['name'], $url_params)->link([
+                        'title' => $file['name'],
+                    ])
+                    . Horde::img('download.png', _("Download")) . '</a>';
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
@@ -1246,27 +1271,32 @@ $links['download']
              * @deprecated Use Horde_Themes_Image::tag() instead
              * @see Horde_Deprecated::img()
              */
-$links['delete'] = Horde::url('ticket/delete_attachment.php')
-                ->add(
-                    [
-                        'file' => $file['name'],
-                        'id' => $ticket,
-                        'url' => Horde::signUrl(Horde::selfUrl(true, false, true)),
-                    ]
-                )
-                ->link([
-                    'title' => sprintf(_("Delete %s"), $file['name']),
-                    'onclick' => 'return window.confirm(\''
-                        . addslashes(
-                            sprintf(_("Permanently delete %s?"), $file['name'])
-                        )
-                        . '\');',
-                ])
-                . Horde::img(
-                    'delete.png',
-                    sprintf(_("Delete %s"), $file['name'])
-                )
-                . '</a>';
+/**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+             * @deprecated Use Horde_Themes_Image::tag() instead
+             * @see Horde_Deprecated::img()
+             */
+            $links['delete'] = Horde::url('ticket/delete_attachment.php')
+                            ->add(
+                                [
+                                    'file' => $file['name'],
+                                    'id' => $ticket,
+                                    'url' => Horde::signUrl(Horde::selfUrl(true, false, true)),
+                                ]
+                            )
+                            ->link([
+                                'title' => sprintf(_("Delete %s"), $file['name']),
+                                'onclick' => 'return window.confirm(\''
+                                    . addslashes(
+                                        sprintf(_("Permanently delete %s?"), $file['name'])
+                                    )
+                                    . '\');',
+                            ])
+                            . Horde::img(
+                                'delete.png',
+                                sprintf(_("Delete %s"), $file['name'])
+                            )
+                            . '</a>';
         }
 
         return $links;

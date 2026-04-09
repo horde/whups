@@ -91,6 +91,33 @@ class Whups_Reports
         if (substr($type, 0, 1) == '@') {
             [$type, $operation, $state] = explode(':', substr($type, 1));
         }
+
+        /* Try SQL-level aggregation for simple counts on non-user fields.
+         * User fields (user_id_*, owner) need PHP-side formatting and
+         * owner expansion, so they fall through to the PHP path. */
+        if ($this->_backend instanceof Whups_Driver_DriverBasedReporting
+            && $operation === 'inc'
+            && $state === null
+            && $field !== 'owner'
+            && substr($field, 0, 7) !== 'user_id'
+        ) {
+            $queueIds = array_keys(
+                Whups::permissionsFilter($this->_backend->getQueues(), 'queue')
+            );
+            $dataset = $this->_backend->getTicketCountByField(
+                $type,
+                $field,
+                $queueIds,
+            );
+            ksort($dataset);
+
+            /* Store in persistent cache. */
+            $this->_cache?->set($cacheKey, serialize($dataset));
+
+            return $dataset;
+        }
+
+        /* Fallback: load all tickets into PHP. */
         $tickets = $this->_getTicketSet($type, ($field == 'owner'));
 
         if (substr($field, 0, 7) == 'user_id' || $field == 'owner') {
@@ -208,6 +235,25 @@ class Whups_Reports
 
         [$operation, $state] = explode('|', $stat ?? '');
 
+        /* Try SQL-level aggregation if the driver supports it. */
+        if ($this->_backend instanceof Whups_Driver_DriverBasedReporting) {
+            $queueIds = array_keys(
+                Whups::permissionsFilter($this->_backend->getQueues(), 'queue')
+            );
+            $dataset = $this->_backend->getAggregateTime(
+                $operation,
+                $state,
+                $queueIds,
+                $group_by,
+            );
+
+            /* Store in persistent cache. */
+            $this->_cache?->set($cacheKey, serialize($dataset));
+
+            return $dataset;
+        }
+
+        /* Fallback: load all tickets into PHP. */
         $tickets = $this->_getTicketSet('closed');
         if (!count($tickets)) {
             throw new Whups_Exception(_("There is no data for this report."));

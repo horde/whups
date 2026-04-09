@@ -225,8 +225,13 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
-$comment_label = Horde::img('locked.png')
-                    . sprintf(_("Comment #%d (Private)"), $comment_count);
+/**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+                $comment_label = Horde::img('locked.png')
+                                    . sprintf(_("Comment #%d (Private)"), $comment_count);
             } else {
                 $comment_label = sprintf(_("Comment #%d"), $comment_count);
             }
@@ -245,13 +250,18 @@ $comment_label = Horde::img('locked.png')
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
-$delete_link = Horde::url('ticket/delete_history.php')
-                    ->add(['transaction' => $transaction,
-                        'id' => $vars->get('ticket_id'),
-                        'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))])
-                    ->link(['title' => _("Delete entry"), 'onclick' => 'return window.confirm(\'' . addslashes(_("Permanently delete entry?")) . '\');'])
-                    . Horde::img('delete.png', _("Delete entry"))
-                    . '</a>';
+/**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+                $delete_link = Horde::url('ticket/delete_history.php')
+                                    ->add(['transaction' => $transaction,
+                                        'id' => $vars->get('ticket_id'),
+                                        'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))])
+                                    ->link(['title' => _("Delete entry"), 'onclick' => 'return window.confirm(\'' . addslashes(_("Permanently delete entry?")) . '\');'])
+                                    . Horde::img('delete.png', _("Delete entry"))
+                                    . '</a>';
             }
 
             Horde::startBuffer();

@@ -67,7 +67,7 @@ class Whups_Application extends Horde_Registry_Application
         /* Inject report cache into driver if configured. */
         $reportLifetime = (int) ($GLOBALS['conf']['cache']['report_lifetime'] ?? 0);
         if ($reportLifetime > 0) {
-            $cacheDir = $cacheDir ?? ($GLOBALS['conf']['cache']['params']['dir'] ?? '');
+            $cacheDir ??= ($GLOBALS['conf']['cache']['params']['dir'] ?? '');
             $reportCache = new HordeCache(
                 new FileStorage(dir: $cacheDir),
                 ['namespace' => 'whups_reports', 'lifetime' => $reportLifetime],
@@ -440,7 +440,12 @@ class Whups_Application extends Horde_Registry_Application
          * @deprecated Use $registry->loadConfigFile() instead
          * @see Horde_Deprecated::loadConfiguration()
          */
-$_templates = Horde::loadConfiguration(
+/**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+         * @deprecated Use $registry->loadConfigFile() instead
+         * @see Horde_Deprecated::loadConfiguration()
+         */
+        $_templates = Horde::loadConfiguration(
             'templates.php',
             '_templates',
             'whups'
