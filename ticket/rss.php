@@ -42,18 +42,18 @@ foreach (array_keys($history) as $i) {
     $items[$i]['url'] = $self . '#t' . $i;
 }
 
-$template = $injector->createInstance('Horde_Template');
-$template->set('xsl', Horde_Themes::getFeedXsl());
-$template->set('pubDate', htmlspecialchars(date('r')));
-$template->set('title', htmlspecialchars($details['summary']));
-$template->set('items', $items, true);
-$template->set('url', Whups::urlFor('ticket', $ticket, true));
-$template->set('rss_url', Whups::urlFor('ticket_rss', $ticket, true));
-$template->set('description', htmlspecialchars($details['summary']));
+$view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
+$view->xsl = Horde_Themes::getFeedXsl();
+$view->pubDate = htmlspecialchars(date('r'));
+$view->title = htmlspecialchars($details['summary']);
+$view->items = $items;
+$view->url = Whups::urlFor('ticket', $ticket, true);
+$view->rss_url = Whups::urlFor('ticket_rss', $ticket, true);
+$view->description = htmlspecialchars($details['summary']);
 
 $browser->downloadHeaders(
     $details['summary'] . '.rss',
     'text/xml',
     true
 );
-echo $template->fetch(WHUPS_TEMPLATES . '/rss/items.rss');
+echo $view->render('items.rss');
