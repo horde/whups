@@ -16,7 +16,11 @@
             "role": "lead"
         }
     ],
-    "time": "2026-03-17",
+    "keywords": [
+        "tickets",
+        "helpdesk"
+    ],
+    "time": "2026-04-09",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -24,6 +28,7 @@
         "horde/horde": "^6 || dev-FRAMEWORK_6_0",
         "horde/auth": "^3 || dev-FRAMEWORK_6_0",
         "horde/autoloader": "^3 || dev-FRAMEWORK_6_0",
+        "horde/cache": "^3 || dev-FRAMEWORK_6_0",
         "horde/compress": "^3 || dev-FRAMEWORK_6_0",
         "horde/core": "^3 || dev-FRAMEWORK_6_0",
         "horde/date": "^3 || dev-FRAMEWORK_6_0",
@@ -44,6 +49,7 @@
         "horde/util": "^3 || dev-FRAMEWORK_6_0",
         "horde/vfs": "^3 || dev-FRAMEWORK_6_0",
         "horde/view": "^3 || dev-FRAMEWORK_6_0",
+        "psr/simple-cache": "^3",
         "ext-gettext": "*",
         "ext-json": "*"
     },
