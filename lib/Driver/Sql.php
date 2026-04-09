@@ -13,7 +13,7 @@
  * @author  Chuck Hagenbuch <chuck@horde.org>
  * @package Whups
  */
-class Whups_Driver_Sql extends Whups_Driver
+class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedReporting
 {
     /**
      * The database connection object.
@@ -81,7 +81,7 @@ class Whups_Driver_Sql extends Whups_Driver
     /**
      * PSR-16 cache for report output.
      *
-     * @var \Psr\SimpleCache\CacheInterface|null
+     * @var Psr\SimpleCache\CacheInterface|null
      */
     protected $_reportCache = null;
 
@@ -3801,5 +3801,197 @@ class Whups_Driver_Sql extends Whups_Driver
     protected function _fromBackend($value)
     {
         return Horde_String::convertCharset($value, $this->_db->getOption('charset'), 'UTF-8');
+    }
+
+    /* Whups_Driver_DriverBasedReporting implementation */
+
+    /**
+     * Map of report field names to SQL expressions and required JOINs.
+     *
+     * @return array  Keys: 'select' (SQL expression), 'join' (JOIN clause),
+     *                'group' (GROUP BY expression).
+     */
+    protected function _reportFieldMapping(string $field): array
+    {
+        return match ($field) {
+            'queue_name' => [
+                'select' => 'q.queue_name',
+                'join'   => 'INNER JOIN whups_queues q ON q.queue_id = t.queue_id',
+                'group'  => 'q.queue_name',
+            ],
+            'type_name' => [
+                'select' => 'ty.type_name',
+                'join'   => 'INNER JOIN whups_types ty ON ty.type_id = t.type_id',
+                'group'  => 'ty.type_name',
+            ],
+            'state_name' => [
+                'select' => 's.state_name',
+                'join'   => 'INNER JOIN whups_states s ON s.state_id = t.state_id',
+                'group'  => 's.state_name',
+            ],
+            'priority_name' => [
+                'select' => 'p.priority_name',
+                'join'   => 'INNER JOIN whups_priorities p ON p.priority_id = t.priority_id',
+                'group'  => 'p.priority_name',
+            ],
+            'user_id_requester' => [
+                'select' => 't.user_id_requester',
+                'join'   => '',
+                'group'  => 't.user_id_requester',
+            ],
+            default => throw new Whups_Exception(
+                sprintf('Unsupported report field: %s', $field)
+            ),
+        };
+    }
+
+    /**
+     * Builds a WHERE clause fragment for queue permission filtering.
+     */
+    protected function _queueInClause(array $queueIds): string
+    {
+        if (empty($queueIds)) {
+            return '1 = 0';
+        }
+        $ids = implode(',', array_map('intval', $queueIds));
+        return 't.queue_id IN (' . $ids . ')';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAggregateTime(
+        string $operation,
+        string $state,
+        array $queueIds,
+        ?string $groupBy = null,
+    ): int|float|array {
+        if (!in_array($operation, ['avg', 'min', 'max'], true)) {
+            throw new Whups_Exception(
+                sprintf('Unsupported aggregate operation: %s', $operation)
+            );
+        }
+
+        if ($state !== 'open') {
+            throw new Whups_Exception(
+                sprintf('Unsupported time state: %s', $state)
+            );
+        }
+
+        $sqlOp = strtoupper($operation);
+        /* date_resolved and ticket_timestamp are integer Unix timestamps.
+         * Difference in seconds, divided by 86400 gives days. */
+        $expr = $sqlOp . '((t.date_resolved - t.ticket_timestamp) * 1.0 / 86400)';
+
+        $where = 't.date_resolved IS NOT NULL AND ' . $this->_queueInClause($queueIds);
+
+        if ($groupBy === null) {
+            $query = 'SELECT ' . $expr . ' AS result'
+                . ' FROM whups_tickets t'
+                . ' WHERE ' . $where;
+            try {
+                $value = $this->_db->selectValue($query);
+            } catch (Horde_Db_Exception $e) {
+                throw new Whups_Exception($e);
+            }
+
+            return $value !== null ? round((float) $value, 2) : 0;
+        }
+
+        /* Grouped query. */
+        $mapping = $this->_reportFieldMapping($groupBy);
+        $query = 'SELECT ' . $mapping['select'] . ' AS group_label, '
+            . $expr . ' AS result'
+            . ' FROM whups_tickets t'
+            . (!empty($mapping['join']) ? ' ' . $mapping['join'] : '')
+            . ' WHERE ' . $where
+            . ' GROUP BY ' . $mapping['group']
+            . ' ORDER BY ' . $mapping['group'];
+
+        try {
+            $rows = $this->_db->select($query);
+        } catch (Horde_Db_Exception $e) {
+            throw new Whups_Exception($e);
+        }
+
+        $result = [];
+        foreach ($rows as $row) {
+            $label = $this->_fromBackend($row['group_label'] ?? '');
+            $result[$label] = round((float) $row['result'], 2);
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTicketCountByField(
+        string $type,
+        string $field,
+        array $queueIds,
+    ): array {
+        $where = $this->_queueInClause($queueIds);
+        $joins = '';
+
+        /* State filter. */
+        switch ($type) {
+            case 'open':
+                $joins .= ' INNER JOIN whups_states s_filter'
+                    . ' ON s_filter.state_id = t.state_id';
+                $where .= ' AND s_filter.state_category <> '
+                    . $this->_db->quoteString('resolved');
+                break;
+            case 'closed':
+                $joins .= ' INNER JOIN whups_states s_filter'
+                    . ' ON s_filter.state_id = t.state_id';
+                $where .= ' AND s_filter.state_category = '
+                    . $this->_db->quoteString('resolved');
+                break;
+            case 'all':
+                break;
+            default:
+                throw new Whups_Exception(
+                    sprintf('Unsupported ticket type filter: %s', $type)
+                );
+        }
+
+        $mapping = $this->_reportFieldMapping($field);
+        /* Avoid duplicate join if state_name is the group field and we
+         * already joined whups_states for the filter. */
+        if (!empty($mapping['join'])) {
+            if ($field === 'state_name' && $type !== 'all') {
+                /* Reuse the s_filter alias for grouping. */
+                $mapping['select'] = 's_filter.state_name';
+                $mapping['group'] = 's_filter.state_name';
+            } else {
+                $joins .= ' ' . $mapping['join'];
+            }
+        }
+
+        $query = 'SELECT ' . $mapping['select'] . ' AS group_label,'
+            . ' COUNT(*) AS cnt'
+            . ' FROM whups_tickets t'
+            . $joins
+            . ' WHERE ' . $where
+            . ' GROUP BY ' . $mapping['group']
+            . ' ORDER BY ' . $mapping['group'];
+
+        try {
+            $rows = $this->_db->select($query);
+        } catch (Horde_Db_Exception $e) {
+            throw new Whups_Exception($e);
+        }
+
+        $result = [];
+        foreach ($rows as $row) {
+            $label = $this->_fromBackend($row['group_label'] ?? '');
+            if (empty($label)) {
+                $label = _("None");
+            }
+            $result[$label] = (int) $row['cnt'];
+        }
+
+        return $result;
     }
 }

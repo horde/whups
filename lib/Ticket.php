@@ -111,7 +111,12 @@ class Whups_Ticket
              * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
              * @see Horde_Deprecated::callHook()
              */
-$info = Horde::callHook('ticket_create', [$info, $requester], 'whups');
+/**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+             * @see Horde_Deprecated::callHook()
+             */
+            $info = Horde::callHook('ticket_create', [$info, $requester], 'whups');
         } catch (Horde_Exception_HookNotSet $e) {
         }
 
@@ -305,7 +310,12 @@ $info = Horde::callHook('ticket_create', [$info, $requester], 'whups');
              * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
              * @see Horde_Deprecated::callHook()
              */
-$this->_changes = Horde::callHook('ticket_update', [$this, $this->_changes], 'whups');
+/**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+             * @see Horde_Deprecated::callHook()
+             */
+            $this->_changes = Horde::callHook('ticket_update', [$this, $this->_changes], 'whups');
         } catch (Horde_Exception_HookNotSet $e) {
         }
 
