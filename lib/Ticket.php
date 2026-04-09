@@ -456,6 +456,11 @@ $this->_changes = Horde::callHook('ticket_update', [$this, $this->_changes], 'wh
             $whups_driver->updateLog($this->_id, $user, $updates, $transaction);
         }
 
+        /* Invalidate report cache — any ticket change can affect reports. */
+        if (method_exists($whups_driver, 'getReportCache')) {
+            $whups_driver->getReportCache()?->clear();
+        }
+
         // Reload $this->_details to make sure we have the latest information.
         //
         // @todo Only touch the db if we have to.
