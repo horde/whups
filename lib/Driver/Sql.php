@@ -79,6 +79,13 @@ class Whups_Driver_Sql extends Whups_Driver
     protected $_cache = null;
 
     /**
+     * PSR-16 cache for report output.
+     *
+     * @var \Psr\SimpleCache\CacheInterface|null
+     */
+    protected $_reportCache = null;
+
+    /**
      * Sets the PSR-16 cache for metadata.
      *
      * @param Psr\SimpleCache\CacheInterface|null $cache
@@ -86,6 +93,22 @@ class Whups_Driver_Sql extends Whups_Driver
     public function setCache(?Psr\SimpleCache\CacheInterface $cache): void
     {
         $this->_cache = $cache;
+    }
+
+    /**
+     * Sets the PSR-16 cache for report output.
+     */
+    public function setReportCache(?Psr\SimpleCache\CacheInterface $cache): void
+    {
+        $this->_reportCache = $cache;
+    }
+
+    /**
+     * Returns the report cache instance, or null if not configured.
+     */
+    public function getReportCache(): ?Psr\SimpleCache\CacheInterface
+    {
+        return $this->_reportCache;
     }
 
     /**

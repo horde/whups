@@ -16,6 +16,7 @@
  <configtab name="cache" desc="Cache Settings">
   <configsection name="cache">
    <configinteger name="metadata_lifetime" desc="How long to cache metadata like queues, types, states, priorities (in seconds). Set to 0 to disable caching.">3600</configinteger>
+   <configinteger name="report_lifetime" desc="How long to cache report results (in seconds). Set to 0 to disable.">86400</configinteger>
   </configsection>
  </configtab>
 
