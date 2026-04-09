@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -28,17 +28,17 @@ $r = new Horde_Form_Renderer(
     ['varrenderer_driver' => ['whups', 'html']]
 );
 
-$valid4 = $form4->validate($vars) &&
-     $formname == 'whups_form_ticket_createstepfour';
+$valid4 = $form4->validate($vars)
+     && $formname == 'whups_form_ticket_createstepfour';
 $valid3 = $form3->validate($vars, true);
 $valid2 = $form2->validate($vars, !$form1->isSubmitted());
 $valid1 = $form1->validate($vars, true);
-$doAssignForm = $GLOBALS['registry']->getAuth() &&
-    $whups_driver->isCategory('assigned', $vars->get('state'));
+$doAssignForm = $GLOBALS['registry']->getAuth()
+    && $whups_driver->isCategory('assigned', $vars->get('state'));
 
-if ($valid1 && $valid2 && $valid3 &&
+if ($valid1 && $valid2 && $valid3
     // Don't validate the assignment form if it isn't being used.
-    (!$doAssignForm || $valid4)) {
+    && (!$doAssignForm || $valid4)) {
     $info = [];
     $info = $form1->getInfo($vars, $info);
     $info = $form2->getInfo($vars, $info);

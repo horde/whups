@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright 2007-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2007-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -22,16 +23,16 @@ $icon = base64_encode(file_get_contents($registry->get('themesfs', 'whups') . '/
 // Charset.
 header('Content-Type: text/xml; charset=UTF-8');
 echo <<<PAYLOAD
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-  <ShortName>$name</ShortName>
-  <SearchForm>$url</SearchForm>
-  <Url type="text/html"
-       method="get"
-       template="${url}ticket/">
-    <Param name="id" value="{searchTerms}"/>
-  </Url>
-  <Image height="16" width="16">data:image/png;base64,$icon</Image>
-  <InputEncoding>UTF-8</InputEncoding>
+    <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+      <ShortName>$name</ShortName>
+      <SearchForm>$url</SearchForm>
+      <Url type="text/html"
+           method="get"
+           template="{$url}ticket/">
+        <Param name="id" value="{searchTerms}"/>
+      </Url>
+      <Image height="16" width="16">data:image/png;base64,$icon</Image>
+      <InputEncoding>UTF-8</InputEncoding>
 
-</OpenSearchDescription>
-PAYLOAD;
+    </OpenSearchDescription>
+    PAYLOAD;

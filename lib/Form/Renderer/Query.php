@@ -3,8 +3,8 @@
 /**
  * A Horde_Form_Renderer for rendering Whups queries.
  *
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -128,16 +128,16 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
                         // The value of the following depends on the type.
                         $state = $whups_driver->getState($value);
                         if ($state && isset($this->ticketTypes[$state['type']])) {
-                            $text = '[' . $this->ticketTypes[$state['type']] . '] ' .
-                                _("State");
+                            $text = '[' . $this->ticketTypes[$state['type']] . '] '
+                                . _("State");
                             $value = $state['name'];
                         }
                         break;
 
                     case Whups_Query::CRITERION_PRIORITY:
                         $state = $whups_driver->getPriority($value);
-                        $text = '[' . $this->ticketTypes[$state['type']] . '] ' .
-                            _("Priority");
+                        $text = '[' . $this->ticketTypes[$state['type']] . '] '
+                            . _("Priority");
                         $value = $state['name'];
                         break;
 
@@ -236,24 +236,49 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
         $count = count($more);
 
         if ($count == 0) {
-            // Always have at least one image to make sure all rows are the
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+             * @deprecated Use Horde_Themes_Image::tag() instead
+             * @see Horde_Deprecated::img()
+             */
+// Always have at least one image to make sure all rows are the
             // same height.
             $space = Horde::img('tree/blank.png', '', $fimgattrs) . "\n";
         } else {
             for ($i = 0; $i < $count - 1; $i++) {
                 if ($more[$i] == 1) {
-                    $space .= Horde::img('tree/line.png', '|', $imgattrs) . "\n";
+                    /**
+                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                     * @deprecated Use Horde_Themes_Image::tag() instead
+                     * @see Horde_Deprecated::img()
+                     */
+$space .= Horde::img('tree/line.png', '|', $imgattrs) . "\n";
                 } else {
-                    $space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
+                    /**
+                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                     * @deprecated Use Horde_Themes_Image::tag() instead
+                     * @see Horde_Deprecated::img()
+                     */
+$space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
                 }
             }
         }
 
         if ($count > 0) {
             if ($more[$count - 1] == 1) {
-                $space .= Horde::img('tree/join.png', '+', $imgattrs) . "\n";
+                /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+$space .= Horde::img('tree/join.png', '+', $imgattrs) . "\n";
             } else {
-                $space .= Horde::img('tree/joinbottom.png', '-', $imgattrs) . "\n";
+                /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+$space .= Horde::img('tree/joinbottom.png', '-', $imgattrs) . "\n";
             }
         }
 

@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -81,8 +81,8 @@ class Whups
         $full = false,
         $append_session = 0
     ) {
-        $rewrite = isset($GLOBALS['conf']['urls']['pretty']) &&
-            $GLOBALS['conf']['urls']['pretty'] == 'rewrite';
+        $rewrite = isset($GLOBALS['conf']['urls']['pretty'])
+            && $GLOBALS['conf']['urls']['pretty'] == 'rewrite';
 
         switch ($controller) {
             case 'queue':
@@ -315,8 +315,8 @@ class Whups
             return 0;
         }
 
-        if ((is_numeric($a_val) || is_null($a_val)) &&
-            (is_numeric($b_val) || is_null($b_val))) {
+        if ((is_numeric($a_val) || is_null($a_val))
+            && (is_numeric($b_val) || is_null($b_val))) {
             // Numeric comparison
             return (int) ($sortdir ? ($b_val > $a_val) : ($a_val > $b_val));
         }
@@ -366,7 +366,12 @@ class Whups
     {
         $templates = [];
 
-        $_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
+        /**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+         * @deprecated Use $registry->loadConfigFile() instead
+         * @see Horde_Deprecated::loadConfiguration()
+         */
+$_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
         foreach ($_templates as $name => $info) {
             if ($info['type'] == $type) {
                 $templates[$name] = $info['name'];
@@ -512,9 +517,9 @@ class Whups
             $user = $GLOBALS['registry']->getAuth();
         }
 
-        if ($permission == 'update' ||
-            $permission == 'assign' ||
-            $permission == 'requester') {
+        if ($permission == 'update'
+            || $permission == 'assign'
+            || $permission == 'requester') {
             $admin_perm = Horde_Perms::EDIT;
         } else {
             $admin_perm = $permission;
@@ -544,10 +549,10 @@ class Whups
 
                     default:
                         if ($perms->exists('whups:queues:' . $in . ':' . $permission)) {
-                            if (($permission == 'update' ||
-                                 $permission == 'assign' ||
-                                 $permission == 'requester') &&
-                                $perms->getPermissions(
+                            if (($permission == 'update'
+                                 || $permission == 'assign'
+                                 || $permission == 'requester')
+                                && $perms->getPermissions(
                                     'whups:queues:' . $in . ':' . $permission,
                                     $user
                                 )) {
@@ -556,9 +561,9 @@ class Whups
                         } else {
                             // If the sub-permission doesn't exist, use the queue
                             // permission at an EDIT level and lock out guests.
-                            if ($permission != 'requester' &&
-                                $GLOBALS['registry']->getAuth() &&
-                                $perms->hasPermission(
+                            if ($permission != 'requester'
+                                && $GLOBALS['registry']->getAuth()
+                                && $perms->hasPermission(
                                     'whups:queues:' . $in,
                                     $user,
                                     Horde_Perms::EDIT
@@ -610,8 +615,8 @@ class Whups
                     return $in;
                 }
                 foreach ($in as $queueID => $name) {
-                    if (!$perms->exists('whups:queues:' . $queueID) ||
-                        $perms->hasPermission(
+                    if (!$perms->exists('whups:queues:' . $queueID)
+                        || $perms->hasPermission(
                             'whups:queues:' . $queueID,
                             $user,
                             $permission,
@@ -627,8 +632,8 @@ class Whups
                     return $in;
                 }
                 foreach ($in as $queueID) {
-                    if (!$perms->exists('whups:queues:' . $queueID) ||
-                        $perms->hasPermission(
+                    if (!$perms->exists('whups:queues:' . $queueID)
+                        || $perms->hasPermission(
                             'whups:queues:' . $queueID,
                             $user,
                             $permission,
@@ -644,8 +649,8 @@ class Whups
                     return $in;
                 }
                 foreach ($in as $replyID => $name) {
-                    if (!$perms->exists('whups:replies:' . $replyID) ||
-                        $perms->hasPermission(
+                    if (!$perms->exists('whups:replies:' . $replyID)
+                        || $perms->hasPermission(
                             'whups:replies:' . $replyID,
                             $user,
                             $permission,
@@ -664,8 +669,8 @@ class Whups
                             continue;
                         }
                         foreach ($rval as $i => $change) {
-                            if ($change['type'] != 'comment' ||
-                                !$perms->exists('whups:comments:' . $change['value'])) {
+                            if ($change['type'] != 'comment'
+                                || !$perms->exists('whups:comments:' . $change['value'])) {
                                 $out[$key][$rkey][$i] = $change;
                                 if (isset($change['comment'])) {
                                     $out[$key]['comment_text'] = $change['comment'];
@@ -674,8 +679,8 @@ class Whups
                                 $change['private'] = true;
                                 $out[$key][$rkey][$i] = $change;
                                 if (isset($change['comment'])) {
-                                    if ($admin ||
-                                        $perms->hasPermission(
+                                    if ($admin
+                                        || $perms->hasPermission(
                                             'whups:comments:' . $change['value'],
                                             $user,
                                             Horde_Perms::READ,
@@ -845,10 +850,10 @@ class Whups
         } else {
             $name = $details['user'];
         }
-        if (($showemail || empty($name) || !$showname) &&
-            !empty($details['email'])) {
-            if ($html && $GLOBALS['conf']['prefs']['obfuscate_email'] &&
-                strpos($details['email'], '@') !== false) {
+        if (($showemail || empty($name) || !$showname)
+            && !empty($details['email'])) {
+            if ($html && $GLOBALS['conf']['prefs']['obfuscate_email']
+                && strpos($details['email'], '@') !== false) {
                 $details['email'] = str_replace(
                     ['@', '.'],
                     [' (at) ', ' (dot) '],
@@ -868,7 +873,12 @@ class Whups
         if ($html) {
             $name = htmlspecialchars($name);
             if ($details['type'] == 'group') {
-                $name = Horde::img(
+                /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+$name = Horde::img(
                     'group.png',
                     !empty($details['name'])
                                    ? $details['name']
@@ -894,8 +904,8 @@ class Whups
         $url = self::urlFor('ticket', $info['id']);
         $thevalue = $info[$value] ?? '';
 
-        if ($value == 'timestamp' || $value == 'due' ||
-            substr($value, 0, 5) == 'date_') {
+        if ($value == 'timestamp' || $value == 'due'
+            || substr($value, 0, 5) == 'date_') {
             require_once 'Horde/Form/Type.php';
             $thevalue = (new Horde_Form_Type_date())->getFormattedTime(
                 $thevalue,
@@ -1084,7 +1094,12 @@ class Whups
     {
         global $injector, $registry;
 
-        $links = [
+        /**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+         * @deprecated Use Horde_Themes_Image::tag() instead
+         * @see Horde_Deprecated::img()
+         */
+$links = [
             'view' => Horde::url('view.php')
                 ->add([
                     'actionID' => 'view_message',
@@ -1107,7 +1122,12 @@ class Whups
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
-            $links['delete'] = Horde::url('ticket/delete_attachment.php')
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+             * @deprecated Use Horde_Themes_Image::tag() instead
+             * @see Horde_Deprecated::img()
+             */
+$links['delete'] = Horde::url('ticket/delete_attachment.php')
                 ->add(
                     [
                         'message' => $message,
@@ -1208,15 +1228,25 @@ class Whups
         $url_params = ['actionID' => 'download_file',
             'file' => $file['name'],
             'ticket' => $ticket];
-        $links['download'] =
-            $registry->downloadUrl($file['name'], $url_params)->link([
+        /**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+         * @deprecated Use Horde_Themes_Image::tag() instead
+         * @see Horde_Deprecated::img()
+         */
+$links['download']
+            = $registry->downloadUrl($file['name'], $url_params)->link([
                 'title' => $file['name'],
             ])
             . Horde::img('download.png', _("Download")) . '</a>';
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
-            $links['delete'] = Horde::url('ticket/delete_attachment.php')
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+             * @deprecated Use Horde_Themes_Image::tag() instead
+             * @see Horde_Deprecated::img()
+             */
+$links['delete'] = Horde::url('ticket/delete_attachment.php')
                 ->add(
                     [
                         'file' => $file['name'],

@@ -2,8 +2,8 @@
 
 /**
  *
- * Copyright 2001-2002 Robert E. Coyle <robertecoyle@hotmail.com>
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -37,8 +37,8 @@ class Whups_Form_Queue_StepOne extends Horde_Form
         $this->addVariable(_("Comment"), 'newcomment', 'longtext', false);
 
         /* Group restrictions. */
-        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin', 'permlevel' => Horde_Perms::EDIT]) ||
-            $GLOBALS['injector']->getInstance('Horde_Perms')->hasPermission('whups:hiddenComments', $GLOBALS['registry']->getAuth(), Horde_Perms::EDIT)) {
+        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin', 'permlevel' => Horde_Perms::EDIT])
+            || $GLOBALS['injector']->getInstance('Horde_Perms')->hasPermission('whups:hiddenComments', $GLOBALS['registry']->getAuth(), Horde_Perms::EDIT)) {
             $groups = $GLOBALS['injector']->getInstance('Horde_Group');
             $mygroups = $groups->listGroups($GLOBALS['registry']->getAuth());
             if ($mygroups) {

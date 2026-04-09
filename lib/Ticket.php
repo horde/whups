@@ -4,7 +4,7 @@
  * The Whups_Ticket class encapsulates some logic relating to tickets, sending
  * updates, etc.
  *
- * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
@@ -106,7 +106,12 @@ class Whups_Ticket
 
         // Run hook.
         try {
-            $info = Horde::callHook('ticket_create', [$info, $requester], 'whups');
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+             * @see Horde_Deprecated::callHook()
+             */
+$info = Horde::callHook('ticket_create', [$info, $requester], 'whups');
         } catch (Horde_Exception_HookNotSet $e) {
         }
 
@@ -138,8 +143,8 @@ class Whups_Ticket
 
         // Check for a deferred attachment upload.
         $a_name = null;
-        if (!empty($info['deferred_attachment']) &&
-            ($a_name = $GLOBALS['session']->get('whups', 'deferred_attachment/' . $info['deferred_attachment']))) {
+        if (!empty($info['deferred_attachment'])
+            && ($a_name = $GLOBALS['session']->get('whups', 'deferred_attachment/' . $info['deferred_attachment']))) {
             $ticket->change(
                 'attachment',
                 [
@@ -295,7 +300,12 @@ class Whups_Ticket
 
         // Run hook before setting the dates.
         try {
-            $this->_changes = Horde::callHook('ticket_update', [$this, $this->_changes], 'whups');
+            /**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+             * @see Horde_Deprecated::callHook()
+             */
+$this->_changes = Horde::callHook('ticket_update', [$this, $this->_changes], 'whups');
         } catch (Horde_Exception_HookNotSet $e) {
         }
 
@@ -328,8 +338,8 @@ class Whups_Ticket
                     }
                     $this->_changes['oldowners'] = $oldOwners;
                     foreach ($value as $owner) {
-                        if (!$oldOwners ||
-                            array_search($owner, $oldOwners) === false) {
+                        if (!$oldOwners
+                            || array_search($owner, $oldOwners) === false) {
                             $whups_driver->addTicketOwner($this->_id, $owner);
                             $whups_driver->updateLog(
                                 $this->_id,
@@ -429,8 +439,8 @@ class Whups_Ticket
                     break;
 
                 default:
-                    if (strpos($detail, 'attribute_') === 0 &&
-                        !is_string($value)) {
+                    if (strpos($detail, 'attribute_') === 0
+                        && !is_string($value)) {
                         $value = Horde_Serialize::Serialize(
                             $value,
                             Horde_Serialize::JSON
@@ -492,8 +502,8 @@ class Whups_Ticket
         }
         $message_file = basename($message_file);
 
-        if ($GLOBALS['conf']['mail']['incl_resp'] ||
-            !count($whups_driver->getOwners($this->_id))) {
+        if ($GLOBALS['conf']['mail']['incl_resp']
+            || !count($whups_driver->getOwners($this->_id))) {
             /* Include all responsible.  */
             $listeners = $whups_driver->getListeners(
                 $this->_id,
@@ -593,8 +603,8 @@ class Whups_Ticket
         $used_names = array_unique($this->listAllAttachments('value'));
 
         $dir = Whups::VFS_ATTACH_PATH . '/' . $this->_id;
-        while ((array_search($attachment_name, $used_names) !== false) ||
-               $vfs->exists($dir, $attachment_name)) {
+        while ((array_search($attachment_name, $used_names) !== false)
+               || $vfs->exists($dir, $attachment_name)) {
             if (preg_match(
                 '/(.*)\[(\d+)\](\.[^.]*)?$/',
                 $attachment_name,
@@ -669,8 +679,8 @@ class Whups_Ticket
                 $changes = $row['changes'];
                 unset($row['changes']);
                 foreach ($changes as $change) {
-                    if (isset($change['type']) &&
-                        $change['type'] == 'attachment') {
+                    if (isset($change['type'])
+                        && $change['type'] == 'attachment') {
                         $files[] = is_null($filter)
                             ? array_merge($row, $change)
                             : $change[$filter];
@@ -968,8 +978,8 @@ class Whups_Ticket
         }
 
         if (empty($listeners)) {
-            if ($conf['mail']['incl_resp'] ||
-                !count($whups_driver->getOwners($this->_id))) {
+            if ($conf['mail']['incl_resp']
+                || !count($whups_driver->getOwners($this->_id))) {
                 /* Include all responsible.  */
                 $listeners = $whups_driver->getListeners(
                     $this->_id,

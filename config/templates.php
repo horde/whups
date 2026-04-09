@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file defines the templates used in various parts of Whups.
  *
@@ -14,22 +15,22 @@
  * More docs coming as this gets fleshed out and used more.
  */
 
-$_templates['html-simple'] = array(
+$_templates['html-simple'] = [
     'type' => 'searchresults',
     'filename' => 'report.html',
     'name' => _("Simple HTML Report"),
-    'sortby' => array('type_name', 'timestamp'),
-    'sortdir' => array(0, 1),
+    'sortby' => ['type_name', 'timestamp'],
+    'sortdir' => [0, 1],
     'view_template' => 'html-simple',
-);
+];
 
-$_templates['csv'] = array(
+$_templates['csv'] = [
     'type' => 'searchresults',
     'name' => _("Comma Separated Values (CSV file)"),
     'filename' => 'report.csv',
     'callback' => '_csvQuote',
     'view_template' => 'csv',
-);
+];
 
 if (!function_exists('_csvQuote')) {
     function _csvQuote($data, $key)

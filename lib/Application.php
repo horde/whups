@@ -6,7 +6,7 @@
  * This file defines Horde's core API interface. Other core Horde libraries
  * can interact with Whups through this API.
  *
- * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (GPL). If you
  * did not receive this file, see http://www.horde.org/licenses/gpl.
@@ -144,8 +144,8 @@ class Whups_Application extends Horde_Registry_Application
         }
         foreach ($queries as $id => $query) {
             $row = [
-                'selected' => strpos(strval(Horde::selfUrl()), $registry->get('webroot') . '/query') === 0 &&
-                    $id == $currentQuery,
+                'selected' => strpos(strval(Horde::selfUrl()), $registry->get('webroot') . '/query') === 0
+                    && $id == $currentQuery,
                 'cssClass' => 'whups-sidebar-query',
                 'url' => Whups::urlFor('query', empty($query['slug']) ? ['id' => $id] : ['slug' => $query['slug']]),
                 'label' => $query['name'],
@@ -357,8 +357,8 @@ class Whups_Application extends Horde_Registry_Application
                 continue;
             }
             foreach ($transaction['changes'] as $change) {
-                if ($change['type'] != 'comment' ||
-                    !empty($change['private'])) {
+                if ($change['type'] != 'comment'
+                    || !empty($change['private'])) {
                     continue;
                 }
                 $comment = $change['comment'];
@@ -424,7 +424,12 @@ class Whups_Application extends Horde_Registry_Application
     {
         global $whups_driver;
 
-        $_templates = Horde::loadConfiguration(
+        /**
+         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+         * @deprecated Use $registry->loadConfigFile() instead
+         * @see Horde_Deprecated::loadConfiguration()
+         */
+$_templates = Horde::loadConfiguration(
             'templates.php',
             '_templates',
             'whups'

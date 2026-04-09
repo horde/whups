@@ -33,8 +33,8 @@ class Whups_Form_AddComment extends Horde_Form
         $this->addVariable(_("Watch this ticket"), 'add_watch', 'boolean', false);
 
         /* Group restrictions. */
-        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin']) ||
-            $GLOBALS['injector']->getInstance('Horde_Perms')->hasPermission('whups:hiddenComments', $GLOBALS['registry']->getAuth(), Horde_Perms::EDIT)) {
+        if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin'])
+            || $GLOBALS['injector']->getInstance('Horde_Perms')->hasPermission('whups:hiddenComments', $GLOBALS['registry']->getAuth(), Horde_Perms::EDIT)) {
             $groups = $GLOBALS['injector']->getInstance('Horde_Group');
             $mygroups = $groups->listGroups($GLOBALS['registry']->getAuth());
             if ($mygroups) {
