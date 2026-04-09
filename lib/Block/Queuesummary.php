@@ -43,7 +43,7 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
         $html .= '</tr></thead><tbody>';
 
         foreach ($summary as $queue) {
-            $html .= '<tr><td>' . Horde::link(Whups::urlFor('queue', $queue, true), $queue['description']) . htmlspecialchars($queue['name']) . '</a></td>';
+            $html .= '<tr><td>' . Horde::link(Whups::urlFor('queue', $queue, true), $queue['description']) . htmlspecialchars($queue['name'] ?? '') . '</a></td>';
             foreach ($types as $type) {
                 $html .= '<td>' . ($queue[$type] ?? '&nbsp;') . '</td>';
             }

@@ -54,7 +54,7 @@ class Whups_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
         if (!$prefs->isDefault('search_sources')) {
             $src = $prefs->getValue('search_sources');
             if (!is_array(json_decode($src))) {
-                $prefs->setValue('search_sources', json_encode(explode("\t", $src)));
+                $prefs->setValue('search_sources', json_encode(explode("\t", $src ?? '')));
             }
         }
 
@@ -62,8 +62,8 @@ class Whups_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
             $val = $prefs->getValue('search_fields');
             if (!is_array(json_decode($val, true))) {
                 $fields = [];
-                foreach (explode("\n", $val) as $field) {
-                    $field = trim($field);
+                foreach (explode("\n", $val ?? '') as $field) {
+                    $field = trim($field ?? '');
                     if (!empty($field)) {
                         $tmp = explode("\t", $field);
                         if (count($tmp) > 1) {

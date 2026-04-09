@@ -29,6 +29,8 @@ if (!defined('HORDE_BASE')) {
     }
 }
 
+use Horde\Cache\Cache as HordeCache;
+use Horde\Cache\FileStorage;
 use Horde\Util\Variables;
 
 /* Load the Horde Framework core (needed to autoload
@@ -50,6 +52,17 @@ class Whups_Application extends Horde_Registry_Application
         $GLOBALS['whups_driver'] = $GLOBALS['injector']
             ->getInstance('Whups_Factory_Driver')
             ->create();
+
+        /* Inject metadata cache into driver if configured. */
+        $metadataLifetime = (int) ($GLOBALS['conf']['cache']['metadata_lifetime'] ?? 0);
+        if ($metadataLifetime > 0) {
+            $cacheDir = $GLOBALS['conf']['cache']['params']['dir'] ?? '';
+            $cache = new HordeCache(
+                new FileStorage(dir: $cacheDir),
+                ['namespace' => 'whups_meta', 'lifetime' => $metadataLifetime],
+            );
+            $GLOBALS['whups_driver']->setCache($cache);
+        }
 
         /* Set the timezone variable, if available. */
         $GLOBALS['registry']->setTimeZone();

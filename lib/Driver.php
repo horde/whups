@@ -89,7 +89,7 @@ abstract class Whups_Driver
         $attributes = $attributeDetails = [];
         foreach ($rows as $row) {
             if ($row['log_type'] == 'attribute' &&
-                strpos($row['log_value'], ':')) {
+                strpos($row['log_value'] ?? '', ':')) {
                 $attributes[(int) $row['log_value']] = $row['attribute_name'];
             }
             if ($row['log_type'] == 'type') {
@@ -473,7 +473,7 @@ abstract class Whups_Driver
             $mail_always = $conf['mail']['always_copy'];
             if (strpos($mail_always, '<@>') !== false) {
                 try {
-                    $mail_always = str_replace('<@>', $opts['ticket']->get('queue_name'), $mail_always);
+                    $mail_always = str_replace('<@>', $opts['ticket']->get('queue_name') ?? '', $mail_always);
                 } catch (Whups_Exception $e) {
                     $mail_always = null;
                 }
@@ -616,7 +616,7 @@ abstract class Whups_Driver
                 );
 
                 if (!$attachmentAdded &&
-                    !strlen(trim($formattedComment)) &&
+                    !strlen(trim($formattedComment ?? '')) &&
                     $details &&
                     $details['type'] == 'user' &&
                     $user_prefs->getValue('email_comments_only')) {
@@ -648,7 +648,7 @@ abstract class Whups_Driver
             $opts['view']->role = $role;
 
             $body = $opts['view']->render($opts['template']);
-            if (!strlen(trim($body))) {
+            if (!strlen(trim($body ?? ''))) {
                 continue;
             }
 

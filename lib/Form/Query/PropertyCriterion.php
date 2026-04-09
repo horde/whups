@@ -112,7 +112,7 @@ class Whups_Form_Query_PropertyCriterion extends Horde_Form
         $path = $vars->get('path');
 
         $id = $vars->get('id');
-        if (strlen(trim($id))) {
+        if (strlen(trim($id ?? ''))) {
             $newpath = $path;
             $ids = preg_split('/[\\t\\n ,]+/', $id);
 

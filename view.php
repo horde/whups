@@ -13,9 +13,9 @@ require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
 $id = (int) Horde_Util::getFormData('ticket');
-$filename = Horde_Util::getFormData('file');
+$filename = Horde_Util::getFormData('file') ?? '';
 $message = (int) Horde_Util::getFormData('message');
-$type = Horde_Util::getFormData('type');
+$type = Horde_Util::getFormData('type') ?? '';
 
 // Get the ticket details first.
 if (empty($id)) {

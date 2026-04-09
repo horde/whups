@@ -63,7 +63,7 @@ class Whups_Reports
     {
         $operation = 'inc';
         $state = null;
-        [$type, $field] = explode('|', $report);
+        [$type, $field] = explode('|', $report ?? '');
         if (substr($type, 0, 1) == '@') {
             [$type, $operation, $state] = explode(':', substr($type, 1));
         }
@@ -170,7 +170,7 @@ class Whups_Reports
      */
     public function getTime($stat, $group_by = null)
     {
-        [$operation, $state] = explode('|', $stat);
+        [$operation, $state] = explode('|', $stat ?? '');
 
         $tickets = $this->_getTicketSet('closed');
         if (!count($tickets)) {
