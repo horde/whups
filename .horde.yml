@@ -41,6 +41,7 @@ dependencies:
       horde/horde: ^6
       horde/auth: ^3
       horde/autoloader: ^3
+      horde/cache: ^3
       horde/compress: ^3
       horde/core: ^3
       horde/date: ^3
@@ -61,6 +62,7 @@ dependencies:
       horde/util: ^3
       horde/vfs: ^3
       horde/view: ^3
+      psr/simple-cache: ^3
     ext:
       gettext: '*'
       json: '*'
@@ -70,3 +72,6 @@ autoload:
   psr-4:
     Horde\Whups\: /src
 vendor: horde
+keywords:
+  - tickets
+  - helpdesk
