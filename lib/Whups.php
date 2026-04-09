@@ -18,6 +18,8 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Whups
  */
+use Horde\Date\Format as DateFormat;
+
 class Whups
 {
     /**
@@ -376,6 +378,11 @@ class Whups
          * @deprecated Use $registry->loadConfigFile() instead
          * @see Horde_Deprecated::loadConfiguration()
          */
+        /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+                 * @deprecated Use $registry->loadConfigFile() instead
+                 * @see Horde_Deprecated::loadConfiguration()
+                 */
         $_templates = Horde::loadConfiguration('templates.php', '_templates', 'whups');
         foreach ($_templates as $name => $info) {
             if ($info['type'] == $type) {
@@ -888,6 +895,11 @@ class Whups
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
+                /**
+                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                                 * @deprecated Use Horde_Themes_Image::tag() instead
+                                 * @see Horde_Deprecated::img()
+                                 */
                 $name = Horde::img(
                     'group.png',
                     !empty($details['name'])
@@ -1039,7 +1051,7 @@ class Whups
 
         /* Build message template. */
         $view = new Horde_View(['templatePath' => WHUPS_BASE . '/config']);
-        $view->date = strftime($GLOBALS['prefs']->getValue('date_format'));
+        $view->date = DateFormat::formatDate(time(), $GLOBALS['prefs']->getValue('date_format'));
 
         /* Get queue specific notification message text, if available. */
         $message_file = WHUPS_BASE . '/config/reminder_email.plain';
@@ -1114,6 +1126,11 @@ class Whups
          * @deprecated Use Horde_Themes_Image::tag() instead
          * @see Horde_Deprecated::img()
          */
+        /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
         $links = [
             'view' => Horde::url('view.php')
                 ->add([
@@ -1147,6 +1164,11 @@ class Whups
              * @deprecated Use Horde_Themes_Image::tag() instead
              * @see Horde_Deprecated::img()
              */
+            /**
+                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                         * @deprecated Use Horde_Themes_Image::tag() instead
+                         * @see Horde_Deprecated::img()
+                         */
             $links['delete'] = Horde::url('ticket/delete_attachment.php')
                             ->add(
                                 [
@@ -1258,6 +1280,11 @@ class Whups
          * @deprecated Use Horde_Themes_Image::tag() instead
          * @see Horde_Deprecated::img()
          */
+        /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
         $links['download']
                     = $registry->downloadUrl($file['name'], $url_params)->link([
                         'title' => $file['name'],
@@ -1276,6 +1303,11 @@ class Whups
              * @deprecated Use Horde_Themes_Image::tag() instead
              * @see Horde_Deprecated::img()
              */
+            /**
+                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                         * @deprecated Use Horde_Themes_Image::tag() instead
+                         * @see Horde_Deprecated::img()
+                         */
             $links['delete'] = Horde::url('ticket/delete_attachment.php')
                             ->add(
                                 [

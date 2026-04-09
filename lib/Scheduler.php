@@ -28,6 +28,11 @@ class Whups_Scheduler extends Horde_Scheduler
              * @deprecated Use $registry->loadConfigFile() instead
              * @see Horde_Deprecated::loadConfiguration()
              */
+            /**
+                         * ARCHITECTURE VIOLATION: Using deprecated Horde::loadConfiguration()
+                         * @deprecated Use $registry->loadConfigFile() instead
+                         * @see Horde_Deprecated::loadConfiguration()
+                         */
             $this->_reminders = Horde::loadConfiguration('reminders.php', 'reminders', 'whups');
         }
 

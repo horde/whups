@@ -28,6 +28,8 @@
     }
 }*/
 
+use Horde\Date\Format as DateFormat;
+
 class Whups_Form_Renderer_Query extends Horde_Form_Renderer
 {
     public $ticketTypes = null;
@@ -158,27 +160,27 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
 
                     case Whups_Query::CRITERION_TIMESTAMP:
                         $text = _("Created");
-                        $value = strftime($GLOBALS['prefs']->getValue('report_time_format'), $value);
+                        $value = DateFormat::formatDate($value, $GLOBALS['prefs']->getValue('report_time_format'));
                         break;
 
                     case Whups_Query::CRITERION_UPDATED:
                         $text = _("Updated");
-                        $value = strftime($GLOBALS['prefs']->getValue('report_time_format'), $value);
+                        $value = DateFormat::formatDate($value, $GLOBALS['prefs']->getValue('report_time_format'));
                         break;
 
                     case Whups_Query::CRITERION_RESOLVED:
                         $text = _("Resolved");
-                        $value = strftime($GLOBALS['prefs']->getValue('report_time_format'), $value);
+                        $value = DateFormat::formatDate($value, $GLOBALS['prefs']->getValue('report_time_format'));
                         break;
 
                     case Whups_Query::CRITERION_ASSIGNED:
                         $text = _("Assigned");
-                        $value = strftime($GLOBALS['prefs']->getValue('report_time_format'), $value);
+                        $value = DateFormat::formatDate($value, $GLOBALS['prefs']->getValue('report_time_format'));
                         break;
 
                     case Whups_Query::CRITERION_DUE:
                         $text = _("Due");
-                        $value = strftime($GLOBALS['prefs']->getValue('report_time_format'), $value);
+                        $value = DateFormat::formatDate($value, $GLOBALS['prefs']->getValue('report_time_format'));
                         break;
                 }
 
@@ -246,6 +248,11 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
              * @deprecated Use Horde_Themes_Image::tag() instead
              * @see Horde_Deprecated::img()
              */
+            /**
+                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                         * @deprecated Use Horde_Themes_Image::tag() instead
+                         * @see Horde_Deprecated::img()
+                         */
             // Always have at least one image to make sure all rows are the
             // same height.
             $space = Horde::img('tree/blank.png', '', $fimgattrs) . "\n";
@@ -262,6 +269,11 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
                      * @deprecated Use Horde_Themes_Image::tag() instead
                      * @see Horde_Deprecated::img()
                      */
+                    /**
+                                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                                         * @deprecated Use Horde_Themes_Image::tag() instead
+                                         * @see Horde_Deprecated::img()
+                                         */
                     $space .= Horde::img('tree/line.png', '|', $imgattrs) . "\n";
                 } else {
                     /**
@@ -274,6 +286,11 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
                      * @deprecated Use Horde_Themes_Image::tag() instead
                      * @see Horde_Deprecated::img()
                      */
+                    /**
+                                         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                                         * @deprecated Use Horde_Themes_Image::tag() instead
+                                         * @see Horde_Deprecated::img()
+                                         */
                     $space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
                 }
             }
@@ -291,6 +308,11 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
+                /**
+                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                                 * @deprecated Use Horde_Themes_Image::tag() instead
+                                 * @see Horde_Deprecated::img()
+                                 */
                 $space .= Horde::img('tree/join.png', '+', $imgattrs) . "\n";
             } else {
                 /**
@@ -303,6 +325,11 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
+                /**
+                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                                 * @deprecated Use Horde_Themes_Image::tag() instead
+                                 * @see Horde_Deprecated::img()
+                                 */
                 $space .= Horde::img('tree/joinbottom.png', '-', $imgattrs) . "\n";
             }
         }

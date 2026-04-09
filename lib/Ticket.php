@@ -14,6 +14,7 @@
  * @package Whups
  */
 
+use Horde\Date\Format as DateFormat;
 use Horde\Util\Variables;
 
 class Whups_Ticket
@@ -116,6 +117,11 @@ class Whups_Ticket
              * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
              * @see Horde_Deprecated::callHook()
              */
+            /**
+                         * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+                         * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+                         * @see Horde_Deprecated::callHook()
+                         */
             $info = Horde::callHook('ticket_create', [$info, $requester], 'whups');
         } catch (Horde_Exception_HookNotSet $e) {
         }
@@ -315,6 +321,11 @@ class Whups_Ticket
              * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
              * @see Horde_Deprecated::callHook()
              */
+            /**
+                         * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
+                         * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
+                         * @see Horde_Deprecated::callHook()
+                         */
             $this->_changes = Horde::callHook('ticket_update', [$this, $this->_changes], 'whups');
         } catch (Horde_Exception_HookNotSet $e) {
         }
@@ -497,7 +508,7 @@ class Whups_Ticket
 
         /* Build message template. */
         $view = new Horde_View(['templatePath' => WHUPS_BASE . '/config']);
-        $view->date = strftime($GLOBALS['prefs']->getValue('date_format'));
+        $view->date = DateFormat::formatDate(time(), $GLOBALS['prefs']->getValue('date_format'));
         $view->auth_name = $GLOBALS['injector']
             ->getInstance('Horde_Core_Factory_Identity')
             ->create()
@@ -964,7 +975,7 @@ class Whups_Ticket
         $view->ticket_url = $url;
         $view->table = $table;
         $view->dont_reply = empty($conf['mail']['reply']);
-        $view->date = strftime($GLOBALS['prefs']->getValue('date_format'));
+        $view->date = DateFormat::formatDate(time(), $GLOBALS['prefs']->getValue('date_format'));
         $view->auth_name = $GLOBALS['injector']
             ->getInstance('Horde_Core_Factory_Identity')
             ->create()

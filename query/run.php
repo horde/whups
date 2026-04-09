@@ -96,6 +96,11 @@ if (!is_null($tickets)) {
          * @deprecated Use Horde_Themes_Image::tag() instead
          * @see Horde_Deprecated::img()
          */
+        /**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
         $subscription = Horde::link(
             Whups::urlFor('query_rss', $params, true, -1),
             _("Subscribe to this query")

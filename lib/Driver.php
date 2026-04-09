@@ -16,6 +16,8 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Whups
  */
+use Horde\Date\Format as DateFormat;
+
 abstract class Whups_Driver
 {
     /**
@@ -701,7 +703,7 @@ abstract class Whups_Driver
                     . sprintf(
                         _("%s (%s) wrote:"),
                         Whups::formatUser($comment['user_id']),
-                        strftime('%Y-%m-%d %H:%M', $comment['timestamp'])
+                        DateFormat::formatDate($comment['timestamp'], '%Y-%m-%d %H:%M')
                     )
                     . "\n\n" . $comment['comment_text'] . "\n\n\n";
             }
@@ -721,7 +723,7 @@ abstract class Whups_Driver
                     . sprintf(
                         _("%s (%s) uploaded: %s"),
                         Whups::formatUser($comment['user_id']),
-                        strftime('%Y-%m-%d %H:%M', $comment['timestamp']),
+                        DateFormat::formatDate($comment['timestamp'], '%Y-%m-%d %H:%M'),
                         $change['value']
                     )
                     . "\n\n"
