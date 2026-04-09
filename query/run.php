@@ -86,26 +86,11 @@ if (!is_null($tickets)) {
         $params = empty($whups_query->slug)
             ? ['id' => $whups_query->id]
             : ['slug' => $whups_query->slug];
-        /**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-/**
-         * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-         * @deprecated Use Horde_Themes_Image::tag() instead
-         * @see Horde_Deprecated::img()
-         */
-        /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
         $subscription = Horde::link(
             Whups::urlFor('query_rss', $params, true, -1),
             _("Subscribe to this query")
         )
-                    . Horde::img('feed.png', _("Subscribe to this query"))
+                    . Horde_Themes_Image::tag('feed.png', ['alt' => _("Subscribe to this query")])
                     . '</a>';
     }
     $results = new Whups_View_Results(

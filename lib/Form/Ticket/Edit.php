@@ -41,26 +41,9 @@ class Whups_Form_Ticket_Edit extends Horde_Form
         $grouped_fields = [$fields];
         $grouped_hook = false;
         try {
-            /**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
-             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
-             * @see Horde_Deprecated::callHook()
-             */
-/**
-             * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
-             * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
-             * @see Horde_Deprecated::callHook()
-             */
-            /**
-                         * ARCHITECTURE VIOLATION: Using deprecated Horde::callHook()
-                         * @deprecated Use $GLOBALS['injector']->getInstance('Horde_Core_Hooks')->callHook() instead
-                         * @see Horde_Deprecated::callHook()
-                         */
-            $grouped_fields = Horde::callHook(
-                'group_fields',
-                [$ticket->get('type'), $fields],
-                'whups'
-            );
+            $grouped_fields = $GLOBALS['injector']
+                ->getInstance('Horde_Core_Hooks')
+                ->callHook('group_fields', 'whups', [$ticket->get('type'), $fields]);
             $grouped_hook = true;
         } catch (Horde_Exception_HookNotSet $e) {
         } catch (Horde_Exception $e) {

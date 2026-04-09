@@ -222,22 +222,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
 
             $comment_count++;
             if ($private) {
-                /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-/**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-                /**
-                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                 * @deprecated Use Horde_Themes_Image::tag() instead
-                                 * @see Horde_Deprecated::img()
-                                 */
-                $comment_label = Horde::img('locked.png')
+                $comment_label = Horde_Themes_Image::tag('locked.png')
                                     . sprintf(_("Comment #%d (Private)"), $comment_count);
             } else {
                 $comment_label = sprintf(_("Comment #%d"), $comment_count);
@@ -252,27 +237,12 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
             // Admins can delete entries.
             $delete_link = '';
             if (Whups::hasPermission($vars->get('queue'), 'queue', Horde_Perms::DELETE)) {
-                /**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-/**
-                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                 * @deprecated Use Horde_Themes_Image::tag() instead
-                 * @see Horde_Deprecated::img()
-                 */
-                /**
-                                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
-                                 * @deprecated Use Horde_Themes_Image::tag() instead
-                                 * @see Horde_Deprecated::img()
-                                 */
                 $delete_link = Horde::url('ticket/delete_history.php')
                                     ->add(['transaction' => $transaction,
                                         'id' => $vars->get('ticket_id'),
                                         'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))])
                                     ->link(['title' => _("Delete entry"), 'onclick' => 'return window.confirm(\'' . addslashes(_("Permanently delete entry?")) . '\');'])
-                                    . Horde::img('delete.png', _("Delete entry"))
+                                    . Horde_Themes_Image::tag('delete.png', ['alt' => _("Delete entry")])
                                     . '</a>';
             }
 
