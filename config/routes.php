@@ -13,25 +13,151 @@ $mapper->connect(
     '/webhook/github',
     [
         'controller' => Webhook\Github::class,
-        // The webhook is not protected at this level but you can configure a secret in conf.php
         'HordeAuthType' => 'NONE',
     ]
 );
-$mapper->connect(
-    'WhupsHomeIndex',
-    '/index.php',
-    [
-        'controller' => Ui\WhupsUi::class,
-        // The webhook is not protected at this level but you can configure a secret in conf.php
-        'HordeAuthType' => 'NONE',
-    ]
-);
-$mapper->connect(
-    'WhupsHome',
-    '/',
-    [
-        'controller' => Ui\WhupsUi::class,
-        // The webhook is not protected at this level but you can configure a secret in conf.php
-        'HordeAuthType' => 'NONE',
-    ]
-);
+
+// Home / default view
+$mapper->buildRoute(uri: '/', name: 'WhupsHome')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'index', 'HordeAuthType' => 'NONE'])
+    ->withSecondaryRoute('/index.php')
+    ->add();
+
+// --- Ticket routes ---
+
+// Ticket view: /ticket/:id
+$mapper->buildRoute(uri: '/ticket/:id', name: 'TicketView')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'view'])
+    ->withRequirements(['id' => '\d+'])
+    ->withSecondaryRoute('/ticket/index.php')
+    ->add();
+
+// Ticket create: /ticket/create
+$mapper->buildRoute(uri: '/ticket/create', name: 'TicketCreate')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'create'])
+    ->withSecondaryRoute('/ticket/create.php')
+    ->add();
+
+// Ticket RSS: /ticket/:id/rss
+$mapper->buildRoute(uri: '/ticket/:id/rss', name: 'TicketRss')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'rss'])
+    ->withRequirements(['id' => '\d+'])
+    ->withSecondaryRoute('/ticket/rss.php')
+    ->add();
+
+// Ticket delete-attachment: /ticket/:id/delete-attachment
+$mapper->buildRoute(uri: '/ticket/:id/delete-attachment', name: 'TicketDeleteAttachment')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'delete_attachment'])
+    ->withRequirements(['id' => '\d+'])
+    ->withSecondaryRoute('/ticket/delete_attachment.php')
+    ->add();
+
+// Ticket delete-history: /ticket/:id/delete-history
+$mapper->buildRoute(uri: '/ticket/:id/delete-history', name: 'TicketDeleteHistory')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'delete_history'])
+    ->withRequirements(['id' => '\d+'])
+    ->withSecondaryRoute('/ticket/delete_history.php')
+    ->add();
+
+// Ticket delete-multiple: /ticket/delete-multiple
+$mapper->buildRoute(uri: '/ticket/delete-multiple', name: 'TicketDeleteMultiple')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'delete_multiple'])
+    ->withSecondaryRoute('/ticket/delete_multiple.php')
+    ->add();
+
+// Ticket actions: /ticket/:id/:action (update, comment, watch, delete, queue, type, attachments)
+$mapper->buildRoute(uri: '/ticket/:id/:action', name: 'TicketAction')
+    ->withController(Ui\WhupsUi::class)
+    ->withRequirements(['id' => '\d+', 'action' => 'update|comment|watch|delete|queue|type|attachments'])
+    ->withSecondaryRoute('/ticket/:action.php')
+    ->add();
+
+// --- Queue routes ---
+
+// Queue view: /queue/:slug
+$mapper->buildRoute(uri: '/queue/:slug', name: 'QueueView')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'view'])
+    ->withSecondaryRoute('/queue/index.php')
+    ->add();
+
+// Queue RSS: /queue/:slug/rss
+$mapper->buildRoute(uri: '/queue/:slug/rss', name: 'QueueRss')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'rss'])
+    ->withSecondaryRoute('/queue/rss.php')
+    ->add();
+
+// --- Query routes ---
+
+// Query builder: /query/builder (must be before /query/:slug)
+$mapper->buildRoute(uri: '/query/builder', name: 'QueryBuilder')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'builder'])
+    ->withSecondaryRoute('/query/index.php')
+    ->add();
+
+// Query run: /query/:slug
+$mapper->buildRoute(uri: '/query/:slug', name: 'QueryRun')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'run'])
+    ->withSecondaryRoute('/query/run.php')
+    ->add();
+
+// Query RSS: /query/:slug/rss
+$mapper->buildRoute(uri: '/query/:slug/rss', name: 'QueryRss')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'rss'])
+    ->withSecondaryRoute('/query/rss.php')
+    ->add();
+
+// --- Other routes ---
+
+// Search
+$mapper->buildRoute(uri: '/search', name: 'Search')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'search'])
+    ->withSecondaryRoute('/search.php')
+    ->add();
+
+// Search RSS
+$mapper->buildRoute(uri: '/search/rss', name: 'SearchRss')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'rss'])
+    ->withSecondaryRoute('/search/rss.php')
+    ->add();
+
+// My Bugs
+$mapper->buildRoute(uri: '/mybugs', name: 'MyBugs')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'mybugs'])
+    ->withSecondaryRoute('/mybugs.php')
+    ->add();
+
+// My Bugs edit
+$mapper->buildRoute(uri: '/mybugs/edit', name: 'MyBugsEdit')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'mybugs_edit'])
+    ->withSecondaryRoute('/mybugs_edit.php')
+    ->add();
+
+// Reports
+$mapper->buildRoute(uri: '/reports', name: 'Reports')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'reports'])
+    ->withSecondaryRoute('/reports.php')
+    ->add();
+
+// Admin
+$mapper->buildRoute(uri: '/admin', name: 'Admin')
+    ->withController(Ui\WhupsUi::class)
+    ->withDefaults(['action' => 'admin'])
+    ->withSecondaryRoute('/admin/index.php')
+    ->add();
