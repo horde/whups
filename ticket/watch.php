@@ -88,6 +88,11 @@ $delurl = Horde::url('ticket/watch.php')->add('id', $id);
  * @deprecated Use Horde_Themes_Image::tag() instead
  * @see Horde_Deprecated::img()
  */
+/**
+ * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+ * @deprecated Use Horde_Themes_Image::tag() instead
+ * @see Horde_Deprecated::img()
+ */
 $delimg = Horde::img('delete.png');
 
 $r = new Horde_Form_Renderer();

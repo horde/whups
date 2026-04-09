@@ -241,7 +241,12 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
              * @deprecated Use Horde_Themes_Image::tag() instead
              * @see Horde_Deprecated::img()
              */
-// Always have at least one image to make sure all rows are the
+/**
+             * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+             * @deprecated Use Horde_Themes_Image::tag() instead
+             * @see Horde_Deprecated::img()
+             */
+            // Always have at least one image to make sure all rows are the
             // same height.
             $space = Horde::img('tree/blank.png', '', $fimgattrs) . "\n";
         } else {
@@ -252,14 +257,24 @@ class Whups_Form_Renderer_Query extends Horde_Form_Renderer
                      * @deprecated Use Horde_Themes_Image::tag() instead
                      * @see Horde_Deprecated::img()
                      */
-$space .= Horde::img('tree/line.png', '|', $imgattrs) . "\n";
+/**
+                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                     * @deprecated Use Horde_Themes_Image::tag() instead
+                     * @see Horde_Deprecated::img()
+                     */
+                    $space .= Horde::img('tree/line.png', '|', $imgattrs) . "\n";
                 } else {
                     /**
                      * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
                      * @deprecated Use Horde_Themes_Image::tag() instead
                      * @see Horde_Deprecated::img()
                      */
-$space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
+/**
+                     * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                     * @deprecated Use Horde_Themes_Image::tag() instead
+                     * @see Horde_Deprecated::img()
+                     */
+                    $space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
                 }
             }
         }
@@ -271,14 +286,24 @@ $space .= Horde::img('tree/blank.png', '', $imgattrs) . "\n";
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
-$space .= Horde::img('tree/join.png', '+', $imgattrs) . "\n";
+/**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+                $space .= Horde::img('tree/join.png', '+', $imgattrs) . "\n";
             } else {
                 /**
                  * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
                  * @deprecated Use Horde_Themes_Image::tag() instead
                  * @see Horde_Deprecated::img()
                  */
-$space .= Horde::img('tree/joinbottom.png', '-', $imgattrs) . "\n";
+/**
+                 * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+                 * @deprecated Use Horde_Themes_Image::tag() instead
+                 * @see Horde_Deprecated::img()
+                 */
+                $space .= Horde::img('tree/joinbottom.png', '-', $imgattrs) . "\n";
             }
         }
 
