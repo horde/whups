@@ -49,7 +49,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                 case 'summary':
                     $changes[] = sprintf(
                         _("Summary &rArr; %s"),
-                        htmlspecialchars($change['value'])
+                        htmlspecialchars($change['value'] ?? '')
                     );
                     break;
 
@@ -85,13 +85,13 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                         } else {
                             $changes[] = sprintf(
                                 _("New Attachment: %s"),
-                                htmlspecialchars($change['value'])
+                                htmlspecialchars($change['value'] ?? '')
                             );
                         }
                     } catch (Whups_Exception $e) {
                         $changes[] = sprintf(
                             _("New Attachment: %s"),
-                            htmlspecialchars($change['value'])
+                            htmlspecialchars($change['value'] ?? '')
                         );
                     }
                     break;
@@ -99,7 +99,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                 case 'delete-attachment':
                     $changes[] = sprintf(
                         _("Deleted Attachment: %s"),
-                        htmlspecialchars($change['value'])
+                        htmlspecialchars($change['value'] ?? '')
                     );
                     break;
 
@@ -133,43 +133,43 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                 case 'queue':
                     $changes[] = sprintf(
                         _("Queue &rArr; %s"),
-                        htmlspecialchars($change['label'])
+                        htmlspecialchars($change['label'] ?? '')
                     );
                     break;
 
                 case 'version':
                     $changes[] = sprintf(
                         _("Version &rArr; %s"),
-                        htmlspecialchars($change['label'])
+                        htmlspecialchars($change['label'] ?? '')
                     );
                     break;
 
                 case 'type':
                     $changes[] = sprintf(
                         _("Type &rArr; %s"),
-                        htmlspecialchars($change['label'])
+                        htmlspecialchars($change['label'] ?? '')
                     );
                     break;
 
                 case 'state':
                     $changes[] = sprintf(
                         _("State &rArr; %s"),
-                        htmlspecialchars($change['label'])
+                        htmlspecialchars($change['label'] ?? '')
                     );
                     break;
 
                 case 'priority':
                     $changes[] = sprintf(
                         _("Priority &rArr; %s"),
-                        htmlspecialchars($change['label'])
+                        htmlspecialchars($change['label'] ?? '')
                     );
                     break;
 
                 case 'attribute':
                     $changes[] = sprintf(
                         _("%s &rArr; %s"),
-                        htmlspecialchars($change['label']),
-                        htmlspecialchars($change['human'])
+                        htmlspecialchars($change['label'] ?? ''),
+                        htmlspecialchars($change['human'] ?? '')
                     );
                     break;
 

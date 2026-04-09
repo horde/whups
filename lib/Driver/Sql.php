@@ -71,6 +71,57 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     protected $_slugs = null;
 
+    /**
+     * PSR-16 cache for metadata.
+     *
+     * @var \Psr\SimpleCache\CacheInterface|null
+     */
+    protected $_cache = null;
+
+    /**
+     * Sets the PSR-16 cache for metadata.
+     *
+     * @param \Psr\SimpleCache\CacheInterface|null $cache
+     */
+    public function setCache(?\Psr\SimpleCache\CacheInterface $cache): void
+    {
+        $this->_cache = $cache;
+    }
+
+    /**
+     * Returns a cached value, or null on miss.
+     */
+    protected function _cacheGet(string $key): mixed
+    {
+        if ($this->_cache === null) {
+            return null;
+        }
+        $data = $this->_cache->get($key);
+        if ($data === null) {
+            return null;
+        }
+        return unserialize($data);
+    }
+
+    /**
+     * Stores a value in the cache.
+     */
+    protected function _cacheSet(string $key, mixed $data): void
+    {
+        $this->_cache?->set($key, serialize($data));
+    }
+
+    /**
+     * Clears all metadata cache entries.
+     *
+     * Uses clear() which wipes the entire namespace. Safe because the
+     * namespace is dedicated to metadata only.
+     */
+    protected function _cacheClearAll(): void
+    {
+        $this->_cache?->clear();
+    }
+
     public function setStorage($storage)
     {
         if (!($storage instanceof Horde_Db_Adapter_Base)) {
@@ -101,7 +152,7 @@ class Whups_Driver_Sql extends Whups_Driver
         }
 
         try {
-            return $this->_db->insert(
+            $id = $this->_db->insert(
                 'INSERT INTO whups_queues (queue_name, queue_description, '
                     . 'queue_slug, queue_email) VALUES (?, ?, ?, ?)',
                 [$this->_toBackend($name),
@@ -112,6 +163,12 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_queues = null;
+        $this->_slugs = null;
+        $this->_cacheClearAll();
+
+        return $id;
     }
 
     /**
@@ -126,7 +183,7 @@ class Whups_Driver_Sql extends Whups_Driver
     public function addType($name, $description)
     {
         try {
-            return $this->_db->insert(
+            $id = $this->_db->insert(
                 'INSERT INTO whups_types (type_name, type_description) '
                     . 'VALUES (?, ?)',
                 [$this->_toBackend($name),
@@ -135,6 +192,10 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
+
+        return $id;
     }
 
     /**
@@ -151,7 +212,7 @@ class Whups_Driver_Sql extends Whups_Driver
     public function addState($typeId, $name, $description, $category)
     {
         try {
-            return $this->_db->insert(
+            $id = $this->_db->insert(
                 'INSERT INTO whups_states (type_id, state_name, '
                     . 'state_description, state_category) VALUES (?, ?, ?, ?)',
                 [(int) $typeId,
@@ -162,6 +223,10 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
+
+        return $id;
     }
 
     /**
@@ -177,7 +242,7 @@ class Whups_Driver_Sql extends Whups_Driver
     public function addPriority($typeId, $name, $description)
     {
         try {
-            return $this->_db->insert(
+            $id = $this->_db->insert(
                 'INSERT INTO whups_priorities (type_id, priority_name, '
                     . 'priority_description) VALUES (?, ?, ?)',
                 [(int) $typeId,
@@ -187,6 +252,10 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
+
+        return $id;
     }
 
     /**
@@ -735,7 +804,7 @@ class Whups_Driver_Sql extends Whups_Driver
     {
         $func    = '';
         $funcend = '';
-        $value = $this->_toBackend($value);
+        $value = $this->_toBackend($value) ?? '';
 
         switch ($operator) {
             case Whups_Query::OPERATOR_GREATER: $op = '>';
@@ -1559,6 +1628,11 @@ class Whups_Driver_Sql extends Whups_Driver
     public function getQueuesInternal()
     {
         if (is_null($this->_queues)) {
+            $cached = $this->_cacheGet('whups.queues');
+            if ($cached !== null) {
+                $this->_queues = $cached;
+                return $this->_queues;
+            }
             try {
                 $queues = $this->_db->selectAssoc(
                     'SELECT queue_id, queue_name FROM whups_queues '
@@ -1568,6 +1642,7 @@ class Whups_Driver_Sql extends Whups_Driver
                 throw new Whups_Exception($e);
             }
             $this->_queues = $this->_fromBackend($queues);
+            $this->_cacheSet('whups.queues', $this->_queues);
         }
 
         return $this->_queues;
@@ -1582,6 +1657,11 @@ class Whups_Driver_Sql extends Whups_Driver
     public function getSlugs()
     {
         if (is_null($this->_slugs)) {
+            $cached = $this->_cacheGet('whups.slugs');
+            if ($cached !== null) {
+                $this->_slugs = $cached;
+                return $this->_slugs;
+            }
             try {
                 $queues = $this->_db->selectAssoc(
                     'SELECT queue_id, queue_slug FROM whups_queues '
@@ -1592,6 +1672,7 @@ class Whups_Driver_Sql extends Whups_Driver
                 throw new Whups_Exception($e);
             }
             $this->_slugs = $this->_fromBackend($queues);
+            $this->_cacheSet('whups.slugs', $this->_slugs);
         }
 
         return $this->_slugs;
@@ -1678,6 +1759,10 @@ class Whups_Driver_Sql extends Whups_Driver
                 }
             }
         }
+
+        $this->_queues = null;
+        $this->_slugs = null;
+        $this->_cacheClearAll();
     }
 
     /**
@@ -1741,6 +1826,10 @@ class Whups_Driver_Sql extends Whups_Driver
             }
         }
         $this->_db->commitDbTransaction();
+
+        $this->_queues = null;
+        $this->_slugs = null;
+        $this->_cacheClearAll();
 
         return parent::deleteQueue($queueId);
     }
@@ -1892,6 +1981,12 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function getTypes($queueId)
     {
+        $cacheKey = 'whups.types.' . (int) $queueId;
+        $cached = $this->_cacheGet($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         try {
             $types = $this->_db->selectAssoc(
                 'SELECT t.type_id, t.type_name '
@@ -1904,7 +1999,9 @@ class Whups_Driver_Sql extends Whups_Driver
             throw new Whups_Exception($e);
         }
 
-        return $this->_fromBackend($types);
+        $result = $this->_fromBackend($types);
+        $this->_cacheSet($cacheKey, $result);
+        return $result;
     }
 
     /**
@@ -1936,6 +2033,11 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function getAllTypes()
     {
+        $cached = $this->_cacheGet('whups.alltypes');
+        if ($cached !== null) {
+            return $cached;
+        }
+
         try {
             $types = $this->_db->selectAssoc(
                 'SELECT type_id, type_name FROM whups_types ORDER BY type_name'
@@ -1944,7 +2046,9 @@ class Whups_Driver_Sql extends Whups_Driver
             throw new Whups_Exception($e);
         }
 
-        return $this->_fromBackend($types);
+        $result = $this->_fromBackend($types);
+        $this->_cacheSet('whups.alltypes', $result);
+        return $result;
     }
 
     /**
@@ -2011,6 +2115,8 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
     }
 
     /**
@@ -2049,6 +2155,8 @@ class Whups_Driver_Sql extends Whups_Driver
             $this->_db->rollbackDbTransaction();
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
     }
 
     /**
@@ -2063,6 +2171,12 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function getStates($type = null, $category = '', $notcategory = '')
     {
+        $cacheKey = 'whups.states.' . md5(serialize([$type, $category, $notcategory]));
+        $cached = $this->_cacheGet($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $fields = 'state_id, state_name';
         $from = 'whups_states';
         $order = 'state_category, state_name';
@@ -2120,7 +2234,9 @@ class Whups_Driver_Sql extends Whups_Driver
             }
         }
 
-        return $this->_fromBackend($return);
+        $result = $this->_fromBackend($return);
+        $this->_cacheSet($cacheKey, $result);
+        return $result;
     }
 
     /**
@@ -2199,6 +2315,8 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
     }
 
     /**
@@ -2266,6 +2384,8 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
     }
 
     /**
@@ -2412,6 +2532,12 @@ class Whups_Driver_Sql extends Whups_Driver
      */
     public function getPriorities($type = null)
     {
+        $cacheKey = 'whups.priorities.' . ((int) ($type ?? 0));
+        $cached = $this->_cacheGet($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $fields = 'priority_id, priority_name';
         $from = 'whups_priorities';
         $order = 'priority_name';
@@ -2442,7 +2568,9 @@ class Whups_Driver_Sql extends Whups_Driver
             }
         }
 
-        return $this->_fromBackend($return);
+        $result = $this->_fromBackend($return);
+        $this->_cacheSet($cacheKey, $result);
+        return $result;
     }
 
     /**
@@ -2495,6 +2623,8 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
     }
 
     /**
@@ -2564,6 +2694,8 @@ class Whups_Driver_Sql extends Whups_Driver
         } catch (Horde_Db_Exception $e) {
             throw new Whups_Exception($e);
         }
+
+        $this->_cacheClearAll();
     }
 
     /**
@@ -2877,7 +3009,7 @@ class Whups_Driver_Sql extends Whups_Driver
         $owner_is_requester = false;
         if (isset($tinfo['owners'])) {
             foreach ($tinfo['owners'] as $owner) {
-                $owner = str_replace('user:', '', $owner);
+                $owner = str_replace('user:', '', $owner ?? '');
                 if ($owner == $requester) {
                     $owner_is_requester = true;
                 }

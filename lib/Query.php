@@ -772,8 +772,8 @@ class Whups_Query
         $path = Whups_Query::stringToPath($pathstring);
         $qobj = &$this->query;
 
-        $value = trim($value);
-        if ($value[0] == '"') {
+        $value = trim($value ?? '');
+        if ($value !== '' && $value[0] == '"') {
             // FIXME: The last character should be '"' as well.
             $value = substr($value, 1, -1);
         } else {

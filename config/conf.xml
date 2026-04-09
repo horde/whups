@@ -13,6 +13,12 @@
   </configsection>
  </configtab>
 
+ <configtab name="cache" desc="Cache Settings">
+  <configsection name="cache">
+   <configinteger name="metadata_lifetime" desc="How long to cache metadata like queues, types, states, priorities (in seconds). Set to 0 to disable caching.">3600</configinteger>
+  </configsection>
+ </configtab>
+
  <configtab name="guests" desc="Guest Settings">
   <configsection name="guests">
    <configswitch name="captcha" quote="false" desc="Require guests to enter a

@@ -36,7 +36,7 @@ class Whups_Ui_VarRenderer_Html extends Horde_Core_Ui_VarRenderer_Html
             '<input type="text" name="%s" id="%s" value="%s" autocomplete="off"%s />',
             $name,
             $name,
-            @htmlspecialchars($var->getValue($vars)),
+            htmlspecialchars($var->getValue($vars) ?? ''),
             $this->_getActionScripts($form, $var)
         )
             . '<span id="' . $name . '_loading_img" style="display:none;">'

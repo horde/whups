@@ -52,8 +52,8 @@ class Whups_Mail
         }
 
         // Try to avoid bounces, auto-replies, and mailing list responses.
-        $from = $headers->getValue('from');
-        if (strpos($headers->getValue('Content-Type'), 'multipart/report') !== false ||
+        $from = $headers->getValue('from') ?? '';
+        if (strpos($headers->getValue('Content-Type') ?? '', 'multipart/report') !== false ||
             stripos($from, 'mailer-daemon@') !== false ||
             stripos($from, 'postmaster@') !== false ||
             !is_null($headers->getValue('X-Failed-Recipients')) ||
@@ -83,7 +83,7 @@ class Whups_Mail
         }
 
         // Use the message subject as the ticket summary.
-        $info['summary'] = trim($headers->getValue('subject'));
+        $info['summary'] = trim($headers->getValue('subject') ?? '');
         if (empty($info['summary'])) {
             $info['summary'] = _("[No Subject]");
         }

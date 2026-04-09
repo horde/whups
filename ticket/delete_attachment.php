@@ -20,7 +20,7 @@ if (!Whups::hasPermission($ticket->get('queue'), 'queue', Horde_Perms::DELETE)) 
         ->redirect();
 }
 
-$file = basename(Horde_Util::getFormData('file'));
+$file = basename(Horde_Util::getFormData('file') ?? '');
 if ($file) {
     $ticket->change('delete-attachment', $file);
 } else {

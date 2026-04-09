@@ -392,7 +392,7 @@ class Whups
         if (empty($id)) {
             $id = Horde_Util::getFormData('id');
         }
-        $id = preg_replace('|\D|', '', $id);
+        $id = preg_replace('|\D|', '', $id ?? '');
         if (!$id) {
             $GLOBALS['notification']->push(_("Invalid Ticket Id"), 'horde.error');
             $default->redirect();
