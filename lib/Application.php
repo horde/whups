@@ -42,7 +42,7 @@ class Whups_Application extends Horde_Registry_Application
 {
     /**
      */
-    public $version = '4.0.0-beta1';
+    public $version = '4.0.0-beta2';
 
     /**
      * Global variables defined:

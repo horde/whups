@@ -1,4 +1,29 @@
 ---
+4.0.0-beta2:
+  api: 4.0.0-beta2
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-09
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: |-
+    fix: Multiple architecture violations with Horde:: or Horde_Deprecated:: calls
+    fix: Various strftime architecture violations.
+    fix: We want to skip to the next ticket, not to the end of the switch
+    feat: Offload some expensive parts of report generation to driver
+    feat: Cache generated reports.
+    chore(hordeyml): Whups now depends on horde/cache and PSR cache interfaces
+    style: php-cs-fixer
+    feat: Cache for metadata which only changes on admin actions
+    Merge pull request #6 from horde/feat/replace-horde-template
+    feat: Replace Horde_Template with Horde_View
+    fix: More defensive code when trying to drop tables
+    docs: Clarify where to put local overrides
+    chore: Use named params for clarity
+    fix: Accept both types of variables
+    fix(ticket/attachements.php): use ticket->getId() instead of undefined $id variable
 4.0.0-beta1:
   api: 4.0.0-beta1
   state:
