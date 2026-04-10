@@ -220,7 +220,8 @@ class Whups_Query
     public function getTabs(Variables|Horde_Variables $vars)
     {
         // Create a few variables that are reused.
-        $queryurl = Horde::url('query/index.php');
+        $webroot = $GLOBALS['registry']->get('webroot', 'whups');
+        $queryurl = new Horde_Url($webroot . '/query/builder');
         $edit = $this->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::EDIT);
         $delete = $this->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::DELETE);
 
@@ -232,7 +233,7 @@ class Whups_Query
         if ($this->id && $edit && empty($GLOBALS['conf']['share']['no_sharing'])) {
             $GLOBALS['page_output']->addScriptFile('popup.js', 'horde');
 
-            $permsurl = Horde::url($GLOBALS['registry']->get('webroot', 'horde') . '/services/shares/edit.php')->add([
+            $permsurl = (new Horde_Url($GLOBALS['registry']->get('webroot', 'horde') . '/services/shares/edit.php'))->add([
                 'app' => 'whups',
                 'cid' => $this->id]);
             $tabs->addTab(
@@ -244,7 +245,7 @@ class Whups_Query
                     'target' => '_blank']
             );
         }
-        $tabs->addTab(_("E_xecute Query"), Horde::url('query/run.php'), 'run');
+        $tabs->addTab(_("E_xecute Query"), new Horde_Url($webroot . '/query/run'), 'run');
         $tabs->addTab(_("_Load Query"), $queryurl, 'load');
         if ((!$this->id && $GLOBALS['registry']->getAuth())
             || ($this->id && $edit)) {

@@ -27,7 +27,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
 
     public function render($transaction, $vars)
     {
-        global $prefs, $conf;
+        global $prefs, $conf, $registry;
         static $canUpdate, $comment_count = 0;
 
         if (!isset($canUpdate)) {
@@ -123,12 +123,16 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
                     $comment = $change['comment'];
                     $private = !empty($change['private']);
                     if ($comment) {
-                        $reply = Horde::link(
-                            Horde::url($canUpdate ? 'ticket/update.php' : 'ticket/comment.php')->add([
-                                'id' => $vars->get('ticket_id'),
+                        $webroot = $registry->get('webroot', 'whups');
+                        $ticketId = $vars->get('ticket_id');
+                        $action = $canUpdate ? 'update' : 'comment';
+                        $reply = (new Horde_Url($webroot . '/ticket/' . $ticketId . '/' . $action))
+                            ->add([
+                                'id' => $ticketId,
                                 'transaction' => $transaction,
                             ])
-                        ) . _("Reply to this comment") . '</a>';
+                            ->link()
+                            . _("Reply to this comment") . '</a>';
                     }
                     break;
 
@@ -237,10 +241,12 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
             // Admins can delete entries.
             $delete_link = '';
             if (Whups::hasPermission($vars->get('queue'), 'queue', Horde_Perms::DELETE)) {
-                $delete_link = Horde::url('ticket/delete_history.php')
+                $webroot = $registry->get('webroot', 'whups');
+                $ticketId = $vars->get('ticket_id');
+                $delete_link = (new Horde_Url($webroot . '/ticket/' . $ticketId . '/delete-history'))
                                     ->add(['transaction' => $transaction,
-                                        'id' => $vars->get('ticket_id'),
-                                        'url' => Horde::signUrl(Whups::urlFor('ticket', $vars->get('ticket_id'), true))])
+                                        'id' => $ticketId,
+                                        'url' => Horde::signUrl(Whups::urlFor('ticket', $ticketId, true))])
                                     ->link(['title' => _("Delete entry"), 'onclick' => 'return window.confirm(\'' . addslashes(_("Permanently delete entry?")) . '\');'])
                                     . Horde_Themes_Image::tag('delete.png', ['alt' => _("Delete entry")])
                                     . '</a>';
@@ -306,7 +312,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
     protected function _autolink($matches)
     {
         $url = Whups::urlFor('ticket', $matches[2]);
-        $link = '<strong>' . Horde::link($url, 'View ' . $matches[0])
+        $link = '<strong>' . $url->link(['title' => 'View ' . $matches[0]])
             . $matches[0] . '</a></strong>';
         $state = $GLOBALS['whups_driver']->getTicketState($matches[2]);
         if ($state['state_category'] == 'resolved') {

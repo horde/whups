@@ -13,6 +13,7 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $vars = Horde_Variables::getDefaultVariables();
 $qManager = new Whups_Query_Manager();
 
@@ -26,7 +27,7 @@ Whups::addTopbarSearch();
 if ($whups_query = $session->get('whups', 'query')) {
     if (!$whups_query->hasPermission($GLOBALS['registry']->getAuth(), Horde_Perms::READ)) {
         $notification->push(_("Permission denied."), 'horde.error');
-        Horde::url($prefs->getValue('whups_default_view') . '.php', true)
+        (new Horde_Url($webroot . '/' . $prefs->getValue('whups_default_view'), true))
             ->redirect();
     }
 } else {
@@ -138,7 +139,7 @@ if ($vars->get('criteria') != ''
 $queryTabs = $whups_query->getTabs($vars);
 
 // Criterion form types.
-$queryurl = Horde::url('query/index.php');
+$queryurl = new Horde_Url($webroot . '/query/builder');
 $vars->set('action', $session->get('whups', 'query_form'));
 $criteriaTabs = new Horde_Core_Ui_Tabs('criteria', $vars);
 $criteriaTabs->preserve('path', $vars->get('path'));
@@ -173,7 +174,7 @@ echo $queryTabs->render(Horde_Util::getFormData('action', 'edit'));
 
 if ($showExtraForm !== null) {
     $form = new $showExtraForm($vars);
-    $form->renderActive($form->getRenderer(), $vars, Horde::url('query/index.php'));
+    $form->renderActive($form->getRenderer(), $vars, new Horde_Url($webroot . '/query/builder'));
     echo '<br class="spacer" />';
 }
 

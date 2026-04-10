@@ -115,8 +115,9 @@ if (isset($type) && isset($queue['name'])) {
 }
 $view->title = htmlspecialchars($rss_title);
 $view->items = $items;
-$view->url = Horde::url('queue/', true, -1)->add('id', $id);
-$view->rss_url = Horde::url('rss.php', true, -1)->add('id', $id);
+$webroot = $registry->get('webroot', 'whups');
+$view->url = (new Horde_Url($webroot . '/queue/', true))->add('id', $id);
+$view->rss_url = (new Horde_Url($webroot . '/queue/rss.php', true))->add('id', $id);
 if (isset($queue['name'])) {
     $description = sprintf(_("Open tickets in %s"), $queue['name']);
 } else {

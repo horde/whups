@@ -19,6 +19,7 @@ class Whups_Form_Admin_EditQueueStepTwo extends Horde_Form
         global $whups_driver, $registry;
 
         parent::__construct($vars);
+        $webroot = $registry->get('webroot', 'whups');
 
         $queue = $vars->get('queue');
         try {
@@ -109,7 +110,7 @@ class Whups_Form_Admin_EditQueueStepTwo extends Horde_Form
         if ($registry->hasMethod('tickets/listVersions') == $registry->getApp()) {
             $versionlink = [
                 'text' => _("Edit the versions for this queue"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_editversionstepone')->add('queue', $queue)];
+                'url' => (new Horde_Url($webroot . '/admin/?formname=whups_form_admin_editversionstepone'))->add('queue', $queue)];
             $this->addVariable('', 'link', 'link', false, true, null, [$versionlink]);
         }
 
@@ -132,7 +133,7 @@ class Whups_Form_Admin_EditQueueStepTwo extends Horde_Form
         $musers->setDefault($whups_driver->getQueueUsers($queue));
         $userlink = [
             'text' => _("Edit the users responsible for this queue"),
-            'url' => Horde::url('admin/?formname=edituserform')->add('queue', $queue)];
+            'url' => (new Horde_Url($webroot . '/admin/?formname=edituserform'))->add('queue', $queue)];
         $this->addVariable(
             '',
             'link',
@@ -147,11 +148,9 @@ class Whups_Form_Admin_EditQueueStepTwo extends Horde_Form
         if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin', 'permlevel' => Horde_Perms::EDIT])) {
             $permslink = [
                 'text' => _("Edit the permissions on this queue"),
-                'url' => Horde::url(
-                    'admin/perms/edit.php',
-                    false,
-                    ['app' => 'horde']
-                )
+                'url' => (new Horde_Url(
+                    $registry->get('webroot', 'horde') . '/admin/perms/edit.php'
+                ))
                             ->add(['category' => 'whups:queues:' . $queue,
                                 'autocreate' => '1'])];
             $this->addVariable(

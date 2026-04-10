@@ -72,8 +72,8 @@ class Whups
      *                                 'queue', 'ticket', 'ticket_rss',
      *                                 'ticket_action', 'query', 'query_rss'.
      * @param array|string $data       URL data, depending on the controller.
-     * @param boolean $full            @see Horde::url()
-     * @param integer $append_session  @see Horde::url()
+     * @param boolean $full            Generate full (absolute) URL.
+     * @param integer $append_session  Deprecated, ignored.
      *
      * @return Horde_Url  The generated URL.
      */
@@ -350,7 +350,11 @@ class Whups
      */
     public static function getCurrentTicket()
     {
-        $default = Horde::url($GLOBALS['prefs']->getValue('whups_default_view') . '.php', true);
+        $default = new Horde_Url(
+            $GLOBALS['registry']->get('webroot', 'whups')
+                . '/' . $GLOBALS['prefs']->getValue('whups_default_view'),
+            true
+        );
         $id = Horde_Util::getFormData('searchfield');
         if (empty($id)) {
             $id = Horde_Util::getFormData('id');
@@ -382,7 +386,9 @@ class Whups
     {
         $topbar = $GLOBALS['injector']->getInstance('Horde_View_Topbar');
         $topbar->search = true;
-        $topbar->searchAction = Horde::url('ticket');
+        $topbar->searchAction = new Horde_Url(
+            $GLOBALS['registry']->get('webroot', 'whups') . '/ticket'
+        );
         $topbar->searchLabel =  $GLOBALS['session']->get('whups', 'search') ?: _("Ticket #Id");
     }
 
@@ -868,7 +874,7 @@ class Whups
         } elseif ($value == 'user_id_requester') {
             $thevalue = $info['requester_formatted'];
         } elseif ($value == 'id' || $value == 'summary') {
-            $thevalue = Horde::link($url) . '<strong>' . htmlspecialchars($thevalue) . '</strong></a>';
+            $thevalue = $url->link() . '<strong>' . htmlspecialchars($thevalue) . '</strong></a>';
         } elseif ($value == 'owners') {
             if (!empty($info['owners_formatted'])) {
                 $thevalue = implode(', ', $info['owners_formatted']);
@@ -1047,8 +1053,10 @@ class Whups
     {
         global $injector, $registry;
 
+        $webroot = $registry->get('webroot', 'whups');
+
         $links = [
-            'view' => Horde::url('view.php')
+            'view' => (new Horde_Url($webroot . '/view.php'))
                 ->add([
                     'actionID' => 'view_message',
                     'message' => $message,
@@ -1070,7 +1078,7 @@ class Whups
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
-            $links['delete'] = Horde::url('ticket/delete_attachment.php')
+            $links['delete'] = (new Horde_Url($webroot . '/ticket/' . $ticket . '/delete-attachment'))
                             ->add(
                                 [
                                     'message' => $message,
@@ -1146,6 +1154,7 @@ class Whups
     {
         global $injector, $registry;
 
+        $webroot = $registry->get('webroot', 'whups');
         $links = [];
 
         // Can we view the attachment online?
@@ -1154,7 +1163,7 @@ class Whups
         $viewer = $injector->getInstance('Horde_Core_Factory_MimeViewer')
             ->create($mime_part);
         if ($viewer && !($viewer instanceof Horde_Mime_Viewer_Default)) {
-            $links['view'] = Horde::url('view.php')
+            $links['view'] = (new Horde_Url($webroot . '/view.php'))
                 ->add([
                     'actionID' => 'view_file',
                     'type' => $file['type'],
@@ -1179,7 +1188,7 @@ class Whups
 
         // Admins can delete attachments.
         if (self::hasPermission($queue, 'queue', Horde_Perms::DELETE)) {
-            $links['delete'] = Horde::url('ticket/delete_attachment.php')
+            $links['delete'] = (new Horde_Url($webroot . '/ticket/' . $ticket . '/delete-attachment'))
                             ->add(
                                 [
                                     'file' => $file['name'],
@@ -1340,11 +1349,12 @@ class Whups
 
     public static function addFeedLink()
     {
+        $webroot = $GLOBALS['registry']->get('webroot', 'whups');
         $GLOBALS['page_output']->addLinkTag([
-            'href' => Horde::url('opensearch.php', true, -1),
+            'href' => (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false),
             'rel' => 'search',
             'type' => 'application/opensearchdescription+xml',
-            'title' => $GLOBALS['registry']->get('name') . ' (' . Horde::url('', true) . ')',
+            'title' => $GLOBALS['registry']->get('name') . ' (' . (new Horde_Url($webroot, true))->toString(true, false) . ')',
         ]);
     }
 

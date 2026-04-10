@@ -44,6 +44,7 @@ function _getSearchUrl($vars)
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $renderer = new Horde_Form_Renderer();
 $beendone = false;
 $vars = Horde_Variables::getDefaultVariables();
@@ -186,14 +187,14 @@ if (($vars->get('formname') || $vars->get('summary') || $vars->get('states')
             }
         }
         $session->set('whups', 'query', $whups_query);
-        Horde::url('query/index.php', true)
+        (new Horde_Url($webroot . '/query/builder', true))
             ->add('action', 'save')
             ->redirect();
     }
     try {
         $tickets = $whups_driver->getTicketsByProperties($info);
         Whups::sortTickets($tickets);
-        $session->set('whups', 'last_search', Horde::url('search.php?' . _getSearchUrl($vars)));
+        $session->set('whups', 'last_search', new Horde_Url($webroot . '/search?' . _getSearchUrl($vars)));
         $results = new Whups_View_Results(
             ['title' => _("Search Results"),
                 'results' => $tickets,
@@ -217,14 +218,14 @@ if ($results) {
     $results->html();
     if (is_object($form)) {
         $form->setTitle(_("Refine Search"));
-        $form->renderActive($renderer, $vars, Horde::url('search.php'), 'get');
+        $form->renderActive($renderer, $vars, new Horde_Url($webroot . '/search'), 'get');
     }
 }
 
 if (!$beendone) {
     // Front search page.
     $form->setTitle(_("Ticket Search"));
-    $form->renderActive($renderer, $vars, Horde::url('search.php'), 'get');
+    $form->renderActive($renderer, $vars, new Horde_Url($webroot . '/search'), 'get');
 }
 
 $qManager = new Whups_Query_Manager();

@@ -727,7 +727,7 @@ abstract class Whups_Driver
                         $change['value']
                     )
                     . "\n\n"
-                    . Horde::url($GLOBALS['registry']->downloadUrl($change['value'], $url_params), true)
+                    . (new Horde_Url($GLOBALS['registry']->downloadUrl($change['value'], $url_params), true))
                     . "\n\n\n";
             }
         }

@@ -10,19 +10,15 @@ if (($list_length = count($whups_tickets)) <= 1 ||
 
 $prevnext_links = array();
 if ($this_ticket != 0) {
-    $prevnext_links[] = Horde::link(
-        Whups::urlFor('ticket', $whups_tickets[0]))
+    $prevnext_links[] = Whups::urlFor('ticket', $whups_tickets[0])->link()
         . htmlspecialchars(_("<<First")) . '</a>';
-    $prevnext_links[] = Horde::link(
-        Whups::urlFor('ticket', $whups_tickets[$this_ticket - 1]))
+    $prevnext_links[] = Whups::urlFor('ticket', $whups_tickets[$this_ticket - 1])->link()
         . htmlspecialchars(_("<Prev")) . '</a>';
 }
 if ($this_ticket + 1 != $list_length) {
-    $prevnext_links[] = Horde::link(
-        Whups::urlFor('ticket', $whups_tickets[$this_ticket + 1]))
+    $prevnext_links[] = Whups::urlFor('ticket', $whups_tickets[$this_ticket + 1])->link()
         . htmlspecialchars(_("Next>")) . '</a>';
-    $prevnext_links[] = Horde::link(
-        Whups::urlFor('ticket', $whups_tickets[$list_length - 1]))
+    $prevnext_links[] = Whups::urlFor('ticket', $whups_tickets[$list_length - 1])->link()
         . htmlspecialchars(_("Last>>")) . '</a>';
 }
 $label = _("Re_turn to Search Results");
@@ -35,7 +31,7 @@ $label = Horde::highlightAccessKey($label, $ak);
   <small>
    [ <?php echo implode(' ', $prevnext_links) ?> ]
    <?php if ($ls = $GLOBALS['session']->get('whups', 'last_search')): ?>
-   [ <?php echo Horde::link(Horde::url($ls)->add('haveSearch', true), '', '', '', '', '', $ak) . $label ?></a> ]
+   [ <?php echo (new Horde_Url($ls))->add('haveSearch', true)->link(['accesskey' => $ak]) . $label ?></a> ]
    <?php endif; ?>
   </small>
  </p>

@@ -6,8 +6,8 @@
 <?php if (count($this->_params['results'])): ?>
 <br class="spacer" />
 <?php if ($GLOBALS['registry']->getAuth()): ?>
-<form id="delete-form" method="post" action="<?php echo Horde::url('ticket/delete_multiple.php') ?>">
-<input type="hidden" name="url" value="<?php echo Horde::selfUrl(true, true, true) ?>" />
+<form id="delete-form" method="post" action="<?php echo new Horde_Url($GLOBALS['registry']->get('webroot', 'whups') . '/ticket/delete-multiple') ?>">
+<input type="hidden" name="url" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']) ?>" />
 <?php endif ?>
 <table class="horde-table tickets sortable" id="sresults_<?php echo $this->_id ?>" width="100%">
 <thead><tr class="nowrap">
@@ -23,12 +23,12 @@ foreach ($this->_params['values'] as $name => $value):
     }
     if ($sortby == $value) {
         $class = ' class="' . $sortdirclass . '"';
-        $revurl = Horde::url($this->_params['url'])->add('sortdir', ($sortdir ? 0 : 1));
-        $sortlink = Horde::link($revurl, sprintf(_("Sort by %s"), $name), 'sortlink') . $name . '</a> ';
+        $revurl = (new Horde_Url($this->_params['url']))->add('sortdir', ($sortdir ? 0 : 1));
+        $sortlink = $revurl->link(['title' => sprintf(_("Sort by %s"), $name), 'class' => 'sortlink']) . $name . '</a> ';
     } else {
         $class = '';
-        $url = Horde::url($this->_params['url'])->add('sortby', $value);
-        $sortlink = Horde::link($url, sprintf(_("Sort by %s"), $name), 'sortlink') . $name . '</a> ';
+        $url = (new Horde_Url($this->_params['url']))->add('sortby', $value);
+        $sortlink = $url->link(['title' => sprintf(_("Sort by %s"), $name), 'class' => 'sortlink']) . $name . '</a> ';
     }
 ?>
 <th id="<?php echo $value ?>"<?php echo $class ?>><?php echo $sortlink ?></th>

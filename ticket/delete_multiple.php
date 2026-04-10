@@ -12,6 +12,7 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 Whups::addTopbarSearch();
 
 $vars = Horde_Variables::getDefaultVariables();
@@ -38,9 +39,9 @@ if ($vars->get('formname') == 'whups_form_ticket_deletemultiple'
         $notification->push(_("The tickets were not deleted."), 'horde.message');
     }
     if (!($url = Horde::verifySignedUrl($vars->get('url')))) {
-        $url = $prefs->getValue('whups_default_view') . '.php';
+        $url = $webroot . '/' . $prefs->getValue('whups_default_view');
     }
-    Horde::url($url, true)->redirect();
+    (new Horde_Url($url, true))->redirect();
 }
 
 $vars->set('tickets', serialize($deleteform->getTickets()));
@@ -51,7 +52,7 @@ $notification->notify(['listeners' => 'status']);
 $deleteform->renderActive(
     $deleteform->getRenderer(),
     $vars,
-    Horde::url('ticket/delete_multiple.php'),
+    new Horde_Url($webroot . '/ticket/delete-multiple'),
     'post'
 );
 $page_output->footer();

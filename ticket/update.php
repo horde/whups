@@ -11,12 +11,13 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $ticket = Whups::getCurrentTicket();
 $page_output->addLinkTag($ticket->feedLink());
 
 if (!Whups::hasPermission($ticket->get('queue'), 'queue', 'update')) {
     $notification->push(_("Permission Denied"), 'horde.error');
-    Horde::url($prefs->getValue('whups_default_view') . '.php', true)
+    (new Horde_Url($webroot . '/' . $prefs->getValue('whups_default_view'), true))
         ->redirect();
 }
 
@@ -112,7 +113,7 @@ echo Whups::getTicketTabs($vars, $id)->render('update');
 $editform->renderActive(
     renderer: $editform->getRenderer(),
     vars: $vars,
-    action: Horde::url('ticket/update.php'),
+    action: new Horde_Url($webroot . '/ticket/' . $id . '/update'),
     method: 'post',
     enctype: 'multipart/form-data'
 );
