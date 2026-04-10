@@ -147,8 +147,8 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
 
     public function setStorage($storage)
     {
-        if (!($storage instanceof Horde_Db_Adapter_Base)) {
-            throw new InvalidArgumentException("Missing Horde_Db_Adapter_Base");
+        if (!($storage instanceof Horde_Db_Adapter)) {
+            throw new InvalidArgumentException("Missing Horde_Db_Adapter");
         }
         $this->_db = $storage;
     }
