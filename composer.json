@@ -20,7 +20,7 @@
         "tickets",
         "helpdesk"
     ],
-    "time": "2026-04-09",
+    "time": "2026-04-10",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -63,7 +63,11 @@
             "Horde\\Whups\\": "/src"
         }
     },
-    "autoload-dev": {},
+    "autoload-dev": {
+        "psr-4": {
+            "Horde\\Whups\\Test\\": "test/"
+        }
+    },
     "bin": [
         "bin/whups-bugzilla-import",
         "bin/whups-convert-datatree-shares-to-sql",
