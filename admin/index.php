@@ -25,8 +25,10 @@ if (!$vars->exists('action')) {
     $vars->set('action', 'queue');
 }
 
+$webroot = $registry->get('webroot', 'whups');
+
 // Admin actions.
-$adminurl = Horde::selfUrl(false, false);
+$adminurl = new Horde_Url($webroot . '/admin/');
 $tabs = new Horde_Core_Ui_Tabs('action', $vars);
 $tabs->addTab(_("_Edit Queues"), $adminurl, 'queue');
 $tabs->addTab(_("Edit _Types"), $adminurl, 'type');
@@ -201,7 +203,7 @@ switch ($vars->get('formname')) {
                 sprintf(_("Successfully Cloned %s to %s."), $type['name'], $vars->get('name')),
                 'horde.success'
             );
-            Horde::url('admin/?action=type', true)->redirect();
+            (new Horde_Url($webroot . '/admin/?action=type', true))->redirect();
         } else {
             _open();
             $form->renderActive($renderer, $vars, $adminurl, 'post');
@@ -224,7 +226,7 @@ switch ($vars->get('formname')) {
                     ),
                     'horde.success'
                 );
-                Horde::url('admin/?action=type', true)->redirect();
+                (new Horde_Url($webroot . '/admin/?action=type', true))->redirect();
             } catch (Whups_Exception $e) {
                 $notification->push(
                     _("There was an error modifying the type:") . ' ' . $e->getMessage(),
@@ -1329,8 +1331,8 @@ if (!_open(true)) {
             _open();
             $queues = $whups_driver->getQueues();
             $types = $whups_driver->getAllTypes();
-            $tlink = Horde::url('admin/?formname=whups_form_admin_edittypestepone');
-            $mlink = Horde::url('admin/?formname=whups_form_admin_editqueuestepone');
+            $tlink = new Horde_Url($webroot . '/admin/?formname=whups_form_admin_edittypestepone');
+            $mlink = new Horde_Url($webroot . '/admin/?formname=whups_form_admin_editqueuestepone');
             require WHUPS_TEMPLATES . '/admin/mtmatrix.inc';
             break;
 

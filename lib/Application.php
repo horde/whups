@@ -137,9 +137,11 @@ class Whups_Application extends Horde_Registry_Application
     {
         global $registry, $session;
 
+        $webroot = $registry->get('webroot', 'whups');
+
         $sidebar->addNewButton(
             _("_New Ticket"),
-            Horde::url('ticket/create.php')
+            new Horde_Url($webroot . '/ticket/create')
         );
         $sidebar->containers['queries'] = [
             'header' => [
@@ -156,7 +158,7 @@ class Whups_Application extends Horde_Registry_Application
         }
         foreach ($queries as $id => $query) {
             $row = [
-                'selected' => strpos(strval(Horde::selfUrl()), $registry->get('webroot') . '/query') === 0
+                'selected' => strpos($_SERVER['REQUEST_URI'] ?? '', $webroot . '/query') === 0
                     && $id == $currentQuery,
                 'cssClass' => 'whups-sidebar-query',
                 'url' => Whups::urlFor('query', empty($query['slug']) ? ['id' => $id] : ['slug' => $query['slug']]),
@@ -170,14 +172,15 @@ class Whups_Application extends Horde_Registry_Application
      */
     public function menu($menu)
     {
-        $menu->add(Horde::url('mybugs.php'), sprintf(_("_My %s"), $GLOBALS['registry']->get('name')), 'whups-mywhups', null, null, null, $GLOBALS['prefs']->getValue('whups_default_view') == 'mybugs' && strpos($_SERVER['PHP_SELF'], $GLOBALS['registry']->get('webroot') . '/index.php') !== false ? 'current' : null);
-        $menu->add(Horde::url('search.php'), _("_Search"), 'horde-search', null, null, null, $GLOBALS['prefs']->getValue('whups_default_view') == 'search' && strpos($_SERVER['PHP_SELF'], $GLOBALS['registry']->get('webroot') . '/index.php') !== false ? 'current' : null);
-        $menu->add(Horde::url('query/index.php'), _("_Query Builder"), 'whups-query');
-        $menu->add(Horde::url('reports.php'), _("_Reports"), 'whups-reports');
+        $webroot = $GLOBALS['registry']->get('webroot', 'whups');
+        $menu->add(new Horde_Url($webroot . '/mybugs'), sprintf(_("_My %s"), $GLOBALS['registry']->get('name')), 'whups-mywhups', null, null, null, $GLOBALS['prefs']->getValue('whups_default_view') == 'mybugs' && strpos($_SERVER['PHP_SELF'], $webroot . '/index.php') !== false ? 'current' : null);
+        $menu->add(new Horde_Url($webroot . '/search'), _("_Search"), 'horde-search', null, null, null, $GLOBALS['prefs']->getValue('whups_default_view') == 'search' && strpos($_SERVER['PHP_SELF'], $webroot . '/index.php') !== false ? 'current' : null);
+        $menu->add(new Horde_Url($webroot . '/query/builder'), _("_Query Builder"), 'whups-query');
+        $menu->add(new Horde_Url($webroot . '/reports'), _("_Reports"), 'whups-reports');
 
         /* Administration. */
         if ($GLOBALS['registry']->isAdmin(['permission' => 'whups:admin'])) {
-            $menu->add(Horde::url('admin/'), _("_Admin"), 'whups-admin');
+            $menu->add(new Horde_Url($webroot . '/admin'), _("_Admin"), 'whups-admin');
         }
     }
 
@@ -190,13 +193,14 @@ class Whups_Application extends Horde_Registry_Application
         $parent = null,
         array $params = []
     ) {
+        $webroot = $GLOBALS['registry']->get('webroot', 'whups');
         $tree->addNode([
             'id' => $parent . '__new',
             'parent' => $parent,
             'label' => _("New Ticket"),
             'expanded' => false,
             'params' => [
-                'url' => Horde::url('ticket/create.php'),
+                'url' => new Horde_Url($webroot . '/ticket/create'),
             ],
         ]);
 
@@ -206,7 +210,7 @@ class Whups_Application extends Horde_Registry_Application
             'label' => _("Search"),
             'expanded' => false,
             'params' => [
-                'url' => Horde::url('search.php'),
+                'url' => new Horde_Url($webroot . '/search'),
             ],
         ]);
     }

@@ -13,12 +13,13 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $ticket = Whups::getCurrentTicket();
 $page_output->addLinkTag($ticket->feedLink());
 $details = $ticket->getDetails();
 if (!Whups::hasPermission($details['queue'], 'queue', Horde_Perms::DELETE)) {
     $notification->push(_("Permission Denied"), 'horde.error');
-    Horde::url($prefs->getValue('whups_default_view') . '.php', true)
+    (new Horde_Url($webroot . '/' . $prefs->getValue('whups_default_view'), true))
         ->redirect();
 }
 
@@ -39,7 +40,7 @@ if ($vars->get('formname') == 'whups_form_ticket_delete'
         try {
             $ticket->delete();
             $notification->push(sprintf(_("Ticket %d has been deleted."), $info['id']), 'horde.success');
-            Horde::url($prefs->getValue('whups_default_view') . '.php', true)
+            (new Horde_Url($webroot . '/' . $prefs->getValue('whups_default_view'), true))
                 ->redirect();
         } catch (Whups_Exception $e) {
             $notification->push(_("There was an error deleting the ticket:") . ' ' . $e->getMessage(), 'horde.error');
@@ -60,7 +61,7 @@ require WHUPS_TEMPLATES . '/prevnext.inc';
 $tabs = Whups::getTicketTabs($vars, $id);
 echo $tabs->render('delete');
 
-$deleteform->renderActive($deleteform->getRenderer(), $vars, Horde::url('ticket/delete.php'), 'post');
+$deleteform->renderActive($deleteform->getRenderer(), $vars, new Horde_Url($webroot . '/ticket/' . $id . '/delete'), 'post');
 echo '<br />';
 
 $form = new Whups_Form_TicketDetails($vars, $ticket);

@@ -13,12 +13,13 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $ticket = Whups::getCurrentTicket();
 $page_output->addLinkTag($ticket->feedLink());
 $details = $ticket->getDetails();
 if (!Whups::hasPermission($details['queue'], 'queue', 'update')) {
     $notification->push(_("Permission Denied"), 'horde.error');
-    Horde::url($prefs->getValue('whups_default_view') . '.php', true)
+    (new Horde_Url($webroot . '/' . $prefs->getValue('whups_default_view'), true))
         ->redirect();
 }
 
@@ -90,12 +91,12 @@ switch ($action) {
 
         $form1->renderInactive($r, $vars);
         echo '<br />';
-        $form2->renderActive($r, $vars, Horde::url('ticket/type.php'), 'post');
+        $form2->renderActive($r, $vars, new Horde_Url($webroot . '/ticket/' . $id . '/type'), 'post');
         break;
 
     default:
         $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
-        $form1->renderActive($r, $vars, Horde::url('ticket/type.php'), 'post');
+        $form1->renderActive($r, $vars, new Horde_Url($webroot . '/ticket/' . $id . '/type'), 'post');
         break;
 }
 

@@ -11,6 +11,7 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $empty = '';
 $beendone = 0;
 $wereerrors = 0;
@@ -55,7 +56,7 @@ if ($valid1 && $valid2 && $valid3
             sprintf(_("Adding your ticket failed: %s."), $e->getMessage()),
             'horde.error'
         );
-        Horde::url('ticket/create.php', true)->redirect();
+        (new Horde_Url($webroot . '/ticket/create', true))->redirect();
     }
     $notification->push(sprintf(_("Your ticket ID is %s. An appropriate person has been notified of this request."), $ticket->getId()), 'horde.success');
     $ticket->show();

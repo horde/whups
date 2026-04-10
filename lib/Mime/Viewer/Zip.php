@@ -98,7 +98,7 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
              || ($val['method'] == 0x0))) {
             $mime_part = $this->_mimepart;
             $mime_part->setName(basename($name));
-            $val['name'] = str_replace($name, Horde::url('view.php')->add(['actionID' => 'view_file', 'type' => Horde_Util::getFormData('type') ?? '', 'file' => Horde_Util::getFormData('file') ?? '', 'ticket' => Horde_Util::getFormData('ticket') ?? '', 'zip_attachment' => $key + 1])->link() . $name . '</a>', $val['name']);
+            $val['name'] = str_replace($name, (new Horde_Url($GLOBALS['registry']->get('webroot', 'whups') . '/view.php'))->add(['actionID' => 'view_file', 'type' => Horde_Util::getFormData('type') ?? '', 'file' => Horde_Util::getFormData('file') ?? '', 'ticket' => Horde_Util::getFormData('ticket') ?? '', 'zip_attachment' => $key + 1])->link() . $name . '</a>', $val['name']);
         }
 
         return $val;

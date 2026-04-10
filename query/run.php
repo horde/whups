@@ -13,6 +13,7 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $vars = Horde_Variables::getDefaultVariables();
 $qManager = new Whups_Query_Manager();
 
@@ -42,7 +43,7 @@ if (!isset($whups_query)
     if (isset($whups_query)) {
         $notification->push(_("Permission denied."), 'horde.error');
     }
-    Horde::url($prefs->getValue('whups_default_view') . '.php', true)
+    (new Horde_Url($webroot . '/' . $prefs->getValue('whups_default_view'), true))
         ->redirect();
 }
 
@@ -64,7 +65,7 @@ if (!$whups_query->parameters) {
 
 if ($isvalid) {
     $tickets = $whups_driver->executeQuery($whups_query, $vars);
-    $session->set('whups', 'last_search', Horde::url('query/run.php'));
+    $session->set('whups', 'last_search', new Horde_Url($webroot . '/query/run'));
 }
 
 if ($whups_query->id) {
@@ -86,10 +87,8 @@ if (!is_null($tickets)) {
         $params = empty($whups_query->slug)
             ? ['id' => $whups_query->id]
             : ['slug' => $whups_query->slug];
-        $subscription = Horde::link(
-            Whups::urlFor('query_rss', $params, true, -1),
-            _("Subscribe to this query")
-        )
+        $subscription = Whups::urlFor('query_rss', $params, true, -1)
+            ->link(['title' => _("Subscribe to this query")])
                     . Horde_Themes_Image::tag('feed.png', ['alt' => _("Subscribe to this query")])
                     . '</a>';
     }
@@ -98,7 +97,7 @@ if (!is_null($tickets)) {
             'results' => $tickets,
             'extra' => $subscription,
             'values' => Whups::getSearchResultColumns(),
-            'url' => Horde::url('query/run.php')]
+            'url' => new Horde_Url($webroot . '/query/run')]
     );
 
     $results->html();

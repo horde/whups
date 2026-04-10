@@ -16,10 +16,11 @@ class Whups_Form_Admin_EditTypeStepTwo extends Horde_Form
 {
     public function __construct($vars)
     {
-        global $whups_driver;
+        global $whups_driver, $registry;
 
         $type = $vars->get('type');
         $info = $whups_driver->getType($type);
+        $webroot = $registry->get('webroot', 'whups');
 
         parent::__construct($vars, sprintf(_("Edit %s"), $info['name']));
 
@@ -50,11 +51,11 @@ class Whups_Form_Admin_EditTypeStepTwo extends Horde_Form
         $tstates->setDefault(array_keys($states));
         $statelink = [
             ['text' => _("Edit States"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_editstatestepone&type=' . $type)]];
+                'url' => new Horde_Url($webroot . '/admin/?formname=whups_form_admin_editstatestepone&type=' . $type)]];
         if (!count($states)) {
             $statelink[] = [
                 'text' => _("Create Default States"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_createdefaultstates&type=' . $type)];
+                'url' => new Horde_Url($webroot . '/admin/?formname=whups_form_admin_createdefaultstates&type=' . $type)];
         }
         $this->addVariable(
             '',
@@ -80,11 +81,11 @@ class Whups_Form_Admin_EditTypeStepTwo extends Horde_Form
         $tpriorities->setDefault(array_keys($priorities));
         $prioritylink = [
             ['text' => _("Edit Priorities"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_editprioritystepone&type=' . $type)]];
+                'url' => new Horde_Url($webroot . '/admin/?formname=whups_form_admin_editprioritystepone&type=' . $type)]];
         if (!count($priorities)) {
             $prioritylink[] = [
                 'text' => _("Create Default Priorities"),
-                'url' => Horde::url('admin/?formname=whups_form_admin_createdefaultpriorities&type=' . $type)];
+                'url' => new Horde_Url($webroot . '/admin/?formname=whups_form_admin_createdefaultpriorities&type=' . $type)];
         }
         $this->addVariable(
             '',
@@ -114,7 +115,7 @@ class Whups_Form_Admin_EditTypeStepTwo extends Horde_Form
         $tattributes->setDefault(array_keys($attributes));
         $attributelink = [
             'text' => _("Edit Attributes"),
-            'url' => Horde::url('admin/?formname=whups_form_admin_editattributestepone&type=' . $type)];
+            'url' => new Horde_Url($webroot . '/admin/?formname=whups_form_admin_editattributestepone&type=' . $type)];
         $this->addVariable(
             '',
             'link',
@@ -143,7 +144,7 @@ class Whups_Form_Admin_EditTypeStepTwo extends Horde_Form
         $treplies->setDefault(array_keys($replies));
         $replylink = [
             'text' => _("Edit Form Replies"),
-            'url' => Horde::url('admin/?formname=whups_form_admin_editreplystepone&type=' . $type)];
+            'url' => new Horde_Url($webroot . '/admin/?formname=whups_form_admin_editreplystepone&type=' . $type)];
         $this->addVariable(
             '',
             'link',

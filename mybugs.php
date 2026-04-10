@@ -12,10 +12,12 @@
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
+
 // Get refresh interval.
 if ($r_time = $prefs->getValue('summary_refresh_time')
     && !$browser->hasFeature('xmlhttpreq')) {
-    $page_output->metaRefresh($r_time, Horde::url('mybugs.php'));
+    $page_output->metaRefresh($r_time, new Horde_Url($webroot . '/mybugs'));
 }
 
 Whups::addTopbarSearch();
@@ -39,12 +41,12 @@ Whups::addFeedLink();
 
 $layout = new Horde_Core_Block_Layout_View(
     $injector->getInstance('Horde_Core_Factory_BlockCollection')->create(['whups'], 'mybugs_layout')->getLayout(),
-    Horde::url('mybugs_edit.php'),
-    Horde::url('mybugs.php', true)
+    new Horde_Url($webroot . '/mybugs/edit'),
+    new Horde_Url($webroot . '/mybugs', true)
 );
 $layout_html = $layout->toHtml();
 
-$menuBottom = '<div id="menuBottom"><a href="' . Horde::url('mybugs_edit.php') . '">' . _("Add Content") . '</a></div><div class="clear">&nbsp;</div>';
+$menuBottom = '<div id="menuBottom"><a href="' . new Horde_Url($webroot . '/mybugs/edit') . '">' . _("Add Content") . '</a></div><div class="clear">&nbsp;</div>';
 $page_output->header([
     'title' => sprintf(_("My %s"), $registry->get('name')),
 ]);

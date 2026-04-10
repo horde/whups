@@ -51,7 +51,7 @@ class Whups_Block_Query extends Whups_Block_Tickets
     protected function _title()
     {
         if (($query = $this->_getQuery()) && $query->name) {
-            return Horde::link(Whups::urlFor('query', empty($query->slug) ? ['id' => $query->id] : ['slug' => $query->slug]))
+            return Whups::urlFor('query', empty($query->slug) ? ['id' => $query->id] : ['slug' => $query->slug])->link()
                 . htmlspecialchars($query->name) . '</a>';
         }
 

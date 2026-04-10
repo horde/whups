@@ -11,6 +11,7 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $ticket = Whups::getCurrentTicket();
 $page_output->addLinkTag($ticket->feedLink());
 
@@ -82,7 +83,7 @@ if ($owners) {
 } else {
     $owners = [];
 }
-$delurl = Horde::url('ticket/watch.php')->add('id', $id);
+$delurl = (new Horde_Url($webroot . '/ticket/' . $id . '/watch'))->add('id', $id);
 $delimg = Horde_Themes_Image::tag('delete.png');
 
 $r = new Horde_Form_Renderer();
@@ -98,10 +99,10 @@ $notification->notify(['listeners' => 'status']);
 require WHUPS_TEMPLATES . '/prevnext.inc';
 echo Whups::getTicketTabs($vars, $id)->render('watch');
 require WHUPS_TEMPLATES . '/ticket/watchers.inc';
-$addform->renderActive($r, $vars, Horde::url('ticket/watch.php'), 'post');
+$addform->renderActive($r, $vars, new Horde_Url($webroot . '/ticket/' . $id . '/watch'), 'post');
 echo '<br class="spacer" />';
 if (!$registry->getAuth()) {
-    $delform->renderActive($r, $vars, Horde::url('ticket/watch.php'), 'post');
+    $delform->renderActive($r, $vars, new Horde_Url($webroot . '/ticket/' . $id . '/watch'), 'post');
     echo '<br class="spacer" />';
 }
 $form->renderInactive($form->getRenderer(), $vars);

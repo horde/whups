@@ -11,6 +11,7 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
+$webroot = $registry->get('webroot', 'whups');
 $ticket = Whups::getCurrentTicket();
 $page_output->addLinkTag($ticket->feedLink());
 
@@ -98,7 +99,7 @@ echo $tabs->render('comment');
 $commentForm->renderActive(
     renderer: new Horde_Form_Renderer(),
     vars: $vars,
-    action: Horde::url('ticket/comment.php'),
+    action: new Horde_Url($webroot . '/ticket/' . $id . '/comment'),
     method: 'post',
     enctype: 'multipart/form-data'
 );

@@ -25,7 +25,7 @@ try {
     $details = $whups_driver->getTicketDetails($id);
 } catch (Horde_Exception_PermissionDenied $e) {
     // No permissions to this ticket.
-    Horde::url($registry->get('webroot', 'horde') . '/login.php', true)
+    (new Horde_Url($registry->get('webroot', 'horde') . '/login.php', true))
         ->add('url', Horde::signUrl(Horde::selfUrl(true)))
         ->redirect();
 }

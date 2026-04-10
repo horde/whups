@@ -29,7 +29,7 @@ class Whups_Form_Admin_AddQueue extends Horde_Form
             false,
             sprintf(
                 _("Slugs allows direct access to this queue's open tickets by visiting: %s. <br /> Slug names may contain only letters, numbers or the _ (underscore) character."),
-                Horde::url('queue/slugname', true)
+                new Horde_Url($GLOBALS['registry']->get('webroot', 'whups') . '/queue/slugname', true)
             ),
             ['/^[a-zA-Z1-9_]*$/']
         );
