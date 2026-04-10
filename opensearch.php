@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * OpenSearch XML descriptor.
+ *
+ * Legacy entry point — delegates to the PSR-15 OpenSearchController.
+ *
  * Copyright 2007-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
@@ -8,31 +12,25 @@
  *
  * @author Jan Schneider <jan@horde.org>
  */
+
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('whups');
 
-// Url.
-$url = Horde::url('', true);
+use Horde\Http\RequestFactory;
+use Horde\Http\StreamFactory;
+use Horde\Http\UriFactory;
+use Horde\Http\Server\RequestBuilder;
+use Horde\Http\Server\ResponseWriterWeb;
+use Horde\Whups\Controller\OpenSearchController;
 
-// Name.
-$name = $registry->get('name', 'whups') . ' (' . $url . ')';
+$requestBuilder = new RequestBuilder(
+    new RequestFactory(),
+    new StreamFactory(),
+    new UriFactory(),
+);
+$request = $requestBuilder->withGlobalVariables()->build();
 
-// Icon.
-$icon = base64_encode(file_get_contents($registry->get('themesfs', 'whups') . '/default/graphics/whups.png'));
+$controller = new OpenSearchController($registry);
 
-// Charset.
-header('Content-Type: text/xml; charset=UTF-8');
-echo <<<PAYLOAD
-    <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-      <ShortName>$name</ShortName>
-      <SearchForm>$url</SearchForm>
-      <Url type="text/html"
-           method="get"
-           template="{$url}ticket/">
-        <Param name="id" value="{searchTerms}"/>
-      </Url>
-      <Image height="16" width="16">data:image/png;base64,$icon</Image>
-      <InputEncoding>UTF-8</InputEncoding>
-
-    </OpenSearchDescription>
-    PAYLOAD;
+$response = $controller->handle($request);
+(new ResponseWriterWeb())->writeResponse($response);

@@ -3,6 +3,8 @@
 /**
  * Deletes a history entry from the ticket.
  *
+ * Legacy entry point — delegates to the PSR-15 DeleteHistoryController.
+ *
  * Copyright 2010-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (BSD). If you
@@ -12,24 +14,29 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
-$ticket = Whups::getCurrentTicket();
-if (!Whups::hasPermission($ticket->get('queue'), 'queue', Horde_Perms::DELETE)) {
-    $notification->push(_("Permission Denied"), 'horde.error');
-    Horde::url($prefs->getValue('whups_default_view') . '.php', true)
-        ->redirect();
-}
+use Horde\Http\RequestFactory;
+use Horde\Http\StreamFactory;
+use Horde\Http\UriFactory;
+use Horde\Http\Server\RequestBuilder;
+use Horde\Http\Server\ResponseWriterWeb;
+use Horde\Whups\Controller\Ticket\DeleteHistoryController;
 
-$vars = Horde_Variables::getDefaultVariables();
-try {
-    $whups_driver->deleteHistory($vars->get('transaction'));
-    $notification->push(_("Entry deleted."), 'horde.success');
-} catch (Whups_Exception $e) {
-    $notification->push($e, 'horde.error');
-}
+$requestBuilder = new RequestBuilder(
+    new RequestFactory(),
+    new StreamFactory(),
+    new UriFactory(),
+);
+$request = $requestBuilder->withGlobalVariables()->build();
+$request = $request->withAttribute('route', [
+    'id' => Horde_Util::getFormData('id'),
+]);
 
-if ($url = Horde::verifySignedUrl(Horde_Util::getFormData('url'))) {
-    header('Location: ' . $url);
-} else {
-    Horde::url($prefs->getValue('whups_default_view') . '.php', true)
-        ->redirect();
-}
+$controller = new DeleteHistoryController(
+    $whups_driver,
+    $notification,
+    $prefs->getValue('whups_default_view'),
+    $registry->get('webroot', 'whups'),
+);
+
+$response = $controller->handle($request);
+(new ResponseWriterWeb())->writeResponse($response);

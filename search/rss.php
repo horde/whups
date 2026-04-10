@@ -51,8 +51,9 @@ $view->xsl = Horde_Themes::getFeedXsl();
 $view->pubDate = htmlspecialchars(date('r'));
 $view->title = _("Search Results");
 $view->items = $items;
-$view->url = Horde::url('search.php');
-$view->rss_url = Horde::selfUrl();
+$webroot = $registry->get('webroot', 'whups');
+$view->url = new Horde_Url($webroot . '/search');
+$view->rss_url = new Horde_Url($_SERVER['REQUEST_URI']);
 $view->description = _("Search Results");
 
 $browser->downloadHeaders('search.rss', 'text/xml', true);
