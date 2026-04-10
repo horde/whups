@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * RSS feed for a single ticket's history.
+ *
+ * Legacy entry point — delegates to the PSR-15 RssController.
+ *
  * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
@@ -11,49 +15,27 @@
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
-$ticket = Horde_Util::getFormData('id');
-$ticket = preg_replace('|\D|', '', $ticket);
-if (!$ticket) {
-    exit;
-}
+use Horde\Http\RequestFactory;
+use Horde\Http\StreamFactory;
+use Horde\Http\UriFactory;
+use Horde\Http\Server\RequestBuilder;
+use Horde\Http\Server\ResponseWriterWeb;
+use Horde\Whups\Controller\Ticket\RssController;
 
-// Get the ticket details first.
-$details = $whups_driver->getTicketDetails($ticket);
-
-// Check permissions on this ticket.
-if (!count(Whups::permissionsFilter([$details['queue'] => ''], 'queue', Horde_Perms::READ))) {
-    exit;
-}
-
-$history = Whups::permissionsFilter(
-    $whups_driver->getHistory($ticket),
-    'comment',
-    Horde_Perms::READ
+$requestBuilder = new RequestBuilder(
+    new RequestFactory(),
+    new StreamFactory(),
+    new UriFactory(),
 );
-$items = [];
-$self = Whups::urlFor('ticket', $ticket, true, -1);
-foreach (array_keys($history) as $i) {
-    if (!isset($history[$i]['comment_text'])) {
-        continue;
-    }
-    $items[$i]['title'] = htmlspecialchars(substr($history[$i]['comment_text'], 0, 60));
-    $items[$i]['description'] = htmlspecialchars($history[$i]['comment_text']);
-    $items[$i]['pubDate'] = htmlspecialchars(date('r', $history[$i]['timestamp']));
-    $items[$i]['url'] = $self . '#t' . $i;
-}
+$request = $requestBuilder->withGlobalVariables()->build();
+$request = $request->withAttribute('route', [
+    'id' => Horde_Util::getFormData('id'),
+]);
 
-$view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
-$view->xsl = Horde_Themes::getFeedXsl();
-$view->pubDate = htmlspecialchars(date('r'));
-$view->title = htmlspecialchars($details['summary']);
-$view->items = $items;
-$view->url = Whups::urlFor('ticket', $ticket, true);
-$view->rss_url = Whups::urlFor('ticket_rss', $ticket, true);
-$view->description = htmlspecialchars($details['summary']);
-
-$browser->downloadHeaders(
-    $details['summary'] . '.rss',
-    'text/xml',
-    true
+$controller = new RssController(
+    $whups_driver,
+    WHUPS_TEMPLATES . '/rss',
 );
-echo $view->render('items.rss');
+
+$response = $controller->handle($request);
+(new ResponseWriterWeb())->writeResponse($response);
