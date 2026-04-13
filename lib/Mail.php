@@ -111,7 +111,7 @@ class Whups_Mail
         if ($body_id) {
             $part = $message->getPart($body_id);
             $content = Horde_String::convertCharset(
-                $part->getContents(),
+                $part->getContents() ?? '',
                 $part->getCharset(),
                 'UTF-8'
             );
