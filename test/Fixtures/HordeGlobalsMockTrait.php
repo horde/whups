@@ -11,6 +11,7 @@ use Horde_Perms_Base;
 use Horde_Prefs;
 use Horde_Registry;
 use Horde_Session;
+use stdClass;
 
 /**
  * Sets up minimal mock globals ($registry, $injector, $session) so that
@@ -44,7 +45,7 @@ trait HordeGlobalsMockTrait
         $perms->method('exists')->willReturn(true);
         $perms->method('hasPermission')->willReturn(false);
 
-        $topbar = new \stdClass();
+        $topbar = new stdClass();
         $topbar->search = false;
         $topbar->searchAction = null;
         $topbar->searchLabel = '';

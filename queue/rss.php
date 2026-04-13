@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * Whups RSS feed.
  *
@@ -15,7 +17,7 @@ require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('whups');
 
 // See if we were passed a slug or id. Slug is tried first.
-$slug = Horde_Util::getFormData('slug');
+$slug = Util::getFormData('slug');
 if ($slug) {
     $queue = $whups_driver->getQueueBySlugInternal($slug);
     // Bad queue slug?
@@ -24,13 +26,13 @@ if ($slug) {
     }
     $id = $queue['id'];
 } else {
-    $id = Horde_Util::getFormData('id');
+    $id = Util::getFormData('id');
     $queue = $whups_driver->getQueue($id);
 }
 
 // If a specific state_category is not specified, default to returning all
 // open tickets.
-$state_category = Horde_Util::getFormData('state');
+$state_category = Util::getFormData('state');
 if ($state_category) {
     $state_display = Horde_String::ucFirst($state_category);
     // When specifying an explicit state, limit the feed to 10.
@@ -45,7 +47,7 @@ if ($state_category) {
 $criteria = [];
 
 // See if we are requesting a specific type_id (for bug, feature etc...)
-$typeId = Horde_Util::getFormData('type_id');
+$typeId = Util::getFormData('type_id');
 if (is_numeric($typeId)) {
     try {
         $type = $whups_driver->getType($typeId);

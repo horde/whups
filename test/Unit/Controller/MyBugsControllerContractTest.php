@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: mybugs.php
  * Purpose: Display user's personal ticket dashboard with query blocks
  * Route: /whups/mybugs
+ * @coversNothing
  */
 class MyBugsControllerContractTest extends TestCase
 {

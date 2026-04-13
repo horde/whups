@@ -21,6 +21,7 @@ use Horde\Http\UriFactory;
 use Horde\Http\Server\RequestBuilder;
 use Horde\Http\Server\ResponseWriterWeb;
 use Horde\Whups\Controller\Ticket\DeleteAttachmentController;
+use Horde\Util\Util;
 
 $requestBuilder = new RequestBuilder(
     new RequestFactory(),
@@ -29,7 +30,7 @@ $requestBuilder = new RequestBuilder(
 );
 $request = $requestBuilder->withGlobalVariables()->build();
 $request = $request->withAttribute('route', [
-    'id' => Horde_Util::getFormData('id'),
+    'id' => Util::getFormData('id'),
 ]);
 
 $controller = new DeleteAttachmentController(

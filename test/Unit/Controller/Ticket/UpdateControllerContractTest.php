@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/update.php
  * Purpose: Display form and handle updating ticket properties
  * Route: /whups/ticket/{id}/update
+ * @coversNothing
  */
 class UpdateControllerContractTest extends TestCase
 {

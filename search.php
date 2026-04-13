@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
@@ -54,7 +56,7 @@ Whups::addTopbarSearch();
 $form = new Whups_Form_Search($vars);
 $results = null;
 if (($vars->get('formname') || $vars->get('summary') || $vars->get('states')
-     || Horde_Util::getFormData('haveSearch', false)) && $form->validate($vars, true)) {
+     || Util::getFormData('haveSearch', false)) && $form->validate($vars, true)) {
 
     $info = $form->getInfo($vars);
     if ($vars->get('submitbutton') == _("Save as Query")) {

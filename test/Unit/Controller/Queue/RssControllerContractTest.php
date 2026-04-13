@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: queue/rss.php
  * Purpose: Generate RSS feed for a specific queue's open tickets
  * Route: /whups/queue/{slug}/rss
+ * @coversNothing
  */
 class RssControllerContractTest extends TestCase
 {

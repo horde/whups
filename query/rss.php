@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * Whups RSS feed.
  *
@@ -20,11 +22,11 @@ $vars = new Horde_Variables();
 
 // See if we were passed a slug or id. Slug is tried first.
 $whups_query = null;
-$slug = Horde_Util::getFormData('slug');
+$slug = Util::getFormData('slug');
 if ($slug) {
     $whups_query = $qManager->getQueryBySlug($slug);
 } else {
-    $whups_query = $qManager->getQuery(Horde_Util::getFormData('query'));
+    $whups_query = $qManager->getQuery(Util::getFormData('query'));
 }
 
 if (!isset($whups_query)
@@ -61,7 +63,7 @@ $view->title = htmlspecialchars($whups_query->name ? $whups_query->name : _("Que
 $view->items = $items;
 $url_param = isset($slug)
     ? ['slug' => $slug]
-    : ['id' => Horde_Util::getFormData('query')];
+    : ['id' => Util::getFormData('query')];
 $view->url = Whups::urlFor('query', $url_param, true, -1);
 $view->rss_url = Whups::urlFor('query_rss', $url_param, true, -1);
 $view->description = htmlspecialchars(sprintf(_("Tickets matching the query \"%s\"."), $whups_query->name));

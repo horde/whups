@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/watch.php
  * Purpose: Subscribe/unsubscribe to ticket update notifications
  * Route: /whups/ticket/{id}/watch
+ * @coversNothing
  */
 class WatchControllerContractTest extends TestCase
 {

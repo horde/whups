@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/delete.php
  * Purpose: Display confirmation form and handle permanent deletion of a ticket
  * Route: /whups/ticket/{id}/delete
+ * @coversNothing
  */
 class DeleteControllerContractTest extends TestCase
 {
