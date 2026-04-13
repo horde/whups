@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
  * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
@@ -170,7 +172,7 @@ $page_output->header([
 ]);
 $notification->notify(['listeners' => 'status']);
 
-echo $queryTabs->render(Horde_Util::getFormData('action', 'edit'));
+echo $queryTabs->render(Util::getFormData('action', 'edit'));
 
 if ($showExtraForm !== null) {
     $form = new $showExtraForm($vars);

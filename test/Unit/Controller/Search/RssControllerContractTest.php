@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: search/rss.php
  * Purpose: Generate RSS feed for search results
  * Route: /whups/search/rss
+ * @coversNothing
  */
 class RssControllerContractTest extends TestCase
 {

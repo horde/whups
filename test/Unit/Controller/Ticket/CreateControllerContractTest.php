@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/create.php
  * Purpose: Multi-step form for creating new tickets (select queue/type, fill details)
  * Route: /whups/ticket/create
+ * @coversNothing
  */
 class CreateControllerContractTest extends TestCase
 {

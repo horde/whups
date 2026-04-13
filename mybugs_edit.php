@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
@@ -20,13 +22,13 @@ $layout = $blocks->getLayoutManager();
 
 // Handle requested actions.
 $layout->handle(
-    Horde_Util::getFormData('action'),
-    (int) Horde_Util::getFormData('row'),
-    (int) Horde_Util::getFormData('col')
+    Util::getFormData('action'),
+    (int) Util::getFormData('row'),
+    (int) Util::getFormData('col')
 );
 if ($layout->updated()) {
     $prefs->setValue('mybugs_layout', $layout->serialize());
-    if ($url = Horde::verifySignedUrl(Horde_Util::getFormData('url'))) {
+    if ($url = Horde::verifySignedUrl(Util::getFormData('url'))) {
         $url = new Horde_Url($url);
         $url->unique()->redirect();
     }

@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Whups_Driver_Sql;
 use Whups_Exception;
+use Error;
 
 #[CoversClass(ViewController::class)]
 class ViewControllerTest extends TestCase
@@ -108,7 +109,7 @@ class ViewControllerTest extends TestCase
             $this->assertTrue(
                 $response->getStatusCode() === 200 || $response->getStatusCode() === 302,
             );
-        } catch (\Error $e) {
+        } catch (Error $e) {
             // Expected when Horde chrome stack is not available
             $this->assertStringContainsString('null', $e->getMessage());
         } finally {

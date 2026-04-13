@@ -8,6 +8,9 @@ use Horde\Whups\Controller\ResponseTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * @coversNothing
+ */
 class ResponseTraitTest extends TestCase
 {
     private object $traitUser;

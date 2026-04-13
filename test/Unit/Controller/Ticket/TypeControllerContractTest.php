@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/type.php
  * Purpose: Display form and handle changing the ticket type
  * Route: /whups/ticket/{id}/type
+ * @coversNothing
  */
 class TypeControllerContractTest extends TestCase
 {

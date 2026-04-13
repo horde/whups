@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/queue.php
  * Purpose: Display form and handle moving a ticket to a different queue
  * Route: /whups/ticket/{id}/queue
+ * @coversNothing
  */
 class QueueChangeControllerContractTest extends TestCase
 {

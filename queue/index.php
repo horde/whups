@@ -22,6 +22,7 @@ use Horde\Http\UriFactory;
 use Horde\Http\Server\RequestBuilder;
 use Horde\Http\Server\ResponseWriterWeb;
 use Horde\Whups\Controller\Queue\ViewController;
+use Horde\Util\Util;
 
 $requestBuilder = new RequestBuilder(
     new RequestFactory(),
@@ -30,8 +31,8 @@ $requestBuilder = new RequestBuilder(
 );
 $request = $requestBuilder->withGlobalVariables()->build();
 
-$slug = Horde_Util::getFormData('slug');
-$id = Horde_Util::getFormData('id');
+$slug = Util::getFormData('slug');
+$id = Util::getFormData('id');
 $request = $request->withAttribute('route', [
     'slug' => $slug ?: $id,
 ]);

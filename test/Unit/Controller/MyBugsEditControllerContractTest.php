@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: mybugs_edit.php
  * Purpose: Handle layout editing for the mybugs dashboard
  * Route: /whups/mybugs/edit
+ * @coversNothing
  */
 class MyBugsEditControllerContractTest extends TestCase
 {

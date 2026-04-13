@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/index.php
  * Purpose: Display a single ticket with details, comments, history, attachments
  * Route: /whups/ticket/{id}
+ * @coversNothing
  */
 class ViewControllerContractTest extends TestCase
 {

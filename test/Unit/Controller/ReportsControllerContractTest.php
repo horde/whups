@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: reports.php
  * Purpose: Generate and display statistical reports about tickets
  * Route: /whups/reports
+ * @coversNothing
  */
 class ReportsControllerContractTest extends TestCase
 {

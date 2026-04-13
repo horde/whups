@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/delete_multiple.php
  * Purpose: Handle bulk deletion of multiple tickets
  * Route: /whups/ticket/delete-multiple
+ * @coversNothing
  */
 class DeleteMultipleControllerContractTest extends TestCase
 {

@@ -1,0 +1,282 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * PSR-15 controller: Multi-step ticket creation wizard.
+ *
+ * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
+ *
+ * See the enclosed file LICENSE for license information (BSD). If you
+ * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
+ */
+
+namespace Horde\Whups\Controller\Ticket;
+
+use Horde;
+use Horde\Whups\Controller\ResponseTrait;
+use Horde_Form_Renderer;
+use Horde_Notification_Handler;
+use Horde_PageOutput;
+use Horde_Registry;
+use Horde_Session;
+use Horde_Variables;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Whups;
+use Whups_Driver;
+use Whups_Exception;
+use Whups_Form_Ticket_CreateStepFour;
+use Whups_Form_Ticket_CreateStepOne;
+use Whups_Form_Ticket_CreateStepThree;
+use Whups_Form_Ticket_CreateStepTwo;
+use Whups_Ticket;
+
+class CreateController implements RequestHandlerInterface
+{
+    use ResponseTrait;
+
+    public function __construct(
+        private readonly Whups_Driver $driver,
+        private readonly Horde_Notification_Handler $notification,
+        private readonly Horde_PageOutput $pageOutput,
+        private readonly Horde_Session $session,
+        private readonly Horde_Registry $registry,
+    ) {}
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $webroot = $this->registry->get('webroot', 'whups');
+        $actionUrl = $webroot . '/ticket/create';
+
+        $vars = Horde_Variables::getDefaultVariables();
+        $formname = $vars->get('formname');
+
+        $form1 = new Whups_Form_Ticket_CreateStepOne($vars);
+        $form2 = new Whups_Form_Ticket_CreateStepTwo($vars);
+        $form3 = new Whups_Form_Ticket_CreateStepThree($vars);
+        $form4 = new Whups_Form_Ticket_CreateStepFour($vars);
+        $r = new Horde_Form_Renderer(
+            ['varrenderer_driver' => ['whups', 'html']]
+        );
+
+        $valid4 = $form4->validate($vars)
+            && $formname == 'whups_form_ticket_createstepfour';
+        $valid3 = $form3->validate($vars, true);
+        $valid2 = $form2->validate($vars, !$form1->isSubmitted());
+        $valid1 = $form1->validate($vars, true);
+        $doAssignForm = $this->registry->getAuth()
+            && $this->driver->isCategory('assigned', $vars->get('state'));
+
+        if ($valid1 && $valid2 && $valid3
+            && (!$doAssignForm || $valid4)) {
+            return $this->processSubmission($vars, $form1, $form2, $form3, $form4, $doAssignForm, $actionUrl);
+        }
+
+        $html = $this->renderChrome(_("New Ticket"), function () use (
+            $vars,
+            $formname,
+            $form1,
+            $form2,
+            $form3,
+            $form4,
+            $r,
+            $valid1,
+            $valid2,
+            $valid3,
+            $actionUrl,
+        ) {
+            if ($valid3 && $valid2 && $valid1) {
+                $this->renderStepFour($vars, $formname, $form1, $form2, $form3, $form4, $r, $actionUrl);
+            } elseif ($valid2 && $valid1) {
+                $this->renderStepThree($vars, $formname, $form1, $form2, $form3, $r, $actionUrl);
+            } elseif ($valid1) {
+                $this->renderStepTwo($vars, $formname, $form1, $form2, $r, $actionUrl);
+            } else {
+                $this->renderStepOne($vars, $formname, $form1, $r, $actionUrl);
+            }
+        });
+
+        return $this->htmlResponse($html);
+    }
+
+    private function processSubmission(
+        Horde_Variables $vars,
+        Whups_Form_Ticket_CreateStepOne $form1,
+        Whups_Form_Ticket_CreateStepTwo $form2,
+        Whups_Form_Ticket_CreateStepThree $form3,
+        Whups_Form_Ticket_CreateStepFour $form4,
+        bool $doAssignForm,
+        string $actionUrl,
+    ): ResponseInterface {
+        $info = [];
+        $info = $form1->getInfo($vars, $info);
+        $info = $form2->getInfo($vars, $info);
+        $info = $form3->getInfo($vars, $info);
+        if ($doAssignForm) {
+            $info = $form4->getInfo($vars, $info);
+        }
+
+        try {
+            $ticket = Whups_Ticket::newTicket($info, $this->registry->getAuth());
+        } catch (Whups_Exception $e) {
+            Horde::log($e, 'ERR');
+            $this->notification->push(
+                sprintf(_("Adding your ticket failed: %s."), $e->getMessage()),
+                'horde.error'
+            );
+            return $this->redirect($actionUrl);
+        }
+
+        $this->notification->push(
+            sprintf(
+                _("Your ticket ID is %s. An appropriate person has been notified of this request."),
+                $ticket->getId()
+            ),
+            'horde.success'
+        );
+
+        $ticketUrl = (string) Whups::urlFor('ticket', $ticket->getId(), true);
+        return $this->redirect($ticketUrl);
+    }
+
+    private function renderStepFour(
+        Horde_Variables $vars,
+        ?string $formname,
+        Whups_Form_Ticket_CreateStepOne $form1,
+        Whups_Form_Ticket_CreateStepTwo $form2,
+        Whups_Form_Ticket_CreateStepThree $form3,
+        Whups_Form_Ticket_CreateStepFour $form4,
+        Horde_Form_Renderer $r,
+        string $actionUrl,
+    ): void {
+        $form4->open($r, $vars, $actionUrl, 'post');
+
+        $form1->preserve($vars);
+        $r->_name = $form1->getName();
+        $r->beginInactive($form1->getTitle());
+        $r->renderFormInactive($form1, $vars);
+        $r->end();
+        echo '<br />';
+
+        $form2->preserve($vars);
+        $r->_name = $form2->getName();
+        $r->beginInactive($form2->getTitle());
+        $r->renderFormInactive($form2, $vars);
+        $r->end();
+        echo '<br />';
+
+        $form3->preserve($vars);
+        $r->_name = $form3->getName();
+        $r->beginInactive($form3->getTitle());
+        $r->renderFormInactive($form3, $vars);
+        $r->end();
+        echo '<br />';
+
+        // Preserve an uploaded file if there was one.
+        $info = $form3->getInfo($vars);
+        if (!empty($info['newattachment']['name'])) {
+            $file_name = $info['newattachment']['name'];
+            $tmp_file_path = Horde::getTempFile('whups', false);
+            if (move_uploaded_file(
+                $info['newattachment']['tmp_name'],
+                $tmp_file_path
+            )) {
+                $this->session->set('whups', 'deferred_attachment/' . $file_name, $tmp_file_path);
+                $vars->set('deferred_attachment', $file_name);
+                $form4->preserveVarByPost($vars, 'deferred_attachment');
+            }
+        }
+
+        if ($formname != 'whups_form_ticket_createstepfour') {
+            $form4->clearValidation();
+        }
+        $r->_name = $form4->getName();
+        $r->beginActive($form4->getTitle());
+        $r->renderFormActive($form4, $vars);
+        $r->submit();
+        $r->end();
+        $form3->close($r);
+    }
+
+    private function renderStepThree(
+        Horde_Variables $vars,
+        ?string $formname,
+        Whups_Form_Ticket_CreateStepOne $form1,
+        Whups_Form_Ticket_CreateStepTwo $form2,
+        Whups_Form_Ticket_CreateStepThree $form3,
+        Horde_Form_Renderer $r,
+        string $actionUrl,
+    ): void {
+        $form3->open($r, $vars, $actionUrl, 'post');
+
+        $form1->preserve($vars);
+        $r->beginInactive($form1->getTitle());
+        $r->renderFormInactive($form1, $vars);
+        $r->end();
+        echo '<br />';
+
+        $form2->preserve($vars);
+        $r->beginInactive($form2->getTitle());
+        $r->renderFormInactive($form2, $vars);
+        $r->end();
+        echo '<br />';
+
+        if ($formname != 'whups_form_ticket_createstepthree') {
+            $form3->clearValidation();
+        }
+        $r->beginActive($form3->getTitle());
+        $r->renderFormActive($form3, $vars);
+        $r->submit(_("Submit"), true);
+        $r->end();
+
+        $form3->close($r);
+    }
+
+    private function renderStepTwo(
+        Horde_Variables $vars,
+        ?string $formname,
+        Whups_Form_Ticket_CreateStepOne $form1,
+        Whups_Form_Ticket_CreateStepTwo $form2,
+        Horde_Form_Renderer $r,
+        string $actionUrl,
+    ): void {
+        $form2->open($r, $vars, $actionUrl, 'post');
+
+        $form1->preserve($vars);
+        $r->beginInactive($form1->getTitle());
+        $r->renderFormInactive($form1, $vars);
+        $r->end();
+        echo '<br />';
+
+        if ($formname != 'whups_form_ticket_createsteptwo') {
+            $form2->clearValidation();
+        }
+        $r->beginActive($form2->getTitle());
+        $r->renderFormActive($form2, $vars);
+        $r->submit();
+        $r->end();
+
+        $form2->close($r);
+    }
+
+    private function renderStepOne(
+        Horde_Variables $vars,
+        ?string $formname,
+        Whups_Form_Ticket_CreateStepOne $form1,
+        Horde_Form_Renderer $r,
+        string $actionUrl,
+    ): void {
+        if ($formname != 'whups_form_ticket_createstepone') {
+            $form1->clearValidation();
+        }
+        $form1->open($r, $vars, $actionUrl, 'post');
+        $r->beginActive($form1->getTitle());
+        $r->renderFormActive($form1, $vars);
+        $r->submit();
+        $r->end();
+        $form1->close($r);
+    }
+}

@@ -23,6 +23,7 @@ use Whups;
 use Whups_Driver;
 use Whups_Exception;
 use Whups_Ticket;
+use Horde;
 
 class DeleteAttachmentController implements RequestHandlerInterface
 {
@@ -69,7 +70,7 @@ class DeleteAttachmentController implements RequestHandlerInterface
         }
 
         $returnUrl = $queryParams['url'] ?? null;
-        if ($returnUrl && \Horde::verifySignedUrl($returnUrl)) {
+        if ($returnUrl && Horde::verifySignedUrl($returnUrl)) {
             return $this->redirect($returnUrl);
         }
 
