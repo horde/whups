@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/attachments.php
  * Purpose: List and display all attachments associated with a ticket
  * Route: /whups/ticket/{id}/attachments
+ * @coversNothing
  */
 class AttachmentsControllerContractTest extends TestCase
 {

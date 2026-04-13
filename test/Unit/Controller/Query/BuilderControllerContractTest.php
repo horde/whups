@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: query/index.php
  * Purpose: List saved queries and provide query management/editing interface
  * Route: /whups/query
+ * @coversNothing
  */
 class BuilderControllerContractTest extends TestCase
 {

@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: query/rss.php
  * Purpose: Generate RSS feed for a saved query's ticket results
  * Route: /whups/query/{slug}/rss
+ * @coversNothing
  */
 class RssControllerContractTest extends TestCase
 {

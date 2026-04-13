@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: query/run.php
  * Purpose: Execute and display results of a saved query (by slug or ID)
  * Route: /whups/query/{slug}
+ * @coversNothing
  */
 class RunControllerContractTest extends TestCase
 {

@@ -53,6 +53,7 @@ class Whups_Application extends Horde_Registry_Application
         $GLOBALS['whups_driver'] = $GLOBALS['injector']
             ->getInstance('Whups_Factory_Driver')
             ->create();
+        $GLOBALS['injector']->setInstance('Whups_Driver', $GLOBALS['whups_driver']);
 
         /* Inject metadata cache into driver if configured. */
         $metadataLifetime = (int) ($GLOBALS['conf']['cache']['metadata_lifetime'] ?? 0);

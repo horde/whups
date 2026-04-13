@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: view.php
  * Purpose: Redirect to the canonical ticket URL (handles legacy URLs)
  * Route: /whups/view.php?id={id}
+ * @coversNothing
  */
 class ViewControllerContractTest extends TestCase
 {

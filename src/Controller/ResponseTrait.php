@@ -30,6 +30,7 @@ use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\Http\Response;
 use Horde\Http\StreamFactory;
 use Psr\Http\Message\ResponseInterface;
+use Whups;
 
 trait ResponseTrait
 {
@@ -78,7 +79,7 @@ trait ResponseTrait
      */
     private function renderChrome(string $title, callable $renderBody): string
     {
-        \Whups::addTopbarSearch();
+        Whups::addTopbarSearch();
 
         ob_start();
         $this->pageOutput->header(['title' => $title]);

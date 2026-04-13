@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * Whups external API interface.
  *
@@ -338,7 +340,7 @@ class Whups_Api extends Horde_Registry_Api
             throw new Whups_Exception(_("Empty attachment"));
         }
 
-        $tmp_name = Horde_Util::getTempFile('whups', true, $GLOBALS['conf']['tmpdir']);
+        $tmp_name = Util::getTempFile('whups', true, $GLOBALS['conf']['tmpdir']);
         $fp = fopen($tmp_name, 'wb');
         fwrite($fp, $data);
         fclose($fp);

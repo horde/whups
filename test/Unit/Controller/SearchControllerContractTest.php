@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: search.php
  * Purpose: Display search form and handle ticket searching with filters
  * Route: /whups/search
+ * @coversNothing
  */
 class SearchControllerContractTest extends TestCase
 {

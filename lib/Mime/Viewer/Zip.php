@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Util\Util;
+
 /**
  * The Whups_Mime_Viewer_Zip class renders out the contents of ZIP files
  * in HTML format and allows downloading of extractable files.
@@ -28,7 +30,7 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
      */
     protected function _render()
     {
-        if (!($zip_atc = Horde_Util::getFormData('zip_attachment'))) {
+        if (!($zip_atc = Util::getFormData('zip_attachment'))) {
             $this->_callback = [$this, '_whupsCallback'];
             return parent::_render();
         }
@@ -94,11 +96,11 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
         $name = preg_replace('/(&nbsp;)+$/', '', $val['name']);
 
         if (!empty($val['size']) && (strstr($val['attr'], 'D') === false)
-            && ((($val['method'] == 0x8) && Horde_Util::extensionExists('zlib'))
+            && ((($val['method'] == 0x8) && Util::extensionExists('zlib'))
              || ($val['method'] == 0x0))) {
             $mime_part = $this->_mimepart;
             $mime_part->setName(basename($name));
-            $val['name'] = str_replace($name, (new Horde_Url($GLOBALS['registry']->get('webroot', 'whups') . '/view.php'))->add(['actionID' => 'view_file', 'type' => Horde_Util::getFormData('type') ?? '', 'file' => Horde_Util::getFormData('file') ?? '', 'ticket' => Horde_Util::getFormData('ticket') ?? '', 'zip_attachment' => $key + 1])->link() . $name . '</a>', $val['name']);
+            $val['name'] = str_replace($name, (new Horde_Url($GLOBALS['registry']->get('webroot', 'whups') . '/view.php'))->add(['actionID' => 'view_file', 'type' => Util::getFormData('type') ?? '', 'file' => Util::getFormData('file') ?? '', 'ticket' => Util::getFormData('ticket') ?? '', 'zip_attachment' => $key + 1])->link() . $name . '</a>', $val['name']);
         }
 
         return $val;

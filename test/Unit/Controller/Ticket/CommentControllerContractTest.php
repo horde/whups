@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/comment.php
  * Purpose: Display form and handle adding comments/transactions to a ticket
  * Route: /whups/ticket/{id}/comment
+ * @coversNothing
  */
 class CommentControllerContractTest extends TestCase
 {

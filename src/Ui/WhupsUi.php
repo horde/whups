@@ -27,9 +27,7 @@ class WhupsUi implements RequestHandlerInterface
      * A null value means the file is resolved from the user's pref.
      */
     private const ROUTE_FILE_MAP = [
-        'WhupsHome'              => null,
         'TicketView'             => 'ticket/index.php',
-        'TicketCreate'           => 'ticket/create.php',
         'TicketRss'              => 'ticket/rss.php',
         'TicketDeleteAttachment' => 'ticket/delete_attachment.php',
         'TicketDeleteHistory'    => 'ticket/delete_history.php',
@@ -78,12 +76,7 @@ class WhupsUi implements RequestHandlerInterface
             // /ticket/:id/:action → ticket/{action}.php
             $file = 'ticket/' . basename($action) . '.php';
         } else {
-            $file = null;
-        }
-
-        if ($file === null) {
-            // Home route or fallback: honour the user's default-view preference.
-            $file = basename($prefs->getValue('whups_default_view')) . '.php';
+            $file = 'mybugs.php';
         }
 
         require $fileroot . '/' . $file;

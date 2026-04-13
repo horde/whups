@@ -19,6 +19,7 @@
  * @package Whups
  */
 use Horde\Date\Format as DateFormat;
+use Horde\Util\Util;
 
 class Whups
 {
@@ -355,9 +356,9 @@ class Whups
                 . '/' . $GLOBALS['prefs']->getValue('whups_default_view'),
             true
         );
-        $id = Horde_Util::getFormData('searchfield');
+        $id = Util::getFormData('searchfield');
         if (empty($id)) {
-            $id = Horde_Util::getFormData('id');
+            $id = Util::getFormData('id');
         }
         $id = preg_replace('|\D|', '', $id ?? '');
         if (!$id) {
