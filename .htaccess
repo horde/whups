@@ -12,7 +12,6 @@
     RewriteEngine On
     RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
     RewriteRule .* - [env=REDIRECT_HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-    RewriteCond   %{REQUEST_FILENAME}  !-d
     RewriteCond   %{REQUEST_FILENAME}  !-f
     RewriteRule ^(.*)$ rampage.php [QSA,L]
 </IfModule>
