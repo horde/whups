@@ -9,21 +9,27 @@ declare(strict_types=1);
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
+ *
+ * @category Horde
+ * @license  http://www.horde.org/licenses/bsdl.php BSD
+ * @package  Whups
  */
 
 namespace Horde\Whups\Controller\Ticket;
 
+use Horde;
+use Horde\Core\Service\PrefsService;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Service\PermissionChecker;
 use Horde_Notification_Handler;
 use Horde_Perms;
+use Horde_Registry;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 use Whups_Exception;
 use Whups_Ticket;
-use Horde;
 
 class DeleteHistoryController implements RequestHandlerInterface
 {
@@ -32,8 +38,9 @@ class DeleteHistoryController implements RequestHandlerInterface
     public function __construct(
         private readonly Whups_Driver $driver,
         private readonly Horde_Notification_Handler $notification,
-        private readonly string $defaultView,
-        private readonly string $webroot,
+        private readonly Horde_Registry $registry,
+        private readonly PrefsService $prefs,
+        private readonly PermissionChecker $permissions,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -42,10 +49,15 @@ class DeleteHistoryController implements RequestHandlerInterface
         $id = (int) ($route['id'] ?? 0);
         $queryParams = $request->getQueryParams();
 
-        $ticket = Whups_Ticket::makeTicket($id);
-        if (!Whups::hasPermission($ticket->get('queue'), 'queue', Horde_Perms::DELETE)) {
+        $webroot = $this->registry->get('webroot', 'whups');
+        $uid = $this->registry->getAuth() ?: '';
+
+        $details = $this->driver->getTicketDetails($id);
+        $ticket = new Whups_Ticket($id, $details);
+
+        if (!$this->permissions->hasQueuePermission($ticket->get('queue'), Horde_Perms::DELETE)) {
             $this->notification->push(_("Permission Denied"), 'horde.error');
-            return $this->redirect($this->webroot . '/' . $this->defaultView);
+            return $this->redirectToDefault($webroot, $uid);
         }
 
         $transaction = $queryParams['transaction'] ?? null;
@@ -61,6 +73,12 @@ class DeleteHistoryController implements RequestHandlerInterface
             return $this->redirect($returnUrl);
         }
 
-        return $this->redirect($this->webroot . '/' . $this->defaultView);
+        return $this->redirectToDefault($webroot, $uid);
+    }
+
+    private function redirectToDefault(string $webroot, string $uid): ResponseInterface
+    {
+        $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
+        return $this->redirect($webroot . '/' . $defaultView);
     }
 }

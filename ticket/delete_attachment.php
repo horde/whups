@@ -33,12 +33,7 @@ $request = $request->withAttribute('route', [
     'id' => Util::getFormData('id'),
 ]);
 
-$controller = new DeleteAttachmentController(
-    $whups_driver,
-    $notification,
-    $prefs->getValue('whups_default_view'),
-    $registry->get('webroot', 'whups'),
-);
+$controller = $injector->getInstance(DeleteAttachmentController::class);
 
 $response = $controller->handle($request);
 (new ResponseWriterWeb())->writeResponse($response);
