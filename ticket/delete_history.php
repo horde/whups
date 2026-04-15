@@ -32,12 +32,7 @@ $request = $request->withAttribute('route', [
     'id' => Util::getFormData('id'),
 ]);
 
-$controller = new DeleteHistoryController(
-    $whups_driver,
-    $notification,
-    $prefs->getValue('whups_default_view'),
-    $registry->get('webroot', 'whups'),
-);
+$controller = $injector->getInstance(DeleteHistoryController::class);
 
 $response = $controller->handle($request);
 (new ResponseWriterWeb())->writeResponse($response);

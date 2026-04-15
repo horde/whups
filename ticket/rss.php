@@ -33,10 +33,7 @@ $request = $request->withAttribute('route', [
     'id' => Util::getFormData('id'),
 ]);
 
-$controller = new RssController(
-    $whups_driver,
-    WHUPS_TEMPLATES . '/rss',
-);
+$controller = $injector->getInstance(RssController::class);
 
 $response = $controller->handle($request);
 (new ResponseWriterWeb())->writeResponse($response);

@@ -9,9 +9,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 // Fat middleware stack for routes that need full Horde framework + auth
 $fatStack = [
-    \Horde\Core\Middleware\LeanErrorHandler::class,
-    \Horde\Core\Middleware\InitHordeFramework::class,
-    \Horde\Core\Middleware\AppBootstrap::class,
+    // \Horde\Core\Middleware\RampageLogError::class,
+//    \Horde\Core\Middleware\InitHordeFramework::class,
+//    \Horde\Core\Middleware\AppBootstrap::class,
     \Horde\Core\Middleware\ErrorFilter::class,
     \Horde\Core\Middleware\AuthHordeSession::class,
     \Horde\Core\Middleware\RedirectToLogin::class,
@@ -31,13 +31,7 @@ $mapper->connect(
 $mapper->buildRoute(uri: '/', name: 'WhupsHome')
     ->withController(Middleware\DefaultViewRedirect::class)
     ->withDefaults(['action' => 'index'])
-    ->withMiddleware([
-        \Horde\Core\Middleware\LeanErrorHandler::class,
-        \Horde\Core\Middleware\InitHordeFramework::class,
-        \Horde\Core\Middleware\AppBootstrap::class,
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\RedirectToLogin::class,
-    ])
+    ->withMiddleware($fatStack)
     ->withSecondaryRoute('/index.php')
     ->add();
 
@@ -45,7 +39,7 @@ $mapper->buildRoute(uri: '/', name: 'WhupsHome')
 
 // Ticket view: /ticket/:id
 $mapper->buildRoute(uri: '/ticket/:id', name: 'TicketView')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Ticket\ViewController::class)
     ->withDefaults(['action' => 'view'])
     ->withRequirements(['id' => '\d+'])
     ->withMiddleware($fatStack)
@@ -56,20 +50,13 @@ $mapper->buildRoute(uri: '/ticket/:id', name: 'TicketView')
 $mapper->buildRoute(uri: '/ticket/create', name: 'TicketCreate')
     ->withController(Controller\Ticket\CreateController::class)
     ->withDefaults(['action' => 'create'])
-    ->withMiddleware([
-        \Horde\Core\Middleware\LeanErrorHandler::class,
-        \Horde\Core\Middleware\InitHordeFramework::class,
-        \Horde\Core\Middleware\AppBootstrap::class,
-        \Horde\Core\Middleware\ErrorFilter::class,
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\RedirectToLogin::class,
-    ])
+    ->withMiddleware($fatStack)
     ->withSecondaryRoute('/ticket/create.php')
     ->add();
 
 // Ticket RSS: /ticket/:id/rss
 $mapper->buildRoute(uri: '/ticket/:id/rss', name: 'TicketRss')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Ticket\RssController::class)
     ->withDefaults(['action' => 'rss'])
     ->withRequirements(['id' => '\d+'])
     ->withMiddleware($fatStack)
@@ -78,7 +65,7 @@ $mapper->buildRoute(uri: '/ticket/:id/rss', name: 'TicketRss')
 
 // Ticket delete-attachment: /ticket/:id/delete-attachment
 $mapper->buildRoute(uri: '/ticket/:id/delete-attachment', name: 'TicketDeleteAttachment')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Ticket\DeleteAttachmentController::class)
     ->withDefaults(['action' => 'delete_attachment'])
     ->withRequirements(['id' => '\d+'])
     ->withMiddleware($fatStack)
@@ -87,7 +74,7 @@ $mapper->buildRoute(uri: '/ticket/:id/delete-attachment', name: 'TicketDeleteAtt
 
 // Ticket delete-history: /ticket/:id/delete-history
 $mapper->buildRoute(uri: '/ticket/:id/delete-history', name: 'TicketDeleteHistory')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Ticket\DeleteHistoryController::class)
     ->withDefaults(['action' => 'delete_history'])
     ->withRequirements(['id' => '\d+'])
     ->withMiddleware($fatStack)
@@ -96,18 +83,73 @@ $mapper->buildRoute(uri: '/ticket/:id/delete-history', name: 'TicketDeleteHistor
 
 // Ticket delete-multiple: /ticket/delete-multiple
 $mapper->buildRoute(uri: '/ticket/delete-multiple', name: 'TicketDeleteMultiple')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Ticket\DeleteMultipleController::class)
     ->withDefaults(['action' => 'delete_multiple'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/ticket/delete_multiple.php')
     ->add();
 
-// Ticket actions: /ticket/:id/:action (update, comment, watch, delete, queue, type, attachments)
-$mapper->buildRoute(uri: '/ticket/:id/:action', name: 'TicketAction')
-    ->withController(Ui\WhupsUi::class)
-    ->withRequirements(['id' => '\d+', 'action' => 'update|comment|watch|delete|queue|type|attachments'])
+// Ticket delete: /ticket/:id/delete
+$mapper->buildRoute(uri: '/ticket/:id/delete', name: 'TicketDelete')
+    ->withController(Controller\Ticket\DeleteController::class)
+    ->withDefaults(['action' => 'delete'])
+    ->withRequirements(['id' => '\d+'])
     ->withMiddleware($fatStack)
-    ->withSecondaryRoute('/ticket/:action.php')
+    ->withSecondaryRoute('/ticket/delete.php')
+    ->add();
+
+// Ticket watch: /ticket/:id/watch
+$mapper->buildRoute(uri: '/ticket/:id/watch', name: 'TicketWatch')
+    ->withController(Controller\Ticket\WatchController::class)
+    ->withDefaults(['action' => 'watch'])
+    ->withRequirements(['id' => '\d+'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/ticket/watch.php')
+    ->add();
+
+// Ticket attachments: /ticket/:id/attachments
+$mapper->buildRoute(uri: '/ticket/:id/attachments', name: 'TicketAttachments')
+    ->withController(Controller\Ticket\AttachmentsController::class)
+    ->withDefaults(['action' => 'attachments'])
+    ->withRequirements(['id' => '\d+'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/ticket/attachments.php')
+    ->add();
+
+// Ticket comment: /ticket/:id/comment
+$mapper->buildRoute(uri: '/ticket/:id/comment', name: 'TicketComment')
+    ->withController(Controller\Ticket\CommentController::class)
+    ->withDefaults(['action' => 'comment'])
+    ->withRequirements(['id' => '\d+'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/ticket/comment.php')
+    ->add();
+
+// Ticket update: /ticket/:id/update
+$mapper->buildRoute(uri: '/ticket/:id/update', name: 'TicketUpdate')
+    ->withController(Controller\Ticket\UpdateController::class)
+    ->withDefaults(['action' => 'update'])
+    ->withRequirements(['id' => '\d+'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/ticket/update.php')
+    ->add();
+
+// Ticket set-queue: /ticket/:id/queue
+$mapper->buildRoute(uri: '/ticket/:id/queue', name: 'TicketQueue')
+    ->withController(Controller\Ticket\QueueMoveController::class)
+    ->withDefaults(['action' => 'queue'])
+    ->withRequirements(['id' => '\d+'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/ticket/queue.php')
+    ->add();
+
+// Ticket set-type: /ticket/:id/type
+$mapper->buildRoute(uri: '/ticket/:id/type', name: 'TicketType')
+    ->withController(Controller\Ticket\TypeChangeController::class)
+    ->withDefaults(['action' => 'type'])
+    ->withRequirements(['id' => '\d+'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/ticket/type.php')
     ->add();
 
 // --- Queue routes ---
@@ -122,7 +164,7 @@ $mapper->buildRoute(uri: '/queue/:slug', name: 'QueueView')
 
 // Queue RSS: /queue/:slug/rss
 $mapper->buildRoute(uri: '/queue/:slug/rss', name: 'QueueRss')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Rss\QueueRssController::class)
     ->withDefaults(['action' => 'rss'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/queue/rss.php')
@@ -148,7 +190,7 @@ $mapper->buildRoute(uri: '/query/:slug', name: 'QueryRun')
 
 // Query RSS: /query/:slug/rss
 $mapper->buildRoute(uri: '/query/:slug/rss', name: 'QueryRss')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Rss\QueryRssController::class)
     ->withDefaults(['action' => 'rss'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/query/rss.php')
@@ -158,7 +200,7 @@ $mapper->buildRoute(uri: '/query/:slug/rss', name: 'QueryRss')
 
 // Search
 $mapper->buildRoute(uri: '/search', name: 'Search')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\SearchController::class)
     ->withDefaults(['action' => 'search'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/search.php')
@@ -166,7 +208,7 @@ $mapper->buildRoute(uri: '/search', name: 'Search')
 
 // Search RSS
 $mapper->buildRoute(uri: '/search/rss', name: 'SearchRss')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Rss\SearchRssController::class)
     ->withDefaults(['action' => 'rss'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/search/rss.php')
@@ -174,7 +216,7 @@ $mapper->buildRoute(uri: '/search/rss', name: 'SearchRss')
 
 // My Bugs
 $mapper->buildRoute(uri: '/mybugs', name: 'MyBugs')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\MyBugsController::class)
     ->withDefaults(['action' => 'mybugs'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/mybugs.php')
@@ -182,7 +224,7 @@ $mapper->buildRoute(uri: '/mybugs', name: 'MyBugs')
 
 // My Bugs edit
 $mapper->buildRoute(uri: '/mybugs/edit', name: 'MyBugsEdit')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\MyBugsEditController::class)
     ->withDefaults(['action' => 'mybugs_edit'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/mybugs_edit.php')
@@ -190,7 +232,7 @@ $mapper->buildRoute(uri: '/mybugs/edit', name: 'MyBugsEdit')
 
 // Reports
 $mapper->buildRoute(uri: '/reports', name: 'Reports')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\ReportsController::class)
     ->withDefaults(['action' => 'reports'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/reports.php')
@@ -202,4 +244,10 @@ $mapper->buildRoute(uri: '/admin', name: 'Admin')
     ->withDefaults(['action' => 'admin'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/admin/index.php')
+    ->add();
+
+// Lean bootstrap test — bisecting middleware stack
+$mapper->buildRoute(uri: '/lean-test', name: 'LeanTest')
+    ->withController(Controller\LeanTestController::class)
+    ->withMiddleware($fatStack)
     ->add();

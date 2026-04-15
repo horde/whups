@@ -17,8 +17,9 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Middleware;
 
+use Horde\Core\Service\PrefsService;
 use Horde\Routes\Mapper;
-use Horde_Prefs;
+use Horde_Registry;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -39,7 +40,8 @@ class DefaultViewRedirect implements MiddlewareInterface
     private const FALLBACK_ROUTE = 'MyBugs';
 
     public function __construct(
-        private readonly Horde_Prefs $prefs,
+        private readonly PrefsService $prefs,
+        private readonly Horde_Registry $registry,
         private readonly Mapper $mapper,
         private readonly ResponseFactoryInterface $responseFactory,
     ) {}
@@ -48,7 +50,8 @@ class DefaultViewRedirect implements MiddlewareInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler,
     ): ResponseInterface {
-        $prefValue = $this->prefs->getValue('whups_default_view');
+        $uid = $this->registry->getAuth() ?: '';
+        $prefValue = $this->prefs->getValue($uid, 'whups', 'whups_default_view');
         $routeName = self::PREF_TO_ROUTE[$prefValue] ?? self::FALLBACK_ROUTE;
         $url = $this->mapper->utils->urlFor($routeName);
 
