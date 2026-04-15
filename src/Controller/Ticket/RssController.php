@@ -9,18 +9,23 @@ declare(strict_types=1);
  *
  * See the enclosed file LICENSE for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsdl.php.
+ *
+ * @category Horde
+ * @license  http://www.horde.org/licenses/bsdl.php BSD
+ * @package  Whups
  */
 
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Perms;
 use Horde_Themes;
 use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 
 class RssController implements RequestHandlerInterface
@@ -29,7 +34,8 @@ class RssController implements RequestHandlerInterface
 
     public function __construct(
         private readonly Whups_Driver $driver,
-        private readonly string $templatePath,
+        private readonly PermissionChecker $permissions,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -42,42 +48,38 @@ class RssController implements RequestHandlerInterface
 
         $details = $this->driver->getTicketDetails($ticketId);
 
-        if (!count(Whups::permissionsFilter([$details['queue'] => ''], 'queue', Horde_Perms::READ))) {
+        if (!$this->permissions->hasQueuePermission($details['queue'], Horde_Perms::READ)) {
             return $this->xmlResponse('', 403);
         }
 
-        $history = Whups::permissionsFilter(
+        $history = $this->permissions->filterComments(
             $this->driver->getHistory($ticketId),
-            'comment',
-            Horde_Perms::READ
+            Horde_Perms::READ,
         );
 
-        $self = Whups::urlFor('ticket', $ticketId, true, -1);
+        $selfUrl = $this->urlGenerator->absoluteUrlFor('TicketView', ['id' => (int) $ticketId]);
         $items = [];
         foreach (array_keys($history) as $i) {
             if (!isset($history[$i]['comment_text'])) {
                 continue;
             }
-            $items[$i]['title'] = htmlspecialchars(substr($history[$i]['comment_text'], 0, 60));
-            $items[$i]['description'] = htmlspecialchars($history[$i]['comment_text']);
-            $items[$i]['pubDate'] = htmlspecialchars(date('r', $history[$i]['timestamp']));
-            $items[$i]['url'] = $self . '#t' . $i;
+            $items[$i] = [
+                'title' => htmlspecialchars(substr($history[$i]['comment_text'], 0, 60)),
+                'description' => htmlspecialchars($history[$i]['comment_text']),
+                'pubDate' => htmlspecialchars(date('r', $history[$i]['timestamp'])),
+                'url' => $selfUrl . '#t' . $i,
+            ];
         }
 
-        $view = new Horde_View(['templatePath' => $this->templatePath]);
+        $view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
         $view->xsl = Horde_Themes::getFeedXsl();
         $view->pubDate = htmlspecialchars(date('r'));
         $view->title = htmlspecialchars($details['summary']);
         $view->items = $items;
-        $view->url = Whups::urlFor('ticket', $ticketId, true);
-        $view->rss_url = Whups::urlFor('ticket_rss', $ticketId, true);
+        $view->url = $this->urlGenerator->absoluteUrlFor('TicketView', ['id' => (int) $ticketId]);
+        $view->rss_url = $this->urlGenerator->absoluteUrlFor('TicketRss', ['id' => (int) $ticketId]);
         $view->description = htmlspecialchars($details['summary']);
 
-        return $this->downloadResponse(
-            $view->render('items.rss'),
-            $details['summary'] . '.rss',
-            'text/xml',
-            true,
-        );
+        return $this->xmlResponse($view->render('items.rss'));
     }
 }

@@ -33,6 +33,9 @@ use Horde\Cache\Cache as HordeCache;
 use Horde\Cache\FileStorage;
 use Horde\Date\Format as DateFormat;
 use Horde\Util\Variables;
+use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\UrlGenerator;
+use Horde\Whups\Service\UserFormatter;
 
 /* Load the Horde Framework core (needed to autoload
  * Horde_Registry_Application::). */
@@ -43,6 +46,58 @@ class Whups_Application extends Horde_Registry_Application
     /**
      */
     public $version = '4.0.0-beta5';
+
+    /**
+     * Register PSR-4 services in the injector.
+     *
+     * Called once during app registration — before _init(), before any
+     * request processing.  Closures are lazy: the service is only
+     * constructed when first requested from the injector.
+     */
+    protected function _bootstrap()
+    {
+        $injector = $GLOBALS['injector'];
+
+        $injector->bindClosure(
+            PermissionChecker::class,
+            function ($injector) {
+                return new PermissionChecker(
+                    $injector->getInstance('Horde_Perms'),
+                    $injector->getInstance('Horde_Registry'),
+                );
+            },
+        );
+
+        $injector->bindClosure(
+            UrlGenerator::class,
+            function ($injector) {
+                $mapper = new \Horde\Routes\Mapper();
+                require WHUPS_BASE . '/config/routes.php';
+                if (file_exists(WHUPS_BASE . '/config/routes.local.php')) {
+                    include WHUPS_BASE . '/config/routes.local.php';
+                }
+                $registry = $injector->getInstance('Horde_Registry');
+                $webroot = $registry->get('webroot', 'whups');
+
+                return new UrlGenerator($mapper, $webroot);
+            },
+        );
+
+        $injector->bindClosure(
+            UserFormatter::class,
+            function ($injector) {
+                $conf = $GLOBALS['conf'] ?? [];
+
+                return new UserFormatter(
+                    $injector->getInstance('Horde_Core_Factory_Identity'),
+                    $injector->getInstance('Horde_Group'),
+                    $injector->getInstance('Horde_Registry'),
+                    $injector->getInstance('Whups_Driver'),
+                    !empty($conf['prefs']['obfuscate_email']),
+                );
+            },
+        );
+    }
 
     /**
      * Global variables defined:
