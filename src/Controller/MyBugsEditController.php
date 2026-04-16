@@ -23,7 +23,7 @@ use Horde_Core_Factory_BlockCollection;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
-use Horde_Session;
+use Horde\Core\Session\HordeSession;
 use Horde_Url;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
@@ -39,7 +39,7 @@ class MyBugsEditController implements RequestHandlerInterface
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
-        private readonly Horde_Session $session,
+        private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
     ) {}

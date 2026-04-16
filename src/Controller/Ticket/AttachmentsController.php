@@ -33,7 +33,7 @@ use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
 use Horde_Registry;
-use Horde_Session;
+use Horde\Core\Session\HordeSession;
 use Horde_Themes_Image;
 use Horde_Url;
 use Horde_Variables;
@@ -60,7 +60,7 @@ class AttachmentsController implements RequestHandlerInterface
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
-        private readonly Horde_Session $session,
+        private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,

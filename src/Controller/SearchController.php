@@ -22,7 +22,7 @@ use Horde_Form_Renderer;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
-use Horde_Session;
+use Horde\Core\Session\HordeSession;
 use Horde_Url;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
@@ -47,7 +47,7 @@ class SearchController implements RequestHandlerInterface
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
-        private readonly Horde_Session $session,
+        private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
     ) {}
 
@@ -78,7 +78,7 @@ class SearchController implements RequestHandlerInterface
                 $tickets = $this->driver->getTicketsByProperties($info);
                 Whups::sortTickets($tickets);
                 $searchUrl = new Horde_Url($webroot . '/search?' . $this->buildSearchUrl($vars));
-                $this->session->set('whups', 'last_search', $searchUrl);
+                $this->session->setScoped('whups', 'last_search', $searchUrl);
                 $results = new Whups_View_Results([
                     'title' => _("Search Results"),
                     'results' => $tickets,
@@ -216,7 +216,7 @@ class SearchController implements RequestHandlerInterface
             }
         }
 
-        $this->session->set('whups', 'query', $whups_query);
+        $this->session->setScoped('whups', 'query', $whups_query);
 
         return $this->redirect(
             (new Horde_Url($webroot . '/query/builder', true))
