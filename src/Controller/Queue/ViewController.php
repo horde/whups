@@ -15,6 +15,7 @@ namespace Horde\Whups\Controller\Queue;
 
 use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\TopbarSearch;
 use Horde\Whups\Service\UrlGenerator;
 use Horde_Notification_Handler;
@@ -24,7 +25,6 @@ use Horde_Url;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 use Whups_Exception;
 use Whups_View_Results;
@@ -39,6 +39,7 @@ class ViewController implements RequestHandlerInterface
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
         private readonly HordeSession $session,
+        private readonly TicketSorter $sorter,
         private readonly TopbarSearch $topbarSearch,
         private readonly UrlGenerator $urlGenerator,
         private readonly string $defaultView,
@@ -92,12 +93,12 @@ class ViewController implements RequestHandlerInterface
 
             try {
                 $tickets = $this->driver->getTicketsByProperties($criteria);
-                Whups::sortTickets($tickets);
+                $this->sorter->sort($tickets);
                 $self = $this->urlGenerator->urlFor('QueueView', ['slug' => $queue['slug'] ?? (int) $queue['id']]);
                 $results = new Whups_View_Results([
                     'title' => $title,
                     'results' => $tickets,
-                    'values' => Whups::getSearchResultColumns(),
+                    'values' => TicketSorter::getSearchResultColumns(),
                     'url' => $self,
                 ]);
                 $this->session->setScoped('whups', 'last_search', $self);

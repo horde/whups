@@ -25,11 +25,11 @@ use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Url;
 use Horde_Variables;
+use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 use Whups_Exception;
 use Whups_Form_Search;
@@ -48,6 +48,7 @@ class SearchController implements RequestHandlerInterface
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
         private readonly HordeSession $session,
+        private readonly TicketSorter $sorter,
         private readonly TopbarSearch $topbarSearch,
     ) {}
 
@@ -76,13 +77,13 @@ class SearchController implements RequestHandlerInterface
             // Execute search.
             try {
                 $tickets = $this->driver->getTicketsByProperties($info);
-                Whups::sortTickets($tickets);
+                $this->sorter->sort($tickets);
                 $searchUrl = new Horde_Url($webroot . '/search?' . $this->buildSearchUrl($vars));
                 $this->session->setScoped('whups', 'last_search', $searchUrl);
                 $results = new Whups_View_Results([
                     'title' => _("Search Results"),
                     'results' => $tickets,
-                    'values' => Whups::getSearchResultColumns(),
+                    'values' => TicketSorter::getSearchResultColumns(),
                     'url' => $searchUrl,
                 ]);
                 $beendone = true;
