@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Rss;
 
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\UrlGenerator;
 use Horde_Registry;
 use Horde_String;
@@ -27,7 +28,6 @@ use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 use Whups_Exception;
 
@@ -38,6 +38,7 @@ class QueueRssController implements RequestHandlerInterface
     public function __construct(
         private readonly Whups_Driver $driver,
         private readonly Horde_Registry $registry,
+        private readonly TicketSorter $sorter,
         private readonly UrlGenerator $urlGenerator,
     ) {}
 
@@ -104,7 +105,7 @@ class QueueRssController implements RequestHandlerInterface
             return $this->xmlResponse('', 404);
         }
 
-        Whups::sortTickets($tickets, 'date_updated', 'desc');
+        $this->sorter->sort($tickets, 'date_updated', 'desc');
         $items = $this->buildItems($tickets, $limit);
 
         // Build title.

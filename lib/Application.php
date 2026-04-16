@@ -34,6 +34,7 @@ use Horde\Cache\FileStorage;
 use Horde\Date\Format as DateFormat;
 use Horde\Util\Variables;
 use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\Service\UserFormatter;
 
@@ -114,6 +115,16 @@ class Whups_Application extends Horde_Registry_Application
                     $injector->getInstance('Horde_Registry'),
                     $injector->getInstance('Whups_Driver'),
                     !empty($conf['prefs']['obfuscate_email']),
+                );
+            },
+        );
+
+        $injector->bindClosure(
+            TicketSorter::class,
+            function ($injector) {
+                return new TicketSorter(
+                    $injector->getInstance('Horde\Core\Service\PrefsService'),
+                    $injector->getInstance('Horde_Registry'),
                 );
             },
         );
