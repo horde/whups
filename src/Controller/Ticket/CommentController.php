@@ -32,7 +32,7 @@ use Horde_Session;
 use Horde_Text_Flowed;
 use Horde_Url;
 use Horde_Variables;
-use Horde_View_Topbar;
+use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -53,7 +53,7 @@ class CommentController implements RequestHandlerInterface
         private readonly Horde_Perms_Base $perms,
         private readonly Horde_Registry $registry,
         private readonly Horde_Session $session,
-        private readonly Horde_View_Topbar $topbar,
+        private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
         private readonly UrlGenerator $urlGenerator,
@@ -157,9 +157,7 @@ class CommentController implements RequestHandlerInterface
             $id,
         ) {
             // Topbar search.
-            $this->topbar->search = true;
-            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
-            $this->topbar->searchLabel = $this->session->get('whups', 'search') ?: _("Ticket #Id");
+            $this->topbarSearch->apply();
 
             // Notifications.
             $this->notification->notify(['listeners' => 'status']);

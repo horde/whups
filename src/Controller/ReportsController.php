@@ -17,14 +17,11 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Controller;
 
-use Horde\Core\Session\HordeSession;
 use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\TopbarSearch;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
-use Horde_Registry;
-use Horde_Url;
-use Horde_View_Topbar;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -40,16 +37,13 @@ class ReportsController implements RequestHandlerInterface
         private readonly Whups_Driver $driver,
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
-        private readonly Horde_Registry $registry,
-        private readonly HordeSession $session,
-        private readonly Horde_View_Topbar $topbar,
+        private readonly TopbarSearch $topbarSearch,
         private readonly PermissionChecker $permissions,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $title = _("Reports");
-        $webroot = $this->registry->get('webroot', 'whups');
 
         $stats = [
             'avg|open' => _("Average time a ticket is unresolved"),
@@ -69,11 +63,8 @@ class ReportsController implements RequestHandlerInterface
             $reporter->setCache($reportCache);
         }
 
-        $html = $this->renderChrome($title, function () use ($queues, $stats, $reporter, $webroot) {
-            $this->topbar->search = true;
-            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
-            $this->topbar->searchLabel = $this->session->getScoped('whups', 'search')
-                ?: _("Ticket #Id");
+        $html = $this->renderChrome($title, function () use ($queues, $stats, $reporter) {
+            $this->topbarSearch->apply();
 
             require WHUPS_TEMPLATES . '/reports/stats.inc';
         });

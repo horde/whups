@@ -38,7 +38,7 @@ use Horde_Themes_Image;
 use Horde_Url;
 use Horde_Variables;
 use Horde_View;
-use Horde_View_Topbar;
+use Horde\Whups\Service\TopbarSearch;
 use Horde_Vfs_Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -61,7 +61,7 @@ class AttachmentsController implements RequestHandlerInterface
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
         private readonly Horde_Session $session,
-        private readonly Horde_View_Topbar $topbar,
+        private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
         private readonly UrlGenerator $urlGenerator,
@@ -158,9 +158,7 @@ class AttachmentsController implements RequestHandlerInterface
             $id,
         ) {
             // Topbar search.
-            $this->topbar->search = true;
-            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
-            $this->topbar->searchLabel = $this->session->get('whups', 'search') ?: _("Ticket #Id");
+            $this->topbarSearch->apply();
 
             // Feed links.
             $rssUrl = $this->urlGenerator->absoluteUrlFor('TicketRss', ['id' => (int) $id]);

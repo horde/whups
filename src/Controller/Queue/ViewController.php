@@ -15,11 +15,11 @@ namespace Horde\Whups\Controller\Queue;
 
 use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Service\TopbarSearch;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
 use Horde_Url;
-use Horde_View_Topbar;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -38,7 +38,7 @@ class ViewController implements RequestHandlerInterface
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
         private readonly HordeSession $session,
-        private readonly Horde_View_Topbar $topbar,
+        private readonly TopbarSearch $topbarSearch,
         private readonly string $defaultView,
         private readonly string $webroot,
     ) {}
@@ -78,10 +78,7 @@ class ViewController implements RequestHandlerInterface
         $html = $this->renderChrome($title, function () use ($criteria, $title, $queue, $id) {
             $webroot = $this->webroot;
 
-            $this->topbar->search = true;
-            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
-            $this->topbar->searchLabel = $this->session->getScoped('whups', 'search')
-                ?: _("Ticket #Id");
+            $this->topbarSearch->apply();
 
             $this->pageOutput->addLinkTag([
                 'href' => (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false),

@@ -27,7 +27,7 @@ use Horde_Registry;
 use Horde_Session;
 use Horde_Url;
 use Horde_Variables;
-use Horde_View_Topbar;
+use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -46,7 +46,7 @@ class DeleteMultipleController implements RequestHandlerInterface
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
         private readonly Horde_Session $session,
-        private readonly Horde_View_Topbar $topbar,
+        private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
     ) {}
 
@@ -101,9 +101,7 @@ class DeleteMultipleController implements RequestHandlerInterface
 
         $html = $this->renderChrome($title, function () use ($vars, $deleteForm, $webroot) {
             // Topbar search.
-            $this->topbar->search = true;
-            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
-            $this->topbar->searchLabel = $this->session->get('whups', 'search') ?: _("Ticket #Id");
+            $this->topbarSearch->apply();
 
             // Notifications.
             $this->notification->notify(['listeners' => 'status']);
