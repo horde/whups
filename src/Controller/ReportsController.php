@@ -21,11 +21,9 @@ use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\TopbarSearch;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
-use Horde_Perms;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 use Whups_Reports;
 
@@ -51,10 +49,8 @@ class ReportsController implements RequestHandlerInterface
             'min|open' => _("Minimum time a ticket is unresolved"),
         ];
 
-        $queues = Whups::permissionsFilter(
+        $queues = $this->permissions->filterQueues(
             $this->driver->getQueues(),
-            'queue',
-            Horde_Perms::READ,
         );
 
         $reporter = new Whups_Reports($this->driver);
