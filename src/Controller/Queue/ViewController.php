@@ -16,6 +16,7 @@ namespace Horde\Whups\Controller\Queue;
 use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Service\TopbarSearch;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
@@ -39,6 +40,7 @@ class ViewController implements RequestHandlerInterface
         private readonly Horde_Registry $registry,
         private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
+        private readonly UrlGenerator $urlGenerator,
         private readonly string $defaultView,
         private readonly string $webroot,
     ) {}
@@ -91,7 +93,7 @@ class ViewController implements RequestHandlerInterface
             try {
                 $tickets = $this->driver->getTicketsByProperties($criteria);
                 Whups::sortTickets($tickets);
-                $self = Whups::urlFor('queue', $queue);
+                $self = $this->urlGenerator->urlFor('QueueView', ['slug' => $queue['slug'] ?? (int) $queue['id']]);
                 $results = new Whups_View_Results([
                     'title' => $title,
                     'results' => $tickets,
