@@ -22,7 +22,7 @@ namespace Horde\Whups\Service;
 
 use Horde_Core_Factory_Identity;
 use Horde_Exception;
-use Horde_Group;
+use Horde_Group_Base;
 use Horde_Mail_Rfc822_Address;
 use Horde_Registry;
 use Horde_Themes_Image;
@@ -39,7 +39,7 @@ class UserFormatter
 
     public function __construct(
         private readonly Horde_Core_Factory_Identity $identityFactory,
-        private readonly Horde_Group $groupService,
+        private readonly Horde_Group_Base $groupService,
         private readonly Horde_Registry $registry,
         private readonly Whups_Driver $driver,
         private readonly bool $obfuscateEmail = false,
