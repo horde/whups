@@ -15,13 +15,15 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde;
+use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde_Form_Renderer;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
-use Horde_Session;
+use Horde_Url;
 use Horde_Variables;
+use Horde_View_Topbar;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -42,8 +44,9 @@ class CreateController implements RequestHandlerInterface
         private readonly Whups_Driver $driver,
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
-        private readonly Horde_Session $session,
         private readonly Horde_Registry $registry,
+        private readonly HordeSession $session,
+        private readonly Horde_View_Topbar $topbar,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -87,7 +90,13 @@ class CreateController implements RequestHandlerInterface
             $valid2,
             $valid3,
             $actionUrl,
+            $webroot,
         ) {
+            $this->topbar->search = true;
+            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
+            $this->topbar->searchLabel = $this->session->getScoped('whups', 'search')
+                ?: _("Ticket #Id");
+
             if ($valid3 && $valid2 && $valid1) {
                 $this->renderStepFour($vars, $formname, $form1, $form2, $form3, $form4, $r, $actionUrl);
             } elseif ($valid2 && $valid1) {
@@ -184,7 +193,7 @@ class CreateController implements RequestHandlerInterface
                 $info['newattachment']['tmp_name'],
                 $tmp_file_path
             )) {
-                $this->session->set('whups', 'deferred_attachment/' . $file_name, $tmp_file_path);
+                $this->session->setScoped('whups', 'deferred_attachment/' . $file_name, $tmp_file_path);
                 $vars->set('deferred_attachment', $file_name);
                 $form4->preserveVarByPost($vars, 'deferred_attachment');
             }

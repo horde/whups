@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Controller\Queue;
 
+use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
-use Horde_Session;
+use Horde_Registry;
 use Horde_Url;
+use Horde_View_Topbar;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -34,7 +36,9 @@ class ViewController implements RequestHandlerInterface
         private readonly Whups_Driver $driver,
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
-        private readonly Horde_Session $session,
+        private readonly Horde_Registry $registry,
+        private readonly HordeSession $session,
+        private readonly Horde_View_Topbar $topbar,
         private readonly string $defaultView,
         private readonly string $webroot,
     ) {}
@@ -72,7 +76,20 @@ class ViewController implements RequestHandlerInterface
         ];
 
         $html = $this->renderChrome($title, function () use ($criteria, $title, $queue, $id) {
-            Whups::addFeedLink();
+            $webroot = $this->webroot;
+
+            $this->topbar->search = true;
+            $this->topbar->searchAction = new Horde_Url($webroot . '/ticket');
+            $this->topbar->searchLabel = $this->session->getScoped('whups', 'search')
+                ?: _("Ticket #Id");
+
+            $this->pageOutput->addLinkTag([
+                'href' => (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false),
+                'rel' => 'search',
+                'type' => 'application/opensearchdescription+xml',
+                'title' => $this->registry->get('name')
+                    . ' (' . (new Horde_Url($webroot, true))->toString(true, false) . ')',
+            ]);
 
             try {
                 $tickets = $this->driver->getTicketsByProperties($criteria);
@@ -84,7 +101,7 @@ class ViewController implements RequestHandlerInterface
                     'values' => Whups::getSearchResultColumns(),
                     'url' => $self,
                 ]);
-                $this->session->set('whups', 'last_search', $self);
+                $this->session->setScoped('whups', 'last_search', $self);
                 $results->html();
             } catch (Whups_Exception $e) {
                 $this->notification->push(
