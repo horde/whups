@@ -18,6 +18,7 @@ use Horde;
 use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Service\TopbarSearch;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Form_Renderer;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
@@ -26,7 +27,6 @@ use Horde_Variables;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whups;
 use Whups_Driver;
 use Whups_Exception;
 use Whups_Form_Ticket_CreateStepFour;
@@ -46,6 +46,7 @@ class CreateController implements RequestHandlerInterface
         private readonly Horde_Registry $registry,
         private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -142,7 +143,7 @@ class CreateController implements RequestHandlerInterface
             'horde.success'
         );
 
-        $ticketUrl = (string) Whups::urlFor('ticket', $ticket->getId(), true);
+        $ticketUrl = $this->urlGenerator->absoluteUrlFor('TicketView', ['id' => (int) $ticket->getId()]);
         return $this->redirect($ticketUrl);
     }
 
