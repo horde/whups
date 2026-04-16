@@ -27,7 +27,7 @@ use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
 use Horde_Registry;
-use Horde_Session;
+use Horde\Core\Session\HordeSession;
 use Horde_Url;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
@@ -51,7 +51,7 @@ class QueueMoveController implements RequestHandlerInterface
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
-        private readonly Horde_Session $session,
+        private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
@@ -127,8 +127,8 @@ class QueueMoveController implements RequestHandlerInterface
         }
 
         // Prev/next navigation.
-        $ticketList = $this->session->get('whups', 'tickets', Horde_Session::TYPE_ARRAY);
-        $lastSearch = (string) ($this->session->get('whups', 'last_search') ?? '');
+        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView((int) $id, $ticketList, $lastSearch, $this->urlGenerator);
 
         // Tabs.
