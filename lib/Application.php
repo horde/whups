@@ -68,6 +68,26 @@ class Whups_Application extends Horde_Registry_Application
             },
         );
 
+        // Alias Horde_Perms_Base to the Horde_Perms injector binding so that
+        // controllers type-hinting the abstract base class get the configured
+        // Horde_Perms_Sql (or other) driver instance.
+        $injector->bindClosure(
+            'Horde_Perms_Base',
+            function ($injector) {
+                return $injector->getInstance('Horde_Perms');
+            },
+        );
+
+        // Alias Horde_Group_Base to the Horde_Group injector binding so that
+        // services type-hinting the abstract base class get the configured
+        // Horde_Group_Sql (or other) driver instance.
+        $injector->bindClosure(
+            'Horde_Group_Base',
+            function ($injector) {
+                return $injector->getInstance('Horde_Group');
+            },
+        );
+
         $injector->bindClosure(
             UrlGenerator::class,
             function ($injector) {
