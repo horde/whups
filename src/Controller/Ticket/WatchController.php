@@ -18,12 +18,14 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde\Core\Service\PrefsService;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\Ticket\AddListenerForm;
+use Horde\Whups\Form\Ticket\DeleteListenerForm;
 use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\Service\UserFormatter;
 use Horde\Whups\View\PrevNextView;
-use Horde_Form_Renderer;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
@@ -37,8 +39,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_AddListener;
-use Whups_Form_DeleteListener;
 use Whups_Form_TicketDetails;
 use Whups_Ticket;
 
@@ -85,20 +85,23 @@ class WatchController implements RequestHandlerInterface
         }
 
         // Build form variables.
+        // V3 forms use $request directly; legacy TicketDetails still needs Horde_Variables.
         $vars = Horde_Variables::getDefaultVariables();
         $vars->set('id', $id);
         foreach ($details as $varname => $value) {
             $vars->add($varname, $value);
         }
 
-        $addForm = new Whups_Form_AddListener($vars, _("Add Watcher"));
-        $delForm = new Whups_Form_DeleteListener($vars, _("Remove Watcher"));
+        // Merge route params into request data for V3 forms.
+        $formVars = ($request->getParsedBody() ?? []) + $request->getQueryParams();
+        $formVars['id'] = $id;
+
+        $addForm = new AddListenerForm($formVars, _("Add Watcher"));
+        $delForm = new DeleteListenerForm($formVars, _("Remove Watcher"));
 
         // Handle add listener.
-        if ($vars->get('formname') == 'whups_form_addlistener'
-            && $addForm->validate($vars)
-        ) {
-            $info = $addForm->getInfo($vars);
+        if ($addForm->isSubmitted() && $addForm->validate()) {
+            $info = $addForm->getInfo();
             try {
                 $this->driver->addListener($id, '**' . $info['add_listener']);
                 $ticket->notify(
@@ -189,13 +192,14 @@ class WatchController implements RequestHandlerInterface
             $this->renderWatchersList($isAuthenticated, $listeners, $owners, $delUrl, $delImg);
 
             // Add listener form.
-            $r = new Horde_Form_Renderer();
-            $addForm->renderActive($r, $vars, new Horde_Url($webroot . '/ticket/' . $id . '/watch'), 'post');
+            $renderer = new HtmlRenderer();
+            $watchUrl = $webroot . '/ticket/' . $id . '/watch';
+            echo $renderer->render($addForm, $watchUrl, 'post');
             echo '<br class="spacer" />';
 
             // Delete listener form (only for unauthenticated users).
             if (!$isAuthenticated) {
-                $delForm->renderActive($r, $vars, new Horde_Url($webroot . '/ticket/' . $id . '/watch'), 'post');
+                echo $renderer->render($delForm, $watchUrl, 'post');
                 echo '<br class="spacer" />';
             }
 

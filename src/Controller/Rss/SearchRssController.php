@@ -18,18 +18,19 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Rss;
 
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\SearchForm;
 use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\UrlGenerator;
+use Horde_Perms;
 use Horde_Registry;
 use Horde_Themes;
 use Horde_Url;
-use Horde_Variables;
 use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Whups;
 use Whups_Driver;
-use Whups_Form_Search;
 
 class SearchRssController implements RequestHandlerInterface
 {
@@ -44,15 +45,24 @@ class SearchRssController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $vars = Horde_Variables::getDefaultVariables();
-        $limit = (int) $vars->get('limit');
-        $form = new Whups_Form_Search($vars);
+        $params = $request->getQueryParams();
+        $limit = (int) ($params['limit'] ?? 0);
 
-        if (!$form->validate($vars, true)) {
+        // Pre-load domain data for the form.
+        $queues = Whups::permissionsFilter(
+            $this->driver->getQueues(),
+            'queue',
+            Horde_Perms::READ,
+        );
+        $typeStates = $this->buildTypeStates($queues);
+
+        $form = new SearchForm($request, $queues, $typeStates);
+
+        if (!$form->validate()) {
             return $this->xmlResponse('<error>' . _("Invalid search") . '</error>', 400);
         }
 
-        $info = $form->getInfo($vars);
+        $info = $this->processSearchInfo($form->getInfo(), $queues);
         $tickets = $this->driver->getTicketsByProperties($info);
         $this->sorter->sort($tickets, 'date_updated', 'desc');
 
@@ -69,6 +79,105 @@ class SearchRssController implements RequestHandlerInterface
         $view->description = _("Search Results");
 
         return $this->xmlResponse($view->render('items.rss'));
+    }
+
+    /**
+     * Build per-type state data for the search form.
+     *
+     * @param array<int,string> $queues Queue id => name
+     * @return array<int,array{typeName:string,states:array<int,string>,defaults:list<int>}>
+     *
+     * TODO: Duplicated in SearchController — extract to a shared service.
+     */
+    private function buildTypeStates(array $queues): array
+    {
+        $types = [];
+        if (count($queues) === 1) {
+            $types = $this->driver->getTypes(key($queues));
+        } else {
+            foreach ($queues as $queueId => $name) {
+                $types = $types + $this->driver->getTypes($queueId);
+            }
+        }
+
+        $typeStates = [];
+        foreach ($types as $typeId => $typeName) {
+            $states = $this->driver->getAllStateInfo($typeId);
+            $list = [];
+            $defaults = [];
+            foreach ($states as $state) {
+                $list[$state['state_id']] = $state['state_name'];
+                if ($state['state_category'] !== 'resolved') {
+                    $defaults[] = $state['state_id'];
+                }
+            }
+            $typeStates[$typeId] = [
+                'typeName' => $typeName,
+                'states' => $list,
+                'defaults' => $defaults,
+            ];
+        }
+
+        return $typeStates;
+    }
+
+    /**
+     * Post-process raw form info for search execution.
+     *
+     * @param array $info   Raw getInfo() output
+     * @param array<int,string> $queues  All readable queues
+     * @return array Processed info for getTicketsByProperties()
+     *
+     * TODO: Duplicated in SearchController — extract to a shared service.
+     */
+    private function processSearchInfo(array $info, array $queues): array
+    {
+        if (empty($info['queue'])) {
+            $info['queue'] = array_keys(
+                Whups::permissionsFilter(
+                    $this->driver->getQueues(),
+                    'queue',
+                    Horde_Perms::READ,
+                    $this->registry->getAuth(),
+                    $this->registry->getAuth(),
+                ),
+            );
+        } else {
+            $info['queue'] = [$info['queue']];
+        }
+
+        if (empty($info['states'])) {
+            unset($info['states']);
+        }
+
+        if (isset($info['states'])) {
+            $info['state_id'] = [];
+            foreach ($info['states'] as $states) {
+                if (isset($states)) {
+                    $info['state_id'] = array_merge($info['state_id'], (array) $states);
+                }
+            }
+            unset($info['states']);
+        }
+
+        if (!empty($info['state_id'])) {
+            $types = [];
+            foreach ($info['queue'] as $queue) {
+                foreach ($this->driver->getTypeIds($queue) as $type) {
+                    $types[$type][$queue] = true;
+                }
+            }
+            $filteredQueues = [];
+            foreach ($info['state_id'] as $stateId) {
+                $state = $this->driver->getState($stateId);
+                if (isset($types[$state['type']])) {
+                    $filteredQueues = array_merge($filteredQueues, array_keys($types[$state['type']]));
+                }
+            }
+            $info['queue'] = array_intersect($info['queue'], $filteredQueues);
+        }
+
+        return $info;
     }
 
     /**
