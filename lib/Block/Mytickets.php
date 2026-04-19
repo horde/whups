@@ -24,18 +24,10 @@ class Whups_Block_Mytickets extends Whups_Block_Tickets
      */
     protected function _content()
     {
-        $queue_ids = array_keys(
-            Whups::permissionsFilter(
-                $GLOBALS['whups_driver']->getQueues(),
-                'queue',
-                Horde_Perms::READ
-            )
+        $queryService = $GLOBALS['injector']->getInstance(
+            \Horde\Whups\Service\TicketQueryService::class,
         );
-        $info = [
-            'owner' => Whups::getOwnerCriteria($GLOBALS['registry']->getAuth()),
-            'nores' => true,
-            'queue' => $queue_ids];
-        $assigned = $GLOBALS['whups_driver']->getTicketsByProperties($info);
+        $assigned = $queryService->getMyTickets();
         if (!$assigned) {
             return '<p class="horde-content"><em>' . _("No tickets are assigned to you.") . '</em></p>';
         }

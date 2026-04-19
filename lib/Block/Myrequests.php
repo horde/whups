@@ -24,20 +24,10 @@ class Whups_Block_Myrequests extends Whups_Block_Tickets
      */
     protected function _content()
     {
-        global $whups_driver, $prefs;
-
-        $queue_ids = array_keys(
-            Whups::permissionsFilter(
-                $GLOBALS['whups_driver']->getQueues(),
-                'queue',
-                Horde_Perms::READ
-            )
+        $queryService = $GLOBALS['injector']->getInstance(
+            \Horde\Whups\Service\TicketQueryService::class,
         );
-        $info = ['requester' => $GLOBALS['registry']->getAuth(),
-            'notowner' => 'user:' . $GLOBALS['registry']->getAuth(),
-            'nores' => true,
-            'queue' => $queue_ids];
-        $requests = $GLOBALS['whups_driver']->getTicketsByProperties($info);
+        $requests = $queryService->getMyRequests();
         if (!$requests) {
             return '<p class="horde-content"><em>' . _("You have no open requests.") . '</em></p>';
         }

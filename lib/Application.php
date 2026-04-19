@@ -33,7 +33,24 @@ use Horde\Cache\Cache as HordeCache;
 use Horde\Cache\FileStorage;
 use Horde\Date\Format as DateFormat;
 use Horde\Util\Variables;
+use Horde\Whups\Domain\AttributeRepositoryInterface;
+use Horde\Whups\Domain\PriorityRepositoryInterface;
+use Horde\Whups\Domain\QueueRepositoryInterface;
+use Horde\Whups\Domain\Repository\DriverAttributeRepository;
+use Horde\Whups\Domain\Repository\DriverPriorityRepository;
+use Horde\Whups\Domain\Repository\DriverQueueRepository;
+use Horde\Whups\Domain\Repository\DriverStateRepository;
+use Horde\Whups\Domain\Repository\DriverTicketRepository;
+use Horde\Whups\Domain\Repository\DriverTypeRepository;
+use Horde\Whups\Domain\Repository\DriverVersionRepository;
+use Horde\Whups\Domain\StateRepositoryInterface;
+use Horde\Whups\Domain\TicketRepositoryInterface;
+use Horde\Whups\Domain\TypeRepositoryInterface;
+use Horde\Whups\Domain\VersionRepositoryInterface;
 use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\ReminderSender;
+use Horde\Whups\Service\TicketCreationService;
+use Horde\Whups\Service\TicketQueryService;
 use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\Service\UserFormatter;
@@ -127,6 +144,88 @@ class Whups_Application extends Horde_Registry_Application
                     $injector->getInstance('Horde_Registry'),
                 );
             },
+        );
+
+        $injector->bindClosure(
+            ReminderSender::class,
+            function ($injector) {
+                return new ReminderSender(
+                    $injector->getInstance('Whups_Driver'),
+                    $injector->getInstance(TicketSorter::class),
+                    $injector->getInstance(UrlGenerator::class),
+                    $injector->getInstance('Horde\Core\Service\PrefsService'),
+                    $injector->getInstance('Horde_Registry'),
+                );
+            },
+        );
+
+        $injector->bindClosure(
+            QueueRepositoryInterface::class,
+            fn($injector) => new DriverQueueRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            TypeRepositoryInterface::class,
+            fn($injector) => new DriverTypeRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            StateRepositoryInterface::class,
+            fn($injector) => new DriverStateRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            PriorityRepositoryInterface::class,
+            fn($injector) => new DriverPriorityRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            VersionRepositoryInterface::class,
+            fn($injector) => new DriverVersionRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            AttributeRepositoryInterface::class,
+            fn($injector) => new DriverAttributeRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            TicketCreationService::class,
+            fn($injector) => new TicketCreationService(
+                $injector->getInstance(TypeRepositoryInterface::class),
+                $injector->getInstance(StateRepositoryInterface::class),
+                $injector->getInstance(PriorityRepositoryInterface::class),
+            ),
+        );
+
+        $injector->bindClosure(
+            TicketRepositoryInterface::class,
+            fn($injector) => new DriverTicketRepository(
+                $injector->getInstance('Whups_Driver'),
+            ),
+        );
+
+        $injector->bindClosure(
+            TicketQueryService::class,
+            fn($injector) => new TicketQueryService(
+                $injector->getInstance(TicketRepositoryInterface::class),
+                $injector->getInstance(QueueRepositoryInterface::class),
+                $injector->getInstance(PermissionChecker::class),
+                $injector->getInstance('Horde_Group'),
+                $injector->getInstance('Horde_Registry'),
+            ),
         );
     }
 
