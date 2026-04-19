@@ -1,6 +1,7 @@
 <?php
 
 use Horde\Util\Util;
+use Horde\Whups\Service\TicketCreationService;
 
 /**
  * Whups external API interface.
@@ -200,7 +201,9 @@ class Whups_Api extends Horde_Registry_Api
             $info = $form4->getInfo($vars, $info);
         }
 
-        $ticket = Whups_Ticket::newTicket($info, $GLOBALS['registry']->getAuth());
+        $ticket = $GLOBALS['injector']
+            ->getInstance(TicketCreationService::class)
+            ->createTicket($info, $GLOBALS['registry']->getAuth());
 
         return $ticket->getId();
     }

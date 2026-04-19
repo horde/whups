@@ -18,10 +18,10 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
      */
     protected function _content()
     {
-        global $whups_driver;
-
-        $queues = Whups::permissionsFilter($whups_driver->getQueues(), 'queue', Horde_Perms::READ);
-        $qsummary = $whups_driver->getQueueSummary(array_keys($queues));
+        $queryService = $GLOBALS['injector']->getInstance(
+            \Horde\Whups\Service\TicketQueryService::class,
+        );
+        $qsummary = $queryService->getQueueSummary();
         if (!$qsummary) {
             return '<p class="horde-content"><em>' . _("There are no open tickets.") . '</em></p>';
         }

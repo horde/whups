@@ -25,14 +25,17 @@ class Whups_Scheduler extends Horde_Scheduler
             )->config['reminders'];
         }
 
+        $reminderSender = $GLOBALS['injector']->getInstance(
+            \Horde\Whups\Service\ReminderSender::class
+        );
+
         foreach ($this->_reminders as $reminder) {
             $ds = new Horde_Scheduler_Cron_Date($reminder['frequency']);
             if ($ds->scheduledAt($this->_runtime)) {
                 if (!empty($reminder['server_name'])) {
                     $GLOBALS['conf']['server']['name'] = $reminder['server_name'];
                 }
-                $vars = new Horde_Variables($reminder);
-                Whups::sendReminders($vars);
+                $reminderSender->send($reminder);
             }
         }
     }
