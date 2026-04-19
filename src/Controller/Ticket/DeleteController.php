@@ -18,7 +18,9 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde\Core\Service\PrefsService;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\Ticket\DeleteTicketForm;
 use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\View\PrevNextView;
@@ -36,7 +38,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_Ticket_Delete;
 use Whups_Form_TicketDetails;
 use Whups_Ticket;
 
@@ -90,20 +91,22 @@ class DeleteController implements RequestHandlerInterface
         $this->pageOutput->addLinkTag(['href' => $rssUrl, 'title' => '[#' . $id . '] ' . $ticket->get('summary')]);
 
         // Build form variables.
+        // V3 form uses array; legacy TicketDetails still needs Horde_Variables.
         $vars = Horde_Variables::getDefaultVariables();
         $vars->set('id', $id);
         foreach ($details as $varname => $value) {
             $vars->add($varname, $value);
         }
 
+        $formVars = ($request->getParsedBody() ?? []) + $request->getQueryParams();
+        $formVars['id'] = $id;
+
         $title = sprintf(_("Delete %s?"), '[#' . $id . '] ' . $ticket->get('summary'));
-        $deleteForm = new Whups_Form_Ticket_Delete($vars, $title);
+        $deleteForm = new DeleteTicketForm($formVars, $title);
 
         // Handle form submission.
-        if ($vars->get('formname') == 'whups_form_ticket_delete'
-            && $deleteForm->validate($vars)
-        ) {
-            if ($vars->get('submitbutton') == _("Delete")) {
+        if ($deleteForm->isSubmitted() && $deleteForm->validate()) {
+            if ($deleteForm->getClickedButton() === _("Delete")) {
                 try {
                     $ticket->delete();
                     $this->notification->push(
@@ -155,12 +158,8 @@ class DeleteController implements RequestHandlerInterface
             echo $tabs->render('delete');
 
             // Delete confirmation form.
-            $deleteForm->renderActive(
-                $deleteForm->getRenderer(),
-                $vars,
-                new Horde_Url($webroot . '/ticket/' . $id . '/delete'),
-                'post',
-            );
+            $renderer = new HtmlRenderer();
+            echo $renderer->render($deleteForm, $webroot . '/ticket/' . $id . '/delete', 'post');
             echo '<br />';
 
             // Ticket details (inactive).

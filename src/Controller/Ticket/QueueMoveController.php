@@ -18,27 +18,27 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde\Core\Service\PrefsService;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\Ticket\QueueMoveForm;
 use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\View\PrevNextView;
-use Horde_Form_Renderer;
+use Horde_Group_Base;
+use Horde_Group_Exception;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
-use Horde_Url;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Whups;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_Queue_StepOne;
-use Whups_Form_Queue_StepThree;
-use Whups_Form_Queue_StepTwo;
 use Whups_Ticket;
 
 class QueueMoveController implements RequestHandlerInterface
@@ -56,6 +56,8 @@ class QueueMoveController implements RequestHandlerInterface
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
         private readonly UrlGenerator $urlGenerator,
+        private readonly Horde_Group_Base $groupService,
+        private readonly Horde_Perms $perms,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -86,31 +88,15 @@ class QueueMoveController implements RequestHandlerInterface
             return $this->redirectToDefault($webroot, $uid);
         }
 
+        // Build form vars from PSR-7 request + route params.
+        $formVars = ($request->getParsedBody() ?? []) + $request->getQueryParams();
+        $formVars['id'] = $id;
+
+        // Legacy Horde_Variables still needed for tabs/TicketDetails.
         $vars = Horde_Variables::getDefaultVariables();
         $vars->set('id', $id);
-        $formName = $vars->get('formname');
-
-        // Preserve in-progress edits for queue/version/type across steps.
-        if ($formName != 'whups_form_queue_stepone') {
-            $q = $vars->get('queue');
-            $v = $vars->get('version');
-            $t = $vars->get('type');
-        }
-
-        // Load ticket details as form defaults.
         foreach ($details as $varname => $value) {
             $vars->add($varname, $value);
-        }
-
-        // Restore in-progress values over ticket defaults.
-        if (!empty($q)) {
-            $vars->set('queue', $q);
-        }
-        if (!empty($v)) {
-            $vars->set('version', $v);
-        }
-        if (!empty($t)) {
-            $vars->set('type', $t);
         }
 
         // RSS feed link.
@@ -120,11 +106,22 @@ class QueueMoveController implements RequestHandlerInterface
             'title' => '[#' . $id . '] ' . $ticket->get('summary'),
         ]);
 
-        // Determine wizard step from form validation.
-        $action = $this->processWizardStep($vars, $formName, $ticket, $id, $webroot, $uid);
-        if ($action instanceof ResponseInterface) {
-            return $action;
+        // Load shared domain data.
+        $queues = Whups::permissionsFilter(
+            $this->driver->getQueues(),
+            'queue',
+            Horde_Perms::EDIT,
+        );
+        $groups = $this->loadGroupEnum($uid);
+
+        // Determine wizard step and process submission.
+        $result = $this->processWizard($formVars, $queues, $groups, $ticket, $id);
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
+
+        // $result is the QueueMoveForm to render.
+        $form = $result;
 
         // Prev/next navigation.
         $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
@@ -135,137 +132,159 @@ class QueueMoveController implements RequestHandlerInterface
         $tabs = $this->buildTicketTabs($vars, $ticket);
 
         $title = sprintf(_("Set Queue for %s"), '[#' . $id . '] ' . $ticket->get('summary'));
+        $actionUrl = $webroot . '/ticket/' . $id . '/queue';
 
         $html = $this->renderChrome($title, function () use (
-            $vars,
-            $action,
+            $form,
+            $actionUrl,
             $prevNext,
             $tabs,
-            $webroot,
-            $id,
         ) {
-            // Topbar search.
             $this->topbarSearch->apply();
-
-            // Notifications.
             $this->notification->notify(['listeners' => 'status']);
-
-            // Prev/next.
             echo $prevNext->render();
-
-            // Tabs.
             echo $tabs->render('queue');
 
-            // Wizard forms.
-            $this->renderWizardStep($action, $vars, $webroot, $id);
+            $renderer = new HtmlRenderer();
+            echo $renderer->renderMixed($form, $actionUrl, 'post');
         });
 
         return $this->htmlResponse($html);
     }
 
     /**
-     * Process the wizard step and return the next action string,
-     * or a ResponseInterface if a redirect is needed.
+     * Process wizard progression. Returns either:
+     * - A QueueMoveForm to render (at the appropriate step)
+     * - A ResponseInterface (redirect after successful submission)
      */
-    private function processWizardStep(
-        Horde_Variables $vars,
-        ?string $formName,
+    private function processWizard(
+        array $formVars,
+        array $queues,
+        array $groups,
         Whups_Ticket $ticket,
         string $id,
-        string $webroot,
-        string $uid,
-    ): string|ResponseInterface {
-        if ($formName == 'whups_form_queue_stepone') {
-            $form = new Whups_Form_Queue_StepOne($vars);
-            if ($form->validate($vars)) {
-                return 'sq2';
-            }
+    ): QueueMoveForm|ResponseInterface {
+        // Load domain data that depends on prior step selections.
+        $queue = (int) ($formVars['queue'] ?? 0);
+        $queueInfo = $queue ? $this->driver->getQueue($queue) : [];
+        $versioned = !empty($queueInfo['versioned']);
+
+        $types = $queue ? $this->driver->getTypes($queue) : [];
+        $versions = $versioned ? $this->driver->getVersions($queue) : null;
+
+        $type = (int) ($formVars['type'] ?? 0);
+        $states = $type ? $this->driver->getStates($type) : [];
+        $priorities = $type ? $this->driver->getPriorities($type) : [];
+
+        // Progressive validation to determine the current step.
+        // Step 1: always validate.
+        $form = new QueueMoveForm($formVars, 1, $queues, $groups, $types, $versions, $states, $priorities);
+        if (!$form->isSubmitted() || !$form->validate()) {
+            return $form;
         }
 
-        if ($formName == 'whups_form_queue_steptwo') {
-            $form = new Whups_Form_Queue_StepTwo($vars);
-            if ($form->validate($vars)) {
-                return 'sq3';
-            }
-            return 'sq2';
+        // Step 1 valid → check step 2.
+        $form = new QueueMoveForm($formVars, 2, $queues, $groups, $types, $versions, $states, $priorities);
+        if (!$form->validate()) {
+            return $form;
         }
 
-        if ($formName == 'whups_form_queue_stepthree') {
-            $form = new Whups_Form_Queue_StepThree($vars);
-            if ($form->validate($vars)) {
-                $info = $form->getInfo($vars);
-
-                $ticket->change('queue', $info['queue']);
-                $ticket->change('type', $info['type']);
-                $ticket->change('state', $info['state']);
-                $ticket->change('priority', $info['priority']);
-
-                if (!empty($info['version'])) {
-                    $ticket->change('version', $info['version']);
-                }
-                if (!empty($info['newcomment'])) {
-                    $ticket->change('comment', $info['newcomment']);
-                }
-                if (!empty($info['group'])) {
-                    $ticket->change('comment-perms', $info['group']);
-                }
-
-                try {
-                    $ticket->commit();
-                    $this->notification->push(
-                        sprintf(_("Moved ticket %d to \"%s\""), $id, $ticket->get('queue_name')),
-                        'horde.success',
-                    );
-                    return $this->redirect(
-                        $this->urlGenerator->urlFor('TicketView', ['id' => (int) $id]),
-                    );
-                } catch (Whups_Exception $e) {
-                    $this->notification->push($e, 'horde.error');
-                }
-            }
-            return 'sq3';
+        // Step 2 valid → check step 3.
+        $form = new QueueMoveForm($formVars, 3, $queues, $groups, $types, $versions, $states, $priorities);
+        if (!$form->validate()) {
+            return $form;
         }
 
-        return '';
+        // All steps valid — process the move.
+        return $this->processMove($form, $ticket, $id);
     }
 
     /**
-     * Render the appropriate wizard step forms.
+     * Process the final form submission: apply the queue move.
      */
-    private function renderWizardStep(
-        string $action,
-        Horde_Variables $vars,
-        string $webroot,
+    private function processMove(
+        QueueMoveForm $form,
+        Whups_Ticket $ticket,
         string $id,
-    ): void {
-        $r = new Horde_Form_Renderer();
-        $actionUrl = new Horde_Url($webroot . '/ticket/' . $id . '/queue');
+    ): ResponseInterface {
+        $info = $form->getInfo();
 
-        switch ($action) {
-            case 'sq2':
-                $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
-                $form2 = new Whups_Form_Queue_StepTwo($vars, _("Set Queue - Step 2"));
-                $form1->renderInactive($r, $vars);
-                echo '<br />';
-                $form2->renderActive($r, $vars, $actionUrl, 'post');
-                break;
+        $ticket->change('queue', $info['queue']);
+        $ticket->change('type', $info['type']);
+        $ticket->change('state', $info['state']);
+        $ticket->change('priority', $info['priority']);
 
-            case 'sq3':
-                $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
-                $form2 = new Whups_Form_Queue_StepTwo($vars, _("Set Queue - Step 2"));
-                $form3 = new Whups_Form_Queue_StepThree($vars, _("Set Queue - Step 3"));
-                $form1->renderInactive($r, $vars);
-                echo '<br />';
-                $form2->renderInactive($r, $vars);
-                echo '<br />';
-                $form3->renderActive($r, $vars, $actionUrl, 'post');
-                break;
-
-            default:
-                $form1 = new Whups_Form_Queue_StepOne($vars, _("Set Queue - Step 1"));
-                $form1->renderActive($r, $vars, $actionUrl, 'post');
-                break;
+        if (!empty($info['version'])) {
+            $ticket->change('version', $info['version']);
         }
+        if (!empty($info['newcomment'])) {
+            $ticket->change('comment', $info['newcomment']);
+        }
+        if (!empty($info['group'])) {
+            $ticket->change('comment-perms', $info['group']);
+        }
+
+        try {
+            $ticket->commit();
+            $this->notification->push(
+                sprintf(_("Moved ticket %d to \"%s\""), $id, $ticket->get('queue_name')),
+                'horde.success',
+            );
+            return $this->redirect(
+                $this->urlGenerator->urlFor('TicketView', ['id' => (int) $id]),
+            );
+        } catch (Whups_Exception $e) {
+            $this->notification->push($e, 'horde.error');
+        }
+
+        // On error, redirect back to the form.
+        $webroot = $this->registry->get('webroot', 'whups');
+        return $this->redirect($webroot . '/ticket/' . $id . '/queue');
+    }
+
+    /**
+     * Load the group enum for comment visibility (admin or hiddenComments permission).
+     *
+     * @return array<int|string,string> Group id => name, with 0 => "Any Group" prepended
+     */
+    private function loadGroupEnum(string $uid): array
+    {
+        if (!$uid) {
+            return [];
+        }
+
+        // Check admin or hiddenComments permission.
+        $isAdmin = $this->registry->isAdmin([
+            'permission' => 'whups:admin',
+            'permlevel' => Horde_Perms::EDIT,
+        ]);
+        $hasHiddenPerm = $this->perms->hasPermission(
+            'whups:hiddenComments',
+            $uid,
+            Horde_Perms::EDIT,
+        );
+
+        if (!$isAdmin && !$hasHiddenPerm) {
+            return [];
+        }
+
+        try {
+            $mygroups = $this->groupService->listGroups($uid);
+        } catch (Horde_Group_Exception $e) {
+            return [];
+        }
+
+        if (!$mygroups) {
+            return [];
+        }
+
+        $grouplist = [];
+        foreach (array_keys($mygroups) as $gid) {
+            $grouplist[$gid] = $this->groupService->getName($gid, true);
+        }
+        asort($grouplist);
+
+        return [0 => _("Any Group")] + $grouplist;
     }
 
     private function redirectToDefault(string $webroot, string $uid): ResponseInterface

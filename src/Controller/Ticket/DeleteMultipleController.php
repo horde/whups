@@ -19,21 +19,23 @@ namespace Horde\Whups\Controller\Ticket;
 
 use Horde;
 use Horde\Core\Service\PrefsService;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\Ticket\DeleteMultipleForm;
+use Horde\Whups\Service\PermissionChecker;
 use Horde_Exception_NotFound;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
+use Horde_Perms;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Url;
-use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_Ticket_DeleteMultiple;
 use Whups_Ticket;
 
 class DeleteMultipleController implements RequestHandlerInterface
@@ -48,26 +50,31 @@ class DeleteMultipleController implements RequestHandlerInterface
         private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
+        private readonly PermissionChecker $permissions,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
+        $params = ($request->getParsedBody() ?? []) + $request->getQueryParams();
 
-        $vars = Horde_Variables::getDefaultVariables();
-        $deleteForm = new Whups_Form_Ticket_DeleteMultiple($vars);
-        $title = sprintf(_("Delete %d tickets?"), count($deleteForm->getTickets()));
-        $deleteForm->setTitle($title);
+        // Collect deletable tickets — filter by DELETE permission.
+        $ticketIds = (array) ($params['ticket'] ?? []);
+        $allowed = $this->filterDeletableTickets($ticketIds);
+
+        $formVars = $params;
+        $formVars['tickets'] = $params['tickets'] ?? serialize(array_keys($allowed));
+        $formVars['url'] = $params['url'] ?? Horde::signUrl(Horde::selfUrl(true));
+
+        $deleteForm = new DeleteMultipleForm($formVars, $allowed);
 
         // Handle form submission.
-        if ($vars->get('formname') == 'whups_form_ticket_deletemultiple'
-            && $deleteForm->validate($vars)
-        ) {
-            if ($vars->get('submitbutton') == _("Delete")) {
-                $info = $deleteForm->getInfo($vars);
+        if ($deleteForm->isSubmitted() && $deleteForm->validate()) {
+            if ($deleteForm->getClickedButton() === _("Delete")) {
+                $info = $deleteForm->getInfo();
                 $tickets = @unserialize($info['tickets']);
-                foreach ($tickets as $id) {
+                foreach ((array) $tickets as $id) {
                     try {
                         $details = $this->driver->getTicketDetails($id);
                         (new Whups_Ticket($id, $details))->delete();
@@ -88,7 +95,7 @@ class DeleteMultipleController implements RequestHandlerInterface
                 $this->notification->push(_("The tickets were not deleted."), 'horde.message');
             }
 
-            $url = Horde::verifySignedUrl($vars->get('url'));
+            $url = Horde::verifySignedUrl($params['url'] ?? '');
             if (!$url) {
                 $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
                 $url = $webroot . '/' . $defaultView;
@@ -97,24 +104,39 @@ class DeleteMultipleController implements RequestHandlerInterface
         }
 
         // Render the confirmation form.
-        $vars->set('tickets', serialize($deleteForm->getTickets()));
+        $title = sprintf(_("Delete %d tickets?"), count($allowed));
 
-        $html = $this->renderChrome($title, function () use ($vars, $deleteForm, $webroot) {
-            // Topbar search.
+        $html = $this->renderChrome($title, function () use ($deleteForm, $webroot) {
             $this->topbarSearch->apply();
-
-            // Notifications.
             $this->notification->notify(['listeners' => 'status']);
 
-            // Delete form.
-            $deleteForm->renderActive(
-                $deleteForm->getRenderer(),
-                $vars,
-                new Horde_Url($webroot . '/ticket/delete-multiple'),
-                'post',
-            );
+            $renderer = new HtmlRenderer();
+            echo $renderer->render($deleteForm, $webroot . '/ticket/delete-multiple', 'post');
         });
 
         return $this->htmlResponse($html);
+    }
+
+    /**
+     * Filter ticket IDs to only those the user has DELETE permission on.
+     *
+     * @param list<int|string> $ticketIds Raw ticket IDs from request
+     * @return array<int,string> Ticket id => summary for deletable tickets
+     */
+    private function filterDeletableTickets(array $ticketIds): array
+    {
+        $allowed = [];
+        foreach ($ticketIds as $id) {
+            $id = (int) $id;
+            try {
+                $ticket = $this->driver->getTicketDetails($id, false);
+            } catch (Whups_Exception $e) {
+                continue;
+            }
+            if ($this->permissions->hasQueuePermission($ticket['queue'], Horde_Perms::DELETE)) {
+                $allowed[$id] = $ticket['summary'];
+            }
+        }
+        return $allowed;
     }
 }

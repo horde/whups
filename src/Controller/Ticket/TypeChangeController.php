@@ -18,16 +18,18 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde\Core\Service\PrefsService;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\Ticket\TypeChangeForm;
 use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\View\PrevNextView;
-use Horde_Form_Renderer;
+use Horde_Group_Base;
+use Horde_Group_Exception;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
-use Horde_Url;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
@@ -35,8 +37,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_SetTypeStepOne;
-use Whups_Form_SetTypeStepTwo;
 use Whups_Ticket;
 
 class TypeChangeController implements RequestHandlerInterface
@@ -54,6 +54,7 @@ class TypeChangeController implements RequestHandlerInterface
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
         private readonly UrlGenerator $urlGenerator,
+        private readonly Horde_Group_Base $groupService,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -84,14 +85,16 @@ class TypeChangeController implements RequestHandlerInterface
             return $this->redirectToDefault($webroot, $uid);
         }
 
+        // Build form vars from PSR-7 request + route params.
+        $formVars = ($request->getParsedBody() ?? []) + $request->getQueryParams();
+        $formVars['id'] = $id;
+
+        // Legacy Horde_Variables still needed for TicketDetails/tabs.
         $vars = Horde_Variables::getDefaultVariables();
         $vars->set('id', $id);
         foreach ($details as $varname => $value) {
             $vars->add($varname, $value);
         }
-
-        $formName = $vars->get('formname');
-        $action = $vars->get('action');
 
         // RSS feed link.
         $rssUrl = $this->urlGenerator->absoluteUrlFor('TicketRss', ['id' => (int) $id]);
@@ -100,11 +103,17 @@ class TypeChangeController implements RequestHandlerInterface
             'title' => '[#' . $id . '] ' . $ticket->get('summary'),
         ]);
 
-        // Process wizard step.
-        $step = $this->processWizardStep($vars, $formName, $action, $ticket, $id);
-        if ($step instanceof ResponseInterface) {
-            return $step;
+        // Load domain data for forms.
+        $types = $this->driver->getTypes($details['queue']);
+        $groups = $this->loadGroupEnum($uid);
+
+        // Determine wizard step and process submission.
+        $result = $this->processWizard($formVars, $types, $groups, $ticket, $id);
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
+
+        $form = $result;
 
         // Prev/next navigation.
         $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
@@ -115,112 +124,121 @@ class TypeChangeController implements RequestHandlerInterface
         $tabs = $this->buildTicketTabs($vars, $ticket);
 
         $title = sprintf(_("Set Type for %s"), '[#' . $id . '] ' . $ticket->get('summary'));
+        $actionUrl = $webroot . '/ticket/' . $id . '/type';
 
         $html = $this->renderChrome($title, function () use (
-            $vars,
-            $step,
+            $form,
+            $actionUrl,
             $prevNext,
             $tabs,
-            $webroot,
-            $id,
         ) {
-            // Topbar search.
             $this->topbarSearch->apply();
-
-            // Notifications.
             $this->notification->notify(['listeners' => 'status']);
-
-            // Prev/next.
             echo $prevNext->render();
-
-            // Tabs.
             echo $tabs->render('type');
 
-            // Wizard forms.
-            $this->renderWizardStep($step, $vars, $webroot, $id);
+            $renderer = new HtmlRenderer();
+            echo $renderer->renderMixed($form, $actionUrl, 'post');
         });
 
         return $this->htmlResponse($html);
     }
 
     /**
-     * Process the wizard step. Returns the next step string or a redirect response.
+     * Process wizard progression. Returns either:
+     * - A TypeChangeForm to render (at the appropriate step)
+     * - A ResponseInterface (redirect after successful submission)
      */
-    private function processWizardStep(
-        Horde_Variables $vars,
-        ?string $formName,
-        ?string $action,
+    private function processWizard(
+        array $formVars,
+        array $types,
+        array $groups,
         Whups_Ticket $ticket,
         string $id,
-    ): string|ResponseInterface {
-        if ($formName == 'whups_form_settypestepone') {
-            $form = new Whups_Form_SetTypeStepOne($vars);
-            if ($form->validate($vars)) {
-                return 'st2';
-            }
-            return 'st';
+    ): TypeChangeForm|ResponseInterface {
+        $type = (int) ($formVars['type'] ?? 0);
+        $states = $type ? $this->driver->getStates($type) : [];
+        $priorities = $type ? $this->driver->getPriorities($type) : [];
+
+        // Step 1: always validate.
+        $form = new TypeChangeForm($formVars, 1, $types, $groups, $states, $priorities);
+        if (!$form->isSubmitted() || !$form->validate()) {
+            return $form;
         }
 
-        if ($formName == 'whups_form_settypesteptwo') {
-            $form = new Whups_Form_SetTypeStepTwo($vars);
-            if ($form->validate($vars)) {
-                $info = $form->getInfo($vars);
-
-                $ticket->change('type', $info['type']);
-                $ticket->change('state', $info['state']);
-                $ticket->change('priority', $info['priority']);
-
-                if (!empty($info['newcomment'])) {
-                    $ticket->change('comment', $info['newcomment']);
-                }
-                if (!empty($info['group'])) {
-                    $ticket->change('comment-perms', $info['group']);
-                }
-
-                try {
-                    $ticket->commit();
-                    $this->notification->push(_("Successfully changed ticket type."), 'horde.success');
-                    return $this->redirect(
-                        $this->urlGenerator->urlFor('TicketView', ['id' => (int) $id]),
-                    );
-                } catch (Whups_Exception $e) {
-                    $this->notification->push($e, 'horde.error');
-                }
-            } else {
-                $this->notification->push(var_export($form->getErrors(), true), 'horde.error');
-            }
-            return 'st2';
+        // Step 1 valid → check step 2.
+        $form = new TypeChangeForm($formVars, 2, $types, $groups, $states, $priorities);
+        if (!$form->validate()) {
+            return $form;
         }
 
-        return $action ?? '';
+        // Both steps valid — process the type change.
+        return $this->processTypeChange($form, $ticket, $id);
     }
 
     /**
-     * Render the appropriate wizard step forms.
+     * Process the final form submission: apply the type change.
      */
-    private function renderWizardStep(
-        string $action,
-        Horde_Variables $vars,
-        string $webroot,
+    private function processTypeChange(
+        TypeChangeForm $form,
+        Whups_Ticket $ticket,
         string $id,
-    ): void {
-        $r = new Horde_Form_Renderer();
-        $actionUrl = new Horde_Url($webroot . '/ticket/' . $id . '/type');
+    ): ResponseInterface {
+        $info = $form->getInfo();
 
-        switch ($action) {
-            case 'st2':
-                $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
-                $form2 = new Whups_Form_SetTypeStepTwo($vars, _("Set Type - Step 2"));
-                $form1->renderInactive($r, $vars);
-                echo '<br />';
-                $form2->renderActive($r, $vars, $actionUrl, 'post');
-                break;
+        $ticket->change('type', $info['type']);
+        $ticket->change('state', $info['state']);
+        $ticket->change('priority', $info['priority']);
 
-            default:
-                $form1 = new Whups_Form_SetTypeStepOne($vars, _("Set Type - Step 1"));
-                $form1->renderActive($r, $vars, $actionUrl, 'post');
-                break;
+        if (!empty($info['newcomment'])) {
+            $ticket->change('comment', $info['newcomment']);
         }
+        if (!empty($info['group'])) {
+            $ticket->change('comment-perms', $info['group']);
+        }
+
+        try {
+            $ticket->commit();
+            $this->notification->push(_("Successfully changed ticket type."), 'horde.success');
+            return $this->redirect(
+                $this->urlGenerator->urlFor('TicketView', ['id' => (int) $id]),
+            );
+        } catch (Whups_Exception $e) {
+            $this->notification->push($e, 'horde.error');
+        }
+
+        $webroot = $this->registry->get('webroot', 'whups');
+        return $this->redirect($webroot . '/ticket/' . $id . '/type');
+    }
+
+    /**
+     * Load the group enum for comment visibility.
+     *
+     * @return array<int|string,string> Group id => name, with 0 => "Any Group" prepended
+     */
+    private function loadGroupEnum(string $uid): array
+    {
+        if (!$uid) {
+            return [];
+        }
+
+        try {
+            $mygroups = $this->groupService->listGroups($uid);
+        } catch (Horde_Group_Exception $e) {
+            return [];
+        }
+
+        if (!$mygroups) {
+            return [];
+        }
+
+        $grouplist = [];
+        foreach (array_keys($mygroups) as $gid) {
+            $grouplist[$gid] = $this->groupService->getName($gid, true);
+        }
+        asort($grouplist);
+
+        return [0 => _("Any Group")] + $grouplist;
     }
 
     private function redirectToDefault(string $webroot, string $uid): ResponseInterface

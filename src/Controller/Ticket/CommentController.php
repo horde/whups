@@ -18,11 +18,14 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde\Core\Service\PrefsService;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Form\Ticket\AddCommentForm;
 use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\View\PrevNextView;
-use Horde_Form_Renderer;
+use Horde_Group_Base;
+use Horde_Group_Exception;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
@@ -30,15 +33,14 @@ use Horde_Perms_Base;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Text_Flowed;
-use Horde_Url;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Whups;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_AddComment;
 use Whups_Ticket;
 
 class CommentController implements RequestHandlerInterface
@@ -57,6 +59,7 @@ class CommentController implements RequestHandlerInterface
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
         private readonly UrlGenerator $urlGenerator,
+        private readonly Horde_Group_Base $groupService,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -83,7 +86,16 @@ class CommentController implements RequestHandlerInterface
             return $this->redirect($webroot . '/' . $defaultView);
         }
 
-        // Build form variables.
+        $isGuest = !$this->registry->getAuth();
+        $conf = $GLOBALS['conf'] ?? [];
+        $useCaptcha = $isGuest && !empty($conf['guests']['captcha']);
+        $captchaFont = $conf['guests']['figlet_font'] ?? null;
+
+        // Build form vars from PSR-7 request + route params.
+        $formVars = ($request->getParsedBody() ?? []) + $request->getQueryParams();
+        $formVars['id'] = $id;
+
+        // Legacy Horde_Variables still needed for tabs/TicketDetails.
         $vars = Horde_Variables::getDefaultVariables();
         $vars->set('id', $id);
         foreach ($details as $varname => $value) {
@@ -91,44 +103,55 @@ class CommentController implements RequestHandlerInterface
         }
 
         // If replying to a specific transaction, pre-fill the comment.
-        $this->prefillQuotedComment($vars, $ticket);
+        $this->prefillQuotedComment($formVars, $vars, $ticket);
+
+        // Load domain data.
+        $groups = $this->loadGroupEnum($uid);
+        $captchaText = $useCaptcha ? Whups::getCAPTCHA(!$this->isFormSubmitted($formVars)) : null;
 
         $title = sprintf(_("Comment on %s"), '[#' . $id . '] ' . $ticket->get('summary'));
-        $commentForm = new Whups_Form_AddComment($vars, $title);
+        $commentForm = new AddCommentForm($formVars, $isGuest, $captchaText, $captchaFont, $groups, $title);
 
         // Handle form submission.
-        if ($vars->get('formname') == 'whups_form_addcomment'
-            && $commentForm->validate($vars)
-        ) {
-            $info = $commentForm->getInfo($vars);
+        if ($commentForm->isSubmitted()) {
+            if ($commentForm->validate()) {
+                $info = $commentForm->getInfo();
 
-            if (!empty($info['newcomment'])) {
-                $ticket->change('comment', $info['newcomment']);
-            }
-            if (!empty($info['user_email'])) {
-                $ticket->change('comment-email', $info['user_email']);
-            }
-            if (!empty($info['newattachment']['name'])) {
-                $ticket->change('attachment', [
-                    'name' => $info['newattachment']['name'],
-                    'tmp_name' => $info['newattachment']['tmp_name'],
-                ]);
-            }
-            if (!empty($info['add_watch'])) {
-                $this->driver->addListener($ticket->getId(), '**' . $info['user_email']);
-            }
-            if (!empty($info['group'])) {
-                $ticket->change('comment-perms', $info['group']);
+                if (!empty($info['newcomment'])) {
+                    $ticket->change('comment', $info['newcomment']);
+                }
+                if (!empty($info['user_email'])) {
+                    $ticket->change('comment-email', $info['user_email']);
+                }
+                if (!empty($info['newattachment']['name'])) {
+                    $ticket->change('attachment', [
+                        'name' => $info['newattachment']['name'],
+                        'tmp_name' => $info['newattachment']['tmp_name'],
+                    ]);
+                }
+                if (!empty($info['add_watch'])) {
+                    $this->driver->addListener($ticket->getId(), '**' . $info['user_email']);
+                }
+                if (!empty($info['group'])) {
+                    $ticket->change('comment-perms', $info['group']);
+                }
+
+                try {
+                    $ticket->commit();
+                    $this->notification->push(_("Comment added"), 'horde.success');
+                    return $this->redirect(
+                        $this->urlGenerator->urlFor('TicketView', ['id' => (int) $id]),
+                    );
+                } catch (Whups_Exception $e) {
+                    $this->notification->push($e->getMessage(), 'horde.error');
+                }
             }
 
-            try {
-                $ticket->commit();
-                $this->notification->push(_("Comment added"), 'horde.success');
-                return $this->redirect(
-                    $this->urlGenerator->urlFor('TicketView', ['id' => (int) $id]),
-                );
-            } catch (Whups_Exception $e) {
-                $this->notification->push($e->getMessage(), 'horde.error');
+            // Validation failed — regenerate CAPTCHA for next render.
+            if ($useCaptcha) {
+                $captchaText = Whups::getCAPTCHA(true);
+                unset($formVars['captcha']);
+                $commentForm = new AddCommentForm($formVars, $isGuest, $captchaText, $captchaFont, $groups, $title);
             }
         }
 
@@ -148,8 +171,6 @@ class CommentController implements RequestHandlerInterface
         $tabs = $this->buildTicketTabs($vars, $ticket);
 
         $html = $this->renderChrome($title, function () use (
-            $ticket,
-            $vars,
             $commentForm,
             $prevNext,
             $tabs,
@@ -169,25 +190,31 @@ class CommentController implements RequestHandlerInterface
             echo $tabs->render('comment');
 
             // Comment form.
-            $commentForm->renderActive(
-                renderer: new Horde_Form_Renderer(),
-                vars: $vars,
-                action: new Horde_Url($webroot . '/ticket/' . $id . '/comment'),
-                method: 'post',
-                enctype: 'multipart/form-data',
-            );
+            $renderer = new HtmlRenderer();
+            echo $renderer->render($commentForm, $webroot . '/ticket/' . $id . '/comment', 'post');
         });
 
         return $this->htmlResponse($html);
     }
 
     /**
+     * Check if the form was submitted (without full form validation).
+     */
+    private function isFormSubmitted(array $formVars): bool
+    {
+        // V3 forms include their name as a hidden field.
+        // If the form name token is present, the form was submitted.
+        return isset($formVars['submitbutton'])
+            || isset($formVars['formname']);
+    }
+
+    /**
      * If a transaction ID is given, pre-fill the comment with the quoted
      * original (respecting private comment permissions).
      */
-    private function prefillQuotedComment(Horde_Variables $vars, Whups_Ticket $ticket): void
+    private function prefillQuotedComment(array &$formVars, Horde_Variables $vars, Whups_Ticket $ticket): void
     {
-        $tid = $vars->get('transaction');
+        $tid = $formVars['transaction'] ?? $vars->get('transaction');
         if (!$tid) {
             return;
         }
@@ -219,6 +246,49 @@ class CommentController implements RequestHandlerInterface
             preg_replace("/\s*\n/U", "\n", $history[$tid]['comment']),
             'UTF-8',
         );
-        $vars->set('newcomment', $flowed->toFlowed(true));
+        $quoted = $flowed->toFlowed(true);
+        $formVars['newcomment'] = $quoted;
+        $vars->set('newcomment', $quoted);
+    }
+
+    /**
+     * Load the group enum for comment visibility (admin or hiddenComments permission).
+     *
+     * @return array<int|string,string> Group id => name, with 0 => "visible to everyone" prepended
+     */
+    private function loadGroupEnum(string $uid): array
+    {
+        if (!$uid) {
+            return [];
+        }
+
+        $isAdmin = $this->registry->isAdmin(['permission' => 'whups:admin']);
+        $hasHiddenPerm = $this->perms->hasPermission(
+            'whups:hiddenComments',
+            $uid,
+            Horde_Perms::EDIT,
+        );
+
+        if (!$isAdmin && !$hasHiddenPerm) {
+            return [];
+        }
+
+        try {
+            $mygroups = $this->groupService->listGroups($uid);
+        } catch (Horde_Group_Exception $e) {
+            return [];
+        }
+
+        if (!$mygroups) {
+            return [];
+        }
+
+        $grouplist = [];
+        foreach (array_keys($mygroups) as $gid) {
+            $grouplist[$gid] = $this->groupService->getName($gid, true);
+        }
+        asort($grouplist);
+
+        return [0 => _("This comment is visible to everyone")] + $grouplist;
     }
 }

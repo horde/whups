@@ -16,24 +16,25 @@ namespace Horde\Whups\Controller\Ticket;
 
 use Horde;
 use Horde\Core\Session\HordeSession;
+use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
+use Horde\Whups\Domain\StateCategory;
+use Horde\Whups\Form\Ticket\CreateTicketForm;
+use Horde\Whups\Service\TicketCreationService;
 use Horde\Whups\Service\TopbarSearch;
 use Horde\Whups\Service\UrlGenerator;
-use Horde_Form_Renderer;
+use Horde_Group_Base;
+use Horde_Group_Exception;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
+use Horde_Perms;
 use Horde_Registry;
-use Horde_Variables;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Whups;
 use Whups_Driver;
 use Whups_Exception;
-use Whups_Form_Ticket_CreateStepFour;
-use Whups_Form_Ticket_CreateStepOne;
-use Whups_Form_Ticket_CreateStepThree;
-use Whups_Form_Ticket_CreateStepTwo;
-use Whups_Ticket;
 
 class CreateController implements RequestHandlerInterface
 {
@@ -47,90 +48,153 @@ class CreateController implements RequestHandlerInterface
         private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly UrlGenerator $urlGenerator,
+        private readonly Horde_Group_Base $groupService,
+        private readonly TicketCreationService $ticketCreation,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $webroot = $this->registry->get('webroot', 'whups');
         $actionUrl = $webroot . '/ticket/create';
+        $uid = $this->registry->getAuth() ?: '';
+        $isGuest = !$uid;
+        $conf = $GLOBALS['conf'] ?? [];
 
-        $vars = Horde_Variables::getDefaultVariables();
-        $formname = $vars->get('formname');
+        $formVars = ($request->getParsedBody() ?? []) + $request->getQueryParams();
+        $formname = $formVars['formname'] ?? '';
 
-        $form1 = new Whups_Form_Ticket_CreateStepOne($vars);
-        $form2 = new Whups_Form_Ticket_CreateStepTwo($vars);
-        $form3 = new Whups_Form_Ticket_CreateStepThree($vars);
-        $form4 = new Whups_Form_Ticket_CreateStepFour($vars);
-        $r = new Horde_Form_Renderer(
-            ['varrenderer_driver' => ['whups', 'html']]
+        // Load queue list for step 1.
+        $queues = Whups::permissionsFilter(
+            $this->driver->getQueues(),
+            'queue',
+            Horde_Perms::EDIT,
         );
 
-        $valid4 = $form4->validate($vars)
-            && $formname == 'whups_form_ticket_createstepfour';
-        $valid3 = $form3->validate($vars, true);
-        $valid2 = $form2->validate($vars, !$form1->isSubmitted());
-        $valid1 = $form1->validate($vars, true);
-        $doAssignForm = $this->registry->getAuth()
-            && $this->driver->isCategory('assigned', $vars->get('state'));
-
-        if ($valid1 && $valid2 && $valid3
-            && (!$doAssignForm || $valid4)) {
-            return $this->processSubmission($vars, $form1, $form2, $form3, $form4, $doAssignForm, $actionUrl);
+        // Step 1: queue selection.
+        $form = new CreateTicketForm($formVars, 1, $queues);
+        if (!$form->validate()) {
+            return $this->renderWizard($actionUrl, $form);
         }
 
-        $html = $this->renderChrome(_("New Ticket"), function () use (
-            $vars,
-            $formname,
-            $form1,
-            $form2,
-            $form3,
-            $form4,
-            $r,
-            $valid1,
-            $valid2,
-            $valid3,
-            $actionUrl,
-        ) {
-            $this->topbarSearch->apply();
+        // Step 1 valid — load data for step 2.
+        $queue = (int) ($formVars['queue'] ?? 0);
+        $types = $this->driver->getTypes($queue);
+        $queueInfo = $this->driver->getQueue($queue);
+        $versioned = !empty($queueInfo['versioned']);
+        $versions = $versioned ? $this->driver->getVersions($queue) : null;
+        $defaultType = $this->driver->getDefaultType($queue);
 
-            if ($valid3 && $valid2 && $valid1) {
-                $this->renderStepFour($vars, $formname, $form1, $form2, $form3, $form4, $r, $actionUrl);
-            } elseif ($valid2 && $valid1) {
-                $this->renderStepThree($vars, $formname, $form1, $form2, $form3, $r, $actionUrl);
-            } elseif ($valid1) {
-                $this->renderStepTwo($vars, $formname, $form1, $form2, $r, $actionUrl);
-            } else {
-                $this->renderStepOne($vars, $formname, $form1, $r, $actionUrl);
+        // Step 2: type/version selection.
+        $form = new CreateTicketForm(
+            $formVars, 2, $queues, $types,
+            $defaultType ? (int) $defaultType : null,
+            $versions,
+        );
+        if (!$form->validate()) {
+            return $this->renderWizard($actionUrl, $form);
+        }
+
+        // Step 2 valid — load data for step 3.
+        $type = (int) ($formVars['type'] ?? 0);
+        $states = $this->loadStates($type, !$isGuest);
+        $defaultState = $this->driver->getDefaultState($type);
+        $priorities = $this->driver->getPriorities($type);
+        $defaultPriority = $this->driver->getDefaultPriority($type);
+        $attributes = $this->driver->getAttributesForType($type);
+        $canSetRequester = Whups::hasPermission($queue, 'queue', 'requester');
+        $groups = $isGuest ? [] : $this->loadGroupEnum($uid);
+        $useCaptcha = $isGuest && !empty($conf['guests']['captcha']);
+        $captchaFont = $conf['guests']['figlet_font'] ?? null;
+
+        // CAPTCHA: generate new text on first display, use existing for validation.
+        $form3Name = 'horde_whups_form_ticket_createticketform';
+        $form3IsActive = $formname === $form3Name;
+        $captchaText = $useCaptcha ? Whups::getCAPTCHA(!$form3IsActive) : null;
+
+        // Step 3: ticket details.
+        $form = new CreateTicketForm(
+            $formVars, 3, $queues, $types,
+            $defaultType ? (int) $defaultType : null,
+            $versions, $states,
+            $defaultState ? (int) $defaultState : null,
+            $priorities,
+            $defaultPriority ? (int) $defaultPriority : null,
+            $attributes, $isGuest, $canSetRequester,
+            $captchaText, $captchaFont, $groups,
+        );
+        $valid3 = $form->validate();
+
+        if (!$valid3) {
+            // Regenerate CAPTCHA on validation failure.
+            if ($form3IsActive && $useCaptcha) {
+                $captchaText = Whups::getCAPTCHA(true);
+                unset($formVars['captcha']);
+                $form = new CreateTicketForm(
+                    $formVars, 3, $queues, $types,
+                    $defaultType ? (int) $defaultType : null,
+                    $versions, $states,
+                    $defaultState ? (int) $defaultState : null,
+                    $priorities,
+                    $defaultPriority ? (int) $defaultPriority : null,
+                    $attributes, $isGuest, $canSetRequester,
+                    $captchaText, $captchaFont, $groups,
+                );
             }
-        });
+            return $this->renderWizard($actionUrl, $form);
+        }
 
-        return $this->htmlResponse($html);
+        // Check whether step 4 (owner assignment) is needed.
+        $doAssignForm = !$isGuest
+            && $this->driver->isCategory(StateCategory::Assigned->value, $formVars['state'] ?? null);
+
+        if ($doAssignForm) {
+            // Preserve attachment upload from step 3 to step 4.
+            if ($form3IsActive) {
+                $this->preserveAttachment($formVars, $form);
+            }
+
+            $ownerData = $this->loadOwnerData($queue);
+
+            // Step 4: owner assignment.
+            $form = new CreateTicketForm(
+                $formVars, 4, $queues, $types,
+                $defaultType ? (int) $defaultType : null,
+                $versions, $states,
+                $defaultState ? (int) $defaultState : null,
+                $priorities,
+                $defaultPriority ? (int) $defaultPriority : null,
+                $attributes, $isGuest, $canSetRequester,
+                $captchaText, $captchaFont, $groups,
+                $ownerData['users'], $ownerData['groups'],
+            );
+            $valid4 = $form->isSubmitted() && $form->validate();
+
+            if (!$valid4) {
+                return $this->renderWizard($actionUrl, $form);
+            }
+        }
+
+        // All steps valid — collect info and create ticket.
+        $info = $form->getInfo();
+
+        return $this->processSubmission($info, $actionUrl);
     }
 
-    private function processSubmission(
-        Horde_Variables $vars,
-        Whups_Form_Ticket_CreateStepOne $form1,
-        Whups_Form_Ticket_CreateStepTwo $form2,
-        Whups_Form_Ticket_CreateStepThree $form3,
-        Whups_Form_Ticket_CreateStepFour $form4,
-        bool $doAssignForm,
-        string $actionUrl,
-    ): ResponseInterface {
-        $info = [];
-        $info = $form1->getInfo($vars, $info);
-        $info = $form2->getInfo($vars, $info);
-        $info = $form3->getInfo($vars, $info);
-        if ($doAssignForm) {
-            $info = $form4->getInfo($vars, $info);
-        }
-
+    /**
+     * Process validated form data and create the ticket.
+     */
+    private function processSubmission(array $info, string $actionUrl): ResponseInterface
+    {
         try {
-            $ticket = Whups_Ticket::newTicket($info, $this->registry->getAuth());
+            $ticket = $this->ticketCreation->createTicket(
+                $info,
+                $this->registry->getAuth(),
+            );
         } catch (Whups_Exception $e) {
             Horde::log($e, 'ERR');
             $this->notification->push(
                 sprintf(_("Adding your ticket failed: %s."), $e->getMessage()),
-                'horde.error'
+                'horde.error',
             );
             return $this->redirect($actionUrl);
         }
@@ -138,150 +202,134 @@ class CreateController implements RequestHandlerInterface
         $this->notification->push(
             sprintf(
                 _("Your ticket ID is %s. An appropriate person has been notified of this request."),
-                $ticket->getId()
+                $ticket->getId(),
             ),
-            'horde.success'
+            'horde.success',
         );
 
         $ticketUrl = $this->urlGenerator->absoluteUrlFor('TicketView', ['id' => (int) $ticket->getId()]);
         return $this->redirect($ticketUrl);
     }
 
-    private function renderStepFour(
-        Horde_Variables $vars,
-        ?string $formname,
-        Whups_Form_Ticket_CreateStepOne $form1,
-        Whups_Form_Ticket_CreateStepTwo $form2,
-        Whups_Form_Ticket_CreateStepThree $form3,
-        Whups_Form_Ticket_CreateStepFour $form4,
-        Horde_Form_Renderer $r,
+    /**
+     * Render the wizard at the current step.
+     */
+    private function renderWizard(
         string $actionUrl,
-    ): void {
-        $form4->open($r, $vars, $actionUrl, 'post');
+        CreateTicketForm $form,
+    ): ResponseInterface {
+        $html = $this->renderChrome(_("New Ticket"), function () use (
+            $actionUrl, $form,
+        ) {
+            $this->topbarSearch->apply();
 
-        $form1->preserve($vars);
-        $r->_name = $form1->getName();
-        $r->beginInactive($form1->getTitle());
-        $r->renderFormInactive($form1, $vars);
-        $r->end();
-        echo '<br />';
+            $renderer = new HtmlRenderer();
+            echo $renderer->renderMixed($form, $actionUrl, 'post');
+        });
 
-        $form2->preserve($vars);
-        $r->_name = $form2->getName();
-        $r->beginInactive($form2->getTitle());
-        $r->renderFormInactive($form2, $vars);
-        $r->end();
-        echo '<br />';
+        return $this->htmlResponse($html);
+    }
 
-        $form3->preserve($vars);
-        $r->_name = $form3->getName();
-        $r->beginInactive($form3->getTitle());
-        $r->renderFormInactive($form3, $vars);
-        $r->end();
-        echo '<br />';
+    /**
+     * Load states available for ticket creation.
+     *
+     * Guests see only 'unconfirmed' states. Authenticated users also
+     * see 'new' and 'assigned' states.
+     */
+    private function loadStates(int $type, bool $authenticated): array
+    {
+        $states = $this->driver->getStates($type, StateCategory::Unconfirmed->value);
 
-        // Preserve an uploaded file if there was one.
-        $info = $form3->getInfo($vars);
-        if (!empty($info['newattachment']['name'])) {
-            $file_name = $info['newattachment']['name'];
-            $tmp_file_path = Horde::getTempFile('whups', false);
-            if (move_uploaded_file(
-                $info['newattachment']['tmp_name'],
-                $tmp_file_path
-            )) {
-                $this->session->setScoped('whups', 'deferred_attachment/' . $file_name, $tmp_file_path);
-                $vars->set('deferred_attachment', $file_name);
-                $form4->preserveVarByPost($vars, 'deferred_attachment');
+        if ($authenticated) {
+            $extra = $this->driver->getStates(
+                $type,
+                [StateCategory::New->value, StateCategory::Assigned->value],
+            );
+            if (is_array($extra)) {
+                $states = $states + $extra;
             }
         }
 
-        if ($formname != 'whups_form_ticket_createstepfour') {
-            $form4->clearValidation();
-        }
-        $r->_name = $form4->getName();
-        $r->beginActive($form4->getTitle());
-        $r->renderFormActive($form4, $vars);
-        $r->submit();
-        $r->end();
-        $form3->close($r);
+        return $states;
     }
 
-    private function renderStepThree(
-        Horde_Variables $vars,
-        ?string $formname,
-        Whups_Form_Ticket_CreateStepOne $form1,
-        Whups_Form_Ticket_CreateStepTwo $form2,
-        Whups_Form_Ticket_CreateStepThree $form3,
-        Horde_Form_Renderer $r,
-        string $actionUrl,
-    ): void {
-        $form3->open($r, $vars, $actionUrl, 'post');
+    /**
+     * Load user and group owner lists for step 4.
+     *
+     * @return array{users: array<string,string>, groups: array<string,string>}
+     */
+    private function loadOwnerData(int $queue): array
+    {
+        $conf = $GLOBALS['conf'] ?? [];
 
-        $form1->preserve($vars);
-        $r->beginInactive($form1->getTitle());
-        $r->renderFormInactive($form1, $vars);
-        $r->end();
-        echo '<br />';
-
-        $form2->preserve($vars);
-        $r->beginInactive($form2->getTitle());
-        $r->renderFormInactive($form2, $vars);
-        $r->end();
-        echo '<br />';
-
-        if ($formname != 'whups_form_ticket_createstepthree') {
-            $form3->clearValidation();
+        $users = $this->driver->getQueueUsers($queue);
+        $fUsers = [];
+        foreach ($users as $user) {
+            $fUsers['user:' . $user] = Whups::formatUser($user);
         }
-        $r->beginActive($form3->getTitle());
-        $r->renderFormActive($form3, $vars);
-        $r->submit(_("Submit"), true);
-        $r->end();
+        if ($fUsers) {
+            asort($fUsers);
+        }
 
-        $form3->close($r);
+        $fGroups = [];
+        try {
+            $assignAllGroups = !empty($conf['prefs']['assign_all_groups']);
+            $mygroups = $this->groupService->listAll(
+                $assignAllGroups ? null : $this->registry->getAuth(),
+            );
+            asort($mygroups);
+            foreach (array_keys($mygroups) as $gid) {
+                $fGroups['group:' . $gid] = $this->groupService->getName($gid);
+            }
+        } catch (Horde_Group_Exception $e) {
+            // Group service unavailable — skip group owners.
+        }
+
+        return ['users' => $fUsers, 'groups' => $fGroups];
     }
 
-    private function renderStepTwo(
-        Horde_Variables $vars,
-        ?string $formname,
-        Whups_Form_Ticket_CreateStepOne $form1,
-        Whups_Form_Ticket_CreateStepTwo $form2,
-        Horde_Form_Renderer $r,
-        string $actionUrl,
-    ): void {
-        $form2->open($r, $vars, $actionUrl, 'post');
-
-        $form1->preserve($vars);
-        $r->beginInactive($form1->getTitle());
-        $r->renderFormInactive($form1, $vars);
-        $r->end();
-        echo '<br />';
-
-        if ($formname != 'whups_form_ticket_createsteptwo') {
-            $form2->clearValidation();
+    /**
+     * Load the group enum for comment visibility.
+     *
+     * @return array<int|string,string> Group id => name, with 0 => "Any Group" prepended
+     */
+    private function loadGroupEnum(string $uid): array
+    {
+        if (!$uid) {
+            return [];
         }
-        $r->beginActive($form2->getTitle());
-        $r->renderFormActive($form2, $vars);
-        $r->submit();
-        $r->end();
 
-        $form2->close($r);
+        try {
+            $mygroups = $this->groupService->listGroups($uid);
+        } catch (Horde_Group_Exception $e) {
+            return [];
+        }
+
+        if (!$mygroups) {
+            return [];
+        }
+
+        return [0 => _("This comment is visible to everyone")] + $mygroups;
     }
 
-    private function renderStepOne(
-        Horde_Variables $vars,
-        ?string $formname,
-        Whups_Form_Ticket_CreateStepOne $form1,
-        Horde_Form_Renderer $r,
-        string $actionUrl,
-    ): void {
-        if ($formname != 'whups_form_ticket_createstepone') {
-            $form1->clearValidation();
+    /**
+     * Preserve an uploaded file attachment from step 3 for step 4.
+     *
+     * Moves the uploaded file to a temp location and stores the path
+     * in the session. The filename is passed to step 4 via formVars.
+     */
+    private function preserveAttachment(array &$formVars, CreateTicketForm $form): void
+    {
+        $info = $form->getInfo();
+        if (empty($info['newattachment']['name'])) {
+            return;
         }
-        $form1->open($r, $vars, $actionUrl, 'post');
-        $r->beginActive($form1->getTitle());
-        $r->renderFormActive($form1, $vars);
-        $r->submit();
-        $r->end();
-        $form1->close($r);
+
+        $fileName = $info['newattachment']['name'];
+        $tmpFilePath = Horde::getTempFile('whups', false);
+        if (move_uploaded_file($info['newattachment']['tmp_name'], $tmpFilePath)) {
+            $this->session->setScoped('whups', 'deferred_attachment/' . $fileName, $tmpFilePath);
+            $formVars['deferred_attachment'] = $fileName;
+        }
     }
 }
