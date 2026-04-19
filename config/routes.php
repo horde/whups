@@ -156,7 +156,7 @@ $mapper->buildRoute(uri: '/ticket/:id/type', name: 'TicketType')
 
 // Queue view: /queue/:slug
 $mapper->buildRoute(uri: '/queue/:slug', name: 'QueueView')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Queue\ViewController::class)
     ->withDefaults(['action' => 'view'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/queue/index.php')
@@ -182,7 +182,7 @@ $mapper->buildRoute(uri: '/query/builder', name: 'QueryBuilder')
 
 // Query run: /query/:slug
 $mapper->buildRoute(uri: '/query/:slug', name: 'QueryRun')
-    ->withController(Ui\WhupsUi::class)
+    ->withController(Controller\Query\RunController::class)
     ->withDefaults(['action' => 'run'])
     ->withMiddleware($fatStack)
     ->withSecondaryRoute('/query/run.php')
@@ -240,10 +240,25 @@ $mapper->buildRoute(uri: '/reports', name: 'Reports')
 
 // Admin
 $mapper->buildRoute(uri: '/admin', name: 'Admin')
-    ->withController(Ui\WhupsUi::class)
-    ->withDefaults(['action' => 'admin'])
+    ->withController(Controller\AdminController::class)
+    ->withDefaults(['action' => 'queue'])
     ->withMiddleware($fatStack)
-    ->withSecondaryRoute('/admin/index.php')
+    ->add();
+
+// OpenSearch XML descriptor
+$mapper->buildRoute(uri: '/opensearch', name: 'OpenSearch')
+    ->withController(Controller\OpenSearchController::class)
+    ->withDefaults(['action' => 'opensearch'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/opensearch.php')
+    ->add();
+
+// View attachment / original message
+$mapper->buildRoute(uri: '/view', name: 'ViewAttachment')
+    ->withController(Controller\ViewAttachmentController::class)
+    ->withDefaults(['action' => 'view'])
+    ->withMiddleware($fatStack)
+    ->withSecondaryRoute('/view.php')
     ->add();
 
 // Lean bootstrap test — bisecting middleware stack
