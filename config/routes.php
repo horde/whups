@@ -10,8 +10,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 // Fat middleware stack for routes that need full Horde framework + auth
 $fatStack = [
     // \Horde\Core\Middleware\RampageLogError::class,
-//    \Horde\Core\Middleware\InitHordeFramework::class,
-//    \Horde\Core\Middleware\AppBootstrap::class,
+    //    \Horde\Core\Middleware\InitHordeFramework::class,
+    //    \Horde\Core\Middleware\AppBootstrap::class,
     \Horde\Core\Middleware\ErrorFilter::class,
     \Horde\Core\Middleware\AuthHordeSession::class,
     \Horde\Core\Middleware\RedirectToLogin::class,

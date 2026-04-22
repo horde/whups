@@ -10,6 +10,15 @@
      </configsection>
     </case>
    </configswitch>
+   <configenum name="repositories" desc="Which repository backend to use for
+   read queries (queues, types, states, etc.). The 'legacy' backend delegates to
+   the Whups_Driver. The 'rdo' backend uses the modern Horde\Rdo stack
+   directly.">legacy
+    <values>
+     <value desc="Legacy (Whups_Driver)">legacy</value>
+     <value desc="Rdo (modern Horde\Rdo)">rdo</value>
+    </values>
+   </configenum>
   </configsection>
  </configtab>
 
