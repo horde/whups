@@ -140,7 +140,7 @@ class EditQueueStepTwoFormTest extends TestCase
         );
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
         $this->assertContains('versionlink', $names);
     }
 
@@ -149,7 +149,7 @@ class EditQueueStepTwoFormTest extends TestCase
         $form = $this->buildForm();
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
         $this->assertNotContains('versionlink', $names);
     }
 
@@ -168,7 +168,7 @@ class EditQueueStepTwoFormTest extends TestCase
         );
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
         $this->assertContains('permslink', $names);
     }
 }

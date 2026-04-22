@@ -6,6 +6,7 @@ namespace Horde\Whups\Test\Unit\Controller;
 
 use Horde\Http\ServerRequest;
 use Horde\Whups\Controller\OpenSearchController;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Registry;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -15,22 +16,25 @@ use Psr\Http\Message\ResponseInterface;
 class OpenSearchControllerTest extends TestCase
 {
     private Horde_Registry $registry;
+    private UrlGenerator $urlGenerator;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(Horde_Registry::class);
+        $this->urlGenerator = $this->createMock(UrlGenerator::class);
     }
 
     private function createController(): OpenSearchController
     {
-        return new OpenSearchController($this->registry);
+        return new OpenSearchController($this->registry, $this->urlGenerator);
     }
 
     public function testReturnsXmlContentType(): void
     {
+        $this->urlGenerator->method('getWebroot')->willReturn('/whups');
+        $this->urlGenerator->method('urlFor')->willReturn('/whups/ticket/0');
         $this->registry->method('get')
             ->willReturnMap([
-                ['webroot', 'whups', '/whups'],
                 ['name', 'whups', 'Whups'],
                 ['themesfs', 'whups', '/nonexistent'],
             ]);
@@ -45,9 +49,10 @@ class OpenSearchControllerTest extends TestCase
 
     public function testXmlContainsWebroot(): void
     {
+        $this->urlGenerator->method('getWebroot')->willReturn('/my-whups');
+        $this->urlGenerator->method('urlFor')->willReturn('/my-whups/ticket/0');
         $this->registry->method('get')
             ->willReturnMap([
-                ['webroot', 'whups', '/my-whups'],
                 ['name', 'whups', 'Bug Tracker'],
                 ['themesfs', 'whups', '/nonexistent'],
             ]);
@@ -62,9 +67,10 @@ class OpenSearchControllerTest extends TestCase
 
     public function testXmlContainsOpenSearchStructure(): void
     {
+        $this->urlGenerator->method('getWebroot')->willReturn('/whups');
+        $this->urlGenerator->method('urlFor')->willReturn('/whups/ticket/0');
         $this->registry->method('get')
             ->willReturnMap([
-                ['webroot', 'whups', '/whups'],
                 ['name', 'whups', 'Whups'],
                 ['themesfs', 'whups', '/nonexistent'],
             ]);
@@ -81,9 +87,10 @@ class OpenSearchControllerTest extends TestCase
 
     public function testXmlContainsTicketSearchUrl(): void
     {
+        $this->urlGenerator->method('getWebroot')->willReturn('/whups');
+        $this->urlGenerator->method('urlFor')->willReturn('/whups/ticket/0');
         $this->registry->method('get')
             ->willReturnMap([
-                ['webroot', 'whups', '/whups'],
                 ['name', 'whups', 'Whups'],
                 ['themesfs', 'whups', '/nonexistent'],
             ]);

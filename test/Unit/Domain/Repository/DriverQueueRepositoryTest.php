@@ -6,6 +6,7 @@ namespace Horde\Whups\Test\Unit\Domain\Repository;
 
 use Horde\Whups\Domain\Queue;
 use Horde\Whups\Domain\Repository\DriverQueueRepository;
+use Horde_Registry;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Whups_Driver;
@@ -19,12 +20,22 @@ class DriverQueueRepositoryTest extends TestCase
         return $this->createMock(Whups_Driver_Sql::class);
     }
 
+    private function mockRegistry(string $ticketsApp = 'whups'): Horde_Registry
+    {
+        $registry = $this->createMock(Horde_Registry::class);
+        $registry->method('hasInterface')
+            ->with('tickets')
+            ->willReturn($ticketsApp);
+
+        return $registry;
+    }
+
     public function testListQueuesReturnsDriverResult(): void
     {
         $driver = $this->mockDriver();
-        $driver->method('getQueues')->willReturn([1 => 'Support', 2 => 'Dev']);
+        $driver->method('getQueuesInternal')->willReturn([1 => 'Support', 2 => 'Dev']);
 
-        $repo = new DriverQueueRepository($driver);
+        $repo = new DriverQueueRepository($driver, $this->mockRegistry());
 
         $this->assertSame([1 => 'Support', 2 => 'Dev'], $repo->listQueues());
     }
@@ -32,7 +43,7 @@ class DriverQueueRepositoryTest extends TestCase
     public function testGetQueueReturnsValueObject(): void
     {
         $driver = $this->mockDriver();
-        $driver->method('getQueue')->with(7)->willReturn([
+        $driver->method('getQueueInternal')->with(7)->willReturn([
             'id' => 7,
             'name' => 'Support',
             'description' => 'General support',
@@ -42,7 +53,7 @@ class DriverQueueRepositoryTest extends TestCase
             'readonly' => false,
         ]);
 
-        $repo = new DriverQueueRepository($driver);
+        $repo = new DriverQueueRepository($driver, $this->mockRegistry());
         $queue = $repo->getQueue(7);
 
         $this->assertInstanceOf(Queue::class, $queue);
@@ -56,7 +67,7 @@ class DriverQueueRepositoryTest extends TestCase
         $driver = $this->mockDriver();
         $driver->method('getQueueUsers')->with(3)->willReturn(['alice', 'bob']);
 
-        $repo = new DriverQueueRepository($driver);
+        $repo = new DriverQueueRepository($driver, $this->mockRegistry());
 
         $this->assertSame(['alice', 'bob'], $repo->getQueueUsers(3));
     }
@@ -74,7 +85,7 @@ class DriverQueueRepositoryTest extends TestCase
             ->with([1, 2])
             ->willReturn($expected);
 
-        $repo = new DriverQueueRepository($driver);
+        $repo = new DriverQueueRepository($driver, $this->mockRegistry());
 
         $this->assertSame($expected, $repo->getQueueSummary([1, 2]));
     }

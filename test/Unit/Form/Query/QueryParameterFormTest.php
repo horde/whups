@@ -16,7 +16,7 @@ class QueryParameterFormTest extends TestCase
         $form = new QueryParameterForm([], ['username', 'project']);
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
 
         $this->assertContains('username', $names);
         $this->assertContains('project', $names);
