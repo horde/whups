@@ -70,7 +70,7 @@ autoload:
   classmap:
     - lib/
   psr-4:
-    Horde\Whups\: /src
+    Horde\Whups\: src/
 vendor: horde
 keywords:
   - tickets
