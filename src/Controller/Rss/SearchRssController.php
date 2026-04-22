@@ -24,7 +24,6 @@ use Horde\Whups\Service\UrlGenerator;
 use Horde_Perms;
 use Horde_Registry;
 use Horde_Themes;
-use Horde_Url;
 use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -68,14 +67,13 @@ class SearchRssController implements RequestHandlerInterface
 
         $items = $this->buildItems($tickets, $limit);
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
         $view->xsl = Horde_Themes::getFeedXsl();
         $view->pubDate = htmlspecialchars(date('r'));
         $view->title = _("Search Results");
         $view->items = $items;
-        $view->url = new Horde_Url($webroot . '/search');
-        $view->rss_url = new Horde_Url($webroot . '/search/rss');
+        $view->url = $this->urlGenerator->absoluteUrlFor('Search');
+        $view->rss_url = $this->urlGenerator->absoluteUrlFor('SearchRss');
         $view->description = _("Search Results");
 
         return $this->xmlResponse($view->render('items.rss'));

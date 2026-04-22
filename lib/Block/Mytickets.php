@@ -25,7 +25,7 @@ class Whups_Block_Mytickets extends Whups_Block_Tickets
     protected function _content()
     {
         $queryService = $GLOBALS['injector']->getInstance(
-            \Horde\Whups\Service\TicketQueryService::class,
+            Horde\Whups\Service\TicketQueryService::class,
         );
         $assigned = $queryService->getMyTickets();
         if (!$assigned) {

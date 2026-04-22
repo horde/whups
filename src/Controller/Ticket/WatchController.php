@@ -66,13 +66,12 @@ class WatchController implements RequestHandlerInterface
         $id = $route['id'] ?? $request->getQueryParams()['id'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         try {
@@ -81,7 +80,7 @@ class WatchController implements RequestHandlerInterface
         } catch (Whups_Exception $e) {
             $this->notification->push($e->getMessage(), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         // Build form variables.
@@ -140,11 +139,12 @@ class WatchController implements RequestHandlerInterface
         $owners = $this->driver->getOwners($id);
         $owners = $owners ? reset($owners) : [];
 
-        $delUrl = (new Horde_Url($webroot . '/ticket/' . $id . '/watch'))->add('id', $id);
+        $delUrl = (new Horde_Url($this->urlGenerator->urlFor('TicketWatch', ['id' => (int) $id])))->add('id', $id);
         $delImg = Horde_Themes_Image::tag('delete.png');
 
         // Prev/next navigation.
-        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $ticketList = $this->session->getScoped('whups', 'tickets');
+        $ticketList = is_array($ticketList) ? $ticketList : [];
         $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView((int) $id, $ticketList, $lastSearch, $this->urlGenerator);
 
@@ -165,7 +165,6 @@ class WatchController implements RequestHandlerInterface
             $delImg,
             $prevNext,
             $tabs,
-            $webroot,
             $id,
             $isAuthenticated,
         ) {
@@ -193,7 +192,7 @@ class WatchController implements RequestHandlerInterface
 
             // Add listener form.
             $renderer = new HtmlRenderer();
-            $watchUrl = $webroot . '/ticket/' . $id . '/watch';
+            $watchUrl = $this->urlGenerator->urlFor('TicketWatch', ['id' => (int) $id]);
             echo $renderer->render($addForm, $watchUrl, 'post');
             echo '<br class="spacer" />';
 

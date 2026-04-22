@@ -68,13 +68,12 @@ class CommentController implements RequestHandlerInterface
         $id = $route['id'] ?? $request->getQueryParams()['id'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         try {
@@ -83,7 +82,7 @@ class CommentController implements RequestHandlerInterface
         } catch (Whups_Exception $e) {
             $this->notification->push($e->getMessage(), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         $isGuest = !$this->registry->getAuth();
@@ -163,7 +162,8 @@ class CommentController implements RequestHandlerInterface
         ]);
 
         // Prev/next navigation.
-        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $ticketList = $this->session->getScoped('whups', 'tickets');
+        $ticketList = is_array($ticketList) ? $ticketList : [];
         $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView((int) $id, $ticketList, $lastSearch, $this->urlGenerator);
 
@@ -174,7 +174,6 @@ class CommentController implements RequestHandlerInterface
             $commentForm,
             $prevNext,
             $tabs,
-            $webroot,
             $id,
         ) {
             // Topbar search.
@@ -191,7 +190,7 @@ class CommentController implements RequestHandlerInterface
 
             // Comment form.
             $renderer = new HtmlRenderer();
-            echo $renderer->render($commentForm, $webroot . '/ticket/' . $id . '/comment', 'post');
+            echo $renderer->render($commentForm, $this->urlGenerator->urlFor('TicketComment', ['id' => (int) $id]), 'post');
         });
 
         return $this->htmlResponse($html);

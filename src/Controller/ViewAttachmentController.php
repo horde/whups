@@ -37,6 +37,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Whups;
 use Whups_Driver;
+use Horde;
 
 class ViewAttachmentController implements RequestHandlerInterface
 {
@@ -70,7 +71,7 @@ class ViewAttachmentController implements RequestHandlerInterface
             $loginUrl = (new Horde_Url(
                 $this->registry->get('webroot', 'horde') . '/login.php',
                 true,
-            ))->add('url', \Horde::signUrl(\Horde::selfUrl(true)));
+            ))->add('url', Horde::signUrl(Horde::selfUrl(true)));
 
             return $this->redirect($loginUrl->toString());
         }

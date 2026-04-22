@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Controller\Queue;
 
+use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\HordeSession;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Service\TicketSorter;
@@ -42,8 +43,7 @@ class ViewController implements RequestHandlerInterface
         private readonly TicketSorter $sorter,
         private readonly TopbarSearch $topbarSearch,
         private readonly UrlGenerator $urlGenerator,
-        private readonly string $defaultView,
-        private readonly string $webroot,
+        private readonly PrefsService $prefs,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -68,7 +68,7 @@ class ViewController implements RequestHandlerInterface
 
         if (!$id) {
             $this->notification->push(_("Invalid queue"), 'horde.error');
-            return $this->redirect($this->webroot . '/' . $this->defaultView);
+            return $this->redirectToDefault();
         }
 
         $title = sprintf(_("Open tickets in %s"), $queue['name']);
@@ -79,16 +79,14 @@ class ViewController implements RequestHandlerInterface
         ];
 
         $html = $this->renderChrome($title, function () use ($criteria, $title, $queue, $id) {
-            $webroot = $this->webroot;
-
             $this->topbarSearch->apply();
 
             $this->pageOutput->addLinkTag([
-                'href' => (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false),
+                'href' => $this->urlGenerator->absoluteUrlFor('OpenSearch'),
                 'rel' => 'search',
                 'type' => 'application/opensearchdescription+xml',
                 'title' => $this->registry->get('name')
-                    . ' (' . (new Horde_Url($webroot, true))->toString(true, false) . ')',
+                    . ' (' . $this->urlGenerator->getWebroot() . ')',
             ]);
 
             try {
@@ -115,5 +113,13 @@ class ViewController implements RequestHandlerInterface
         });
 
         return $this->htmlResponse($html);
+    }
+
+    private function redirectToDefault(): ResponseInterface
+    {
+        $uid = $this->registry->getAuth() ?: '';
+        $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
+
+        return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
     }
 }

@@ -75,12 +75,11 @@ class UpdateController implements RequestHandlerInterface
         $id = $route['id'] ?? $request->getQueryParams()['id'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         try {
@@ -88,13 +87,13 @@ class UpdateController implements RequestHandlerInterface
             $ticket = new Whups_Ticket($id, $details);
         } catch (Whups_Exception $e) {
             $this->notification->push($e->getMessage(), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         // Permission check: 'update' required.
         if (!$this->permissions->hasQueuePermission($ticket->get('queue'), 'update')) {
             $this->notification->push(_("Permission Denied"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         // Build form variables — setDetails with editable=true populates vars
@@ -190,7 +189,8 @@ class UpdateController implements RequestHandlerInterface
         ]);
 
         // Prev/next navigation.
-        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $ticketList = $this->session->getScoped('whups', 'tickets');
+        $ticketList = is_array($ticketList) ? $ticketList : [];
         $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView((int) $id, $ticketList, $lastSearch, $this->urlGenerator);
 
@@ -204,7 +204,6 @@ class UpdateController implements RequestHandlerInterface
             $editForm,
             $prevNext,
             $tabs,
-            $webroot,
             $id,
         ) {
             // Topbar search.
@@ -221,7 +220,7 @@ class UpdateController implements RequestHandlerInterface
 
             // Edit form.
             $renderer = new HtmlRenderer();
-            echo $renderer->render($editForm, $webroot . '/ticket/' . $id . '/update', 'post');
+            echo $renderer->render($editForm, $this->urlGenerator->urlFor('TicketUpdate', ['id' => (int) $id]), 'post');
             echo '<br class="spacer" />';
 
             // Ticket details (inactive).
@@ -576,9 +575,9 @@ class UpdateController implements RequestHandlerInterface
         return [0 => _("This comment is visible to everyone")] + $grouplist;
     }
 
-    private function redirectToDefault(string $webroot, string $uid): ResponseInterface
+    private function redirectToDefault(string $uid): ResponseInterface
     {
         $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-        return $this->redirect($webroot . '/' . $defaultView);
+        return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
     }
 }

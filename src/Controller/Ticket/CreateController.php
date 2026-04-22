@@ -54,8 +54,7 @@ class CreateController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $webroot = $this->registry->get('webroot', 'whups');
-        $actionUrl = $webroot . '/ticket/create';
+        $actionUrl = $this->urlGenerator->urlFor('TicketCreate');
         $uid = $this->registry->getAuth() ?: '';
         $isGuest = !$uid;
         $conf = $GLOBALS['conf'] ?? [];
@@ -86,7 +85,10 @@ class CreateController implements RequestHandlerInterface
 
         // Step 2: type/version selection.
         $form = new CreateTicketForm(
-            $formVars, 2, $queues, $types,
+            $formVars,
+            2,
+            $queues,
+            $types,
             $defaultType ? (int) $defaultType : null,
             $versions,
         );
@@ -113,14 +115,22 @@ class CreateController implements RequestHandlerInterface
 
         // Step 3: ticket details.
         $form = new CreateTicketForm(
-            $formVars, 3, $queues, $types,
+            $formVars,
+            3,
+            $queues,
+            $types,
             $defaultType ? (int) $defaultType : null,
-            $versions, $states,
+            $versions,
+            $states,
             $defaultState ? (int) $defaultState : null,
             $priorities,
             $defaultPriority ? (int) $defaultPriority : null,
-            $attributes, $isGuest, $canSetRequester,
-            $captchaText, $captchaFont, $groups,
+            $attributes,
+            $isGuest,
+            $canSetRequester,
+            $captchaText,
+            $captchaFont,
+            $groups,
         );
         $valid3 = $form->validate();
 
@@ -130,14 +140,22 @@ class CreateController implements RequestHandlerInterface
                 $captchaText = Whups::getCAPTCHA(true);
                 unset($formVars['captcha']);
                 $form = new CreateTicketForm(
-                    $formVars, 3, $queues, $types,
+                    $formVars,
+                    3,
+                    $queues,
+                    $types,
                     $defaultType ? (int) $defaultType : null,
-                    $versions, $states,
+                    $versions,
+                    $states,
                     $defaultState ? (int) $defaultState : null,
                     $priorities,
                     $defaultPriority ? (int) $defaultPriority : null,
-                    $attributes, $isGuest, $canSetRequester,
-                    $captchaText, $captchaFont, $groups,
+                    $attributes,
+                    $isGuest,
+                    $canSetRequester,
+                    $captchaText,
+                    $captchaFont,
+                    $groups,
                 );
             }
             return $this->renderWizard($actionUrl, $form);
@@ -157,15 +175,24 @@ class CreateController implements RequestHandlerInterface
 
             // Step 4: owner assignment.
             $form = new CreateTicketForm(
-                $formVars, 4, $queues, $types,
+                $formVars,
+                4,
+                $queues,
+                $types,
                 $defaultType ? (int) $defaultType : null,
-                $versions, $states,
+                $versions,
+                $states,
                 $defaultState ? (int) $defaultState : null,
                 $priorities,
                 $defaultPriority ? (int) $defaultPriority : null,
-                $attributes, $isGuest, $canSetRequester,
-                $captchaText, $captchaFont, $groups,
-                $ownerData['users'], $ownerData['groups'],
+                $attributes,
+                $isGuest,
+                $canSetRequester,
+                $captchaText,
+                $captchaFont,
+                $groups,
+                $ownerData['users'],
+                $ownerData['groups'],
             );
             $valid4 = $form->isSubmitted() && $form->validate();
 
@@ -219,7 +246,8 @@ class CreateController implements RequestHandlerInterface
         CreateTicketForm $form,
     ): ResponseInterface {
         $html = $this->renderChrome(_("New Ticket"), function () use (
-            $actionUrl, $form,
+            $actionUrl,
+            $form,
         ) {
             $this->topbarSearch->apply();
 

@@ -117,13 +117,54 @@ final class TicketQueryService
     }
 
     /**
+     * Get unassigned tickets across all readable queues.
+     *
+     * Excludes resolved tickets.
+     *
+     * @return list<array>
+     */
+    public function getUnassignedTickets(): array
+    {
+        $queueIds = $this->getReadableQueueIds();
+        if (!$queueIds) {
+            return [];
+        }
+
+        return $this->tickets->findByProperties([
+            'notowner' => true,
+            'nores' => true,
+            'queue' => $queueIds,
+        ]);
+    }
+
+    /**
+     * Get open tickets in a specific queue.
+     *
+     * Returns empty array if queue is not readable by the current user.
+     *
+     * @return list<array>
+     */
+    public function getQueueTickets(int $queueId): array
+    {
+        $readable = $this->getReadableQueueIds();
+        if (!in_array($queueId, $readable, true)) {
+            return [];
+        }
+
+        return $this->tickets->findByProperties([
+            'queue' => $queueId,
+            'nores' => true,
+        ]);
+    }
+
+    /**
      * Build owner criteria including group memberships.
      *
      * Replaces static Whups::getOwnerCriteria().
      *
      * @return list<string>  Owner strings like "user:alice", "group:5".
      */
-    private function getOwnerCriteria(string $user): array
+    public function getOwnerCriteria(string $user): array
     {
         $criteria = ['user:' . $user];
 

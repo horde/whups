@@ -19,7 +19,7 @@ class Whups_Block_Queuesummary extends Horde_Core_Block
     protected function _content()
     {
         $queryService = $GLOBALS['injector']->getInstance(
-            \Horde\Whups\Service\TicketQueryService::class,
+            Horde\Whups\Service\TicketQueryService::class,
         );
         $qsummary = $queryService->getQueueSummary();
         if (!$qsummary) {

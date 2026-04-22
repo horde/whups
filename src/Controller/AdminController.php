@@ -58,6 +58,7 @@ use Horde\Whups\Form\Admin\SendReminderForm;
 use Horde\Whups\Service\PermissionChecker;
 use Horde\Whups\Service\ReminderSender;
 use Horde\Whups\Service\TopbarSearch;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Auth_Base;
 use Horde_Auth_Exception;
 use Horde_Core_Ui_Tabs;
@@ -73,6 +74,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Whups;
 use Whups_Driver;
 use Whups_Exception;
+use Horde_Exception;
 
 class AdminController implements RequestHandlerInterface
 {
@@ -86,6 +88,7 @@ class AdminController implements RequestHandlerInterface
         private readonly PermissionChecker $permissions,
         private readonly TopbarSearch $topbarSearch,
         private readonly ReminderSender $reminderSender,
+        private readonly UrlGenerator $urlGenerator,
         private readonly Horde_Auth_Base $auth,
     ) {}
 
@@ -93,11 +96,11 @@ class AdminController implements RequestHandlerInterface
     {
         if (!$this->permissions->isAdmin()) {
             $this->notification->push(_("Permission denied."), 'horde.error');
-            return $this->redirect($this->registry->get('webroot', 'whups'));
+            return $this->redirect($this->urlGenerator->getWebroot());
         }
 
         $action = $request->getQueryParams()['action'] ?? 'queue';
-        $adminUrl = $this->registry->get('webroot', 'whups') . '/admin/';
+        $adminUrl = $this->urlGenerator->getWebroot() . '/admin/';
         $renderer = new HtmlRenderer();
 
         $formHtml = match ($action) {
@@ -145,8 +148,6 @@ class AdminController implements RequestHandlerInterface
         string $adminUrl,
         HtmlRenderer $renderer,
     ): ?string {
-        $webroot = $this->registry->get('webroot', 'whups');
-
         // Sub-entity handlers: versions, users (mirroring type tab's sub-actions).
         $query = $request->getQueryParams();
         $subaction = $query['subaction'] ?? '';
@@ -162,7 +163,7 @@ class AdminController implements RequestHandlerInterface
         }
 
         // AddQueue
-        $form = new AddQueueForm($request, $webroot);
+        $form = new AddQueueForm($request, $this->urlGenerator->getWebroot());
         if ($form->isSubmitted()) {
             return $this->processAddQueue($form, $adminUrl, $renderer);
         }
@@ -315,7 +316,7 @@ class AdminController implements RequestHandlerInterface
             try {
                 $this->driver->deleteQueue($info['queue']);
                 $this->notification->push(_("The queue has been deleted."), 'horde.success');
-            } catch (\Horde_Exception $e) {
+            } catch (Horde_Exception $e) {
                 $this->notification->push(
                     _("There was an error deleting the queue:") . ' ' . $e->getMessage(),
                     'horde.error',
@@ -335,7 +336,7 @@ class AdminController implements RequestHandlerInterface
         ServerRequestInterface|array $vars,
         int $queueId,
     ): EditQueueStepTwoForm {
-        $webroot = $this->registry->get('webroot', 'whups');
+        $webroot = $this->urlGenerator->getWebroot();
         $queueInfo = $this->driver->getQueue($queueId);
 
         $allTypes = $this->driver->getAllTypes();
@@ -730,7 +731,6 @@ class AdminController implements RequestHandlerInterface
     private function renderQueueTab(string $adminUrl, HtmlRenderer $renderer): string
     {
         $output = [];
-        $webroot = $this->registry->get('webroot', 'whups');
 
         $queues = Whups::permissionsFilter(
             $this->driver->getQueues(),
@@ -744,7 +744,7 @@ class AdminController implements RequestHandlerInterface
         }
 
         if ($this->registry->hasMethod('tickets/listQueues') == $this->registry->getApp()) {
-            $addForm = new AddQueueForm([], $webroot);
+            $addForm = new AddQueueForm([], $this->urlGenerator->getWebroot());
             if (!empty($output)) {
                 $output[] = '<br />';
             }
@@ -1046,7 +1046,7 @@ class AdminController implements RequestHandlerInterface
         ServerRequestInterface|array $vars,
         int $typeId,
     ): EditTypeStepTwoForm {
-        $webroot = $this->registry->get('webroot', 'whups');
+        $webroot = $this->urlGenerator->getWebroot();
         $typeInfo = $this->driver->getType($typeId);
         $states = $this->driver->getStates($typeId);
         $priorities = $this->driver->getPriorities($typeId);

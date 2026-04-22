@@ -36,13 +36,7 @@ use Horde\Util\Variables;
 use Horde\Whups\Domain\AttributeRepositoryInterface;
 use Horde\Whups\Domain\PriorityRepositoryInterface;
 use Horde\Whups\Domain\QueueRepositoryInterface;
-use Horde\Whups\Domain\Repository\DriverAttributeRepository;
-use Horde\Whups\Domain\Repository\DriverPriorityRepository;
-use Horde\Whups\Domain\Repository\DriverQueueRepository;
-use Horde\Whups\Domain\Repository\DriverStateRepository;
-use Horde\Whups\Domain\Repository\DriverTicketRepository;
-use Horde\Whups\Domain\Repository\DriverTypeRepository;
-use Horde\Whups\Domain\Repository\DriverVersionRepository;
+use Horde\Whups\Factory\RepositoryStrategy;
 use Horde\Whups\Domain\StateRepositoryInterface;
 use Horde\Whups\Domain\TicketRepositoryInterface;
 use Horde\Whups\Domain\TypeRepositoryInterface;
@@ -86,30 +80,10 @@ class Whups_Application extends Horde_Registry_Application
             },
         );
 
-        // Alias Horde_Perms_Base to the Horde_Perms injector binding so that
-        // controllers type-hinting the abstract base class get the configured
-        // Horde_Perms_Sql (or other) driver instance.
-        $injector->bindClosure(
-            'Horde_Perms_Base',
-            function ($injector) {
-                return $injector->getInstance('Horde_Perms');
-            },
-        );
-
-        // Alias Horde_Group_Base to the Horde_Group injector binding so that
-        // services type-hinting the abstract base class get the configured
-        // Horde_Group_Sql (or other) driver instance.
-        $injector->bindClosure(
-            'Horde_Group_Base',
-            function ($injector) {
-                return $injector->getInstance('Horde_Group');
-            },
-        );
-
         $injector->bindClosure(
             UrlGenerator::class,
             function ($injector) {
-                $mapper = new \Horde\Routes\Mapper();
+                $mapper = new Horde\Routes\Mapper();
                 require WHUPS_BASE . '/config/routes.php';
                 if (file_exists(WHUPS_BASE . '/config/routes.local.php')) {
                     include WHUPS_BASE . '/config/routes.local.php';
@@ -159,47 +133,18 @@ class Whups_Application extends Horde_Registry_Application
             },
         );
 
-        $injector->bindClosure(
-            QueueRepositoryInterface::class,
-            fn($injector) => new DriverQueueRepository(
-                $injector->getInstance('Whups_Driver'),
-            ),
-        );
-
-        $injector->bindClosure(
-            TypeRepositoryInterface::class,
-            fn($injector) => new DriverTypeRepository(
-                $injector->getInstance('Whups_Driver'),
-            ),
-        );
-
-        $injector->bindClosure(
-            StateRepositoryInterface::class,
-            fn($injector) => new DriverStateRepository(
-                $injector->getInstance('Whups_Driver'),
-            ),
-        );
-
-        $injector->bindClosure(
-            PriorityRepositoryInterface::class,
-            fn($injector) => new DriverPriorityRepository(
-                $injector->getInstance('Whups_Driver'),
-            ),
-        );
-
-        $injector->bindClosure(
-            VersionRepositoryInterface::class,
-            fn($injector) => new DriverVersionRepository(
-                $injector->getInstance('Whups_Driver'),
-            ),
-        );
-
-        $injector->bindClosure(
-            AttributeRepositoryInterface::class,
-            fn($injector) => new DriverAttributeRepository(
-                $injector->getInstance('Whups_Driver'),
-            ),
-        );
+        // Repository bindings: deferred via RepositoryStrategy.
+        // The strategy uses ConfigLoader (no globals) to read the
+        // configured backend and lazily delegates to DriverRepositoryFactory
+        // or RdoRepositoryFactory.
+        $strategy = RepositoryStrategy::class;
+        $injector->bindFactory(QueueRepositoryInterface::class, $strategy, 'createQueues');
+        $injector->bindFactory(TypeRepositoryInterface::class, $strategy, 'createTypes');
+        $injector->bindFactory(StateRepositoryInterface::class, $strategy, 'createStates');
+        $injector->bindFactory(PriorityRepositoryInterface::class, $strategy, 'createPriorities');
+        $injector->bindFactory(VersionRepositoryInterface::class, $strategy, 'createVersions');
+        $injector->bindFactory(AttributeRepositoryInterface::class, $strategy, 'createAttributes');
+        $injector->bindFactory(TicketRepositoryInterface::class, $strategy, 'createTickets');
 
         $injector->bindClosure(
             TicketCreationService::class,
@@ -207,13 +152,6 @@ class Whups_Application extends Horde_Registry_Application
                 $injector->getInstance(TypeRepositoryInterface::class),
                 $injector->getInstance(StateRepositoryInterface::class),
                 $injector->getInstance(PriorityRepositoryInterface::class),
-            ),
-        );
-
-        $injector->bindClosure(
-            TicketRepositoryInterface::class,
-            fn($injector) => new DriverTicketRepository(
-                $injector->getInstance('Whups_Driver'),
             ),
         );
 

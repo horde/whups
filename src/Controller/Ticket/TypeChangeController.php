@@ -63,12 +63,11 @@ class TypeChangeController implements RequestHandlerInterface
         $id = $route['id'] ?? $request->getQueryParams()['id'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         try {
@@ -76,13 +75,13 @@ class TypeChangeController implements RequestHandlerInterface
             $ticket = new Whups_Ticket($id, $details);
         } catch (Whups_Exception $e) {
             $this->notification->push($e->getMessage(), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         // Permission check: 'update' required.
         if (!$this->permissions->hasQueuePermission($details['queue'], 'update')) {
             $this->notification->push(_("Permission Denied"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         // Build form vars from PSR-7 request + route params.
@@ -116,7 +115,8 @@ class TypeChangeController implements RequestHandlerInterface
         $form = $result;
 
         // Prev/next navigation.
-        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $ticketList = $this->session->getScoped('whups', 'tickets');
+        $ticketList = is_array($ticketList) ? $ticketList : [];
         $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView((int) $id, $ticketList, $lastSearch, $this->urlGenerator);
 
@@ -124,7 +124,7 @@ class TypeChangeController implements RequestHandlerInterface
         $tabs = $this->buildTicketTabs($vars, $ticket);
 
         $title = sprintf(_("Set Type for %s"), '[#' . $id . '] ' . $ticket->get('summary'));
-        $actionUrl = $webroot . '/ticket/' . $id . '/type';
+        $actionUrl = $this->urlGenerator->urlFor('TicketType', ['id' => (int) $id]);
 
         $html = $this->renderChrome($title, function () use (
             $form,
@@ -207,8 +207,7 @@ class TypeChangeController implements RequestHandlerInterface
             $this->notification->push($e, 'horde.error');
         }
 
-        $webroot = $this->registry->get('webroot', 'whups');
-        return $this->redirect($webroot . '/ticket/' . $id . '/type');
+        return $this->redirect($this->urlGenerator->urlFor('TicketType', ['id' => (int) $id]));
     }
 
     /**
@@ -241,9 +240,9 @@ class TypeChangeController implements RequestHandlerInterface
         return [0 => _("Any Group")] + $grouplist;
     }
 
-    private function redirectToDefault(string $webroot, string $uid): ResponseInterface
+    private function redirectToDefault(string $uid): ResponseInterface
     {
         $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-        return $this->redirect($webroot . '/' . $defaultView);
+        return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
     }
 }

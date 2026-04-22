@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller;
 
 use Horde_Registry;
+use Horde\Whups\Service\UrlGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -24,11 +25,12 @@ class OpenSearchController implements RequestHandlerInterface
 
     public function __construct(
         private readonly Horde_Registry $registry,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $webroot = $this->registry->get('webroot', 'whups');
+        $webroot = $this->urlGenerator->getWebroot();
         $name = $this->registry->get('name', 'whups') . ' (' . $webroot . ')';
         $themesFs = $this->registry->get('themesfs', 'whups');
 
@@ -37,15 +39,16 @@ class OpenSearchController implements RequestHandlerInterface
             ? base64_encode(file_get_contents($iconPath))
             : '';
 
+        $ticketBase = $this->urlGenerator->urlFor('TicketView', ['id' => 0]);
+        $ticketBase = rtrim($ticketBase, '0');
+
         $xml = <<<XML
             <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
               <ShortName>{$name}</ShortName>
               <SearchForm>{$webroot}</SearchForm>
               <Url type="text/html"
                    method="get"
-                   template="{$webroot}/ticket/">
-                <Param name="id" value="{searchTerms}"/>
-              </Url>
+                   template="{$ticketBase}{searchTerms}"/>
               <Image height="16" width="16">data:image/png;base64,{$icon}</Image>
               <InputEncoding>UTF-8</InputEncoding>
             </OpenSearchDescription>

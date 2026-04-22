@@ -23,6 +23,7 @@ use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Form\Ticket\DeleteMultipleForm;
 use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Exception_NotFound;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
@@ -51,11 +52,11 @@ class DeleteMultipleController implements RequestHandlerInterface
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
         $params = ($request->getParsedBody() ?? []) + $request->getQueryParams();
 
@@ -98,7 +99,7 @@ class DeleteMultipleController implements RequestHandlerInterface
             $url = Horde::verifySignedUrl($params['url'] ?? '');
             if (!$url) {
                 $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-                $url = $webroot . '/' . $defaultView;
+                $url = $this->urlGenerator->defaultViewUrl($defaultView);
             }
             return $this->redirect((new Horde_Url($url, true))->toString());
         }
@@ -106,12 +107,12 @@ class DeleteMultipleController implements RequestHandlerInterface
         // Render the confirmation form.
         $title = sprintf(_("Delete %d tickets?"), count($allowed));
 
-        $html = $this->renderChrome($title, function () use ($deleteForm, $webroot) {
+        $html = $this->renderChrome($title, function () use ($deleteForm) {
             $this->topbarSearch->apply();
             $this->notification->notify(['listeners' => 'status']);
 
             $renderer = new HtmlRenderer();
-            echo $renderer->render($deleteForm, $webroot . '/ticket/delete-multiple', 'post');
+            echo $renderer->render($deleteForm, $this->urlGenerator->urlFor('TicketDeleteMultiple'), 'post');
         });
 
         return $this->htmlResponse($html);

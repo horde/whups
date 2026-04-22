@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Controller\Query;
 
+use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\HordeSession;
 use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
@@ -43,6 +44,7 @@ use Whups_Exception;
 use Whups_Query;
 use Whups_Query_Manager;
 use Whups_View_Results;
+use Horde_Themes_Image;
 
 class RunController implements RequestHandlerInterface
 {
@@ -58,8 +60,7 @@ class RunController implements RequestHandlerInterface
         private readonly TopbarSearch $topbarSearch,
         private readonly UrlGenerator $urlGenerator,
         private readonly Whups_Query_Manager $queryManager,
-        private readonly string $defaultView,
-        private readonly string $webroot,
+        private readonly PrefsService $prefs,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -78,7 +79,7 @@ class RunController implements RequestHandlerInterface
             if ($whups_query) {
                 $this->notification->push(_("Permission denied."), 'horde.error');
             }
-            return $this->redirect($this->webroot . '/' . $this->defaultView);
+            return $this->redirectToDefault();
         }
 
         // Store in session for other pages (query builder tabs, etc.)
@@ -131,11 +132,11 @@ class RunController implements RequestHandlerInterface
 
             // Add OpenSearch link.
             $this->pageOutput->addLinkTag([
-                'href' => (new Horde_Url($this->webroot . '/opensearch.php', true))->toString(true, false),
+                'href' => $this->urlGenerator->absoluteUrlFor('OpenSearch'),
                 'rel' => 'search',
                 'type' => 'application/opensearchdescription+xml',
                 'title' => $this->registry->get('name')
-                    . ' (' . (new Horde_Url($this->webroot, true))->toString(true, false) . ')',
+                    . ' (' . $this->urlGenerator->getWebroot() . ')',
             ]);
 
             // Render query tabs.
@@ -156,7 +157,7 @@ class RunController implements RequestHandlerInterface
                     $rssUrl = $this->urlGenerator->absoluteUrlFor('QueryRss', $rssParams);
                     $subscription = '<a href="' . htmlspecialchars($rssUrl) . '" title="'
                         . htmlspecialchars(_("Subscribe to this query")) . '">'
-                        . \Horde_Themes_Image::tag('feed.png', ['alt' => _("Subscribe to this query")])
+                        . Horde_Themes_Image::tag('feed.png', ['alt' => _("Subscribe to this query")])
                         . '</a>';
                 }
 
@@ -211,6 +212,14 @@ class RunController implements RequestHandlerInterface
         if ($query->id) {
             return $this->urlGenerator->urlFor('QueryRun', ['slug' => (string) $query->id]);
         }
-        return $this->webroot . '/query/run';
+        return $this->urlGenerator->getWebroot() . '/query/run';
+    }
+
+    private function redirectToDefault(): ResponseInterface
+    {
+        $uid = $this->registry->getAuth() ?: '';
+        $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
+
+        return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
     }
 }

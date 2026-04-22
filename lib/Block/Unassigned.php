@@ -24,11 +24,10 @@ class Whups_Block_Unassigned extends Whups_Block_Tickets
      */
     protected function _content()
     {
-        $queue_ids = array_keys(Whups::permissionsFilter($GLOBALS['whups_driver']->getQueues(), 'queue', Horde_Perms::READ));
-        $info = ['notowner' => true,
-            'nores' => true,
-            'queue' => $queue_ids];
-        $unassigned = $GLOBALS['whups_driver']->getTicketsByProperties($info);
+        $queryService = $GLOBALS['injector']->getInstance(
+            Horde\Whups\Service\TicketQueryService::class,
+        );
+        $unassigned = $queryService->getUnassignedTickets();
         if (!$unassigned) {
             return '<p class="horde-content"><em>' . _("No tickets are unassigned!") . '</em></p>';
         }

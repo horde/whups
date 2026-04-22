@@ -15,21 +15,31 @@ namespace Horde\Whups\Domain\Repository;
 
 use Horde\Whups\Domain\Queue;
 use Horde\Whups\Domain\QueueRepositoryInterface;
+use Horde_Registry;
 use Whups_Driver;
 
 final class DriverQueueRepository implements QueueRepositoryInterface
 {
     public function __construct(
         private readonly Whups_Driver $driver,
+        private readonly Horde_Registry $registry,
     ) {}
 
     public function listQueues(): array
     {
+        if ($this->registry->hasInterface('tickets') === 'whups') {
+            return $this->driver->getQueuesInternal();
+        }
+
         return $this->driver->getQueues();
     }
 
     public function getQueue(int $id): Queue
     {
+        if ($this->registry->hasInterface('tickets') === 'whups') {
+            return Queue::fromDriverArray($this->driver->getQueueInternal($id));
+        }
+
         return Queue::fromDriverArray($this->driver->getQueue($id));
     }
 

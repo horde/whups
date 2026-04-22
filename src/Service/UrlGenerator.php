@@ -55,4 +55,25 @@ class UrlGenerator
 
         return $this->utils->urlFor($routeName, $params);
     }
+
+    /**
+     * Return the application webroot (e.g. "/whups").
+     *
+     * For edge cases where no named route exists (admin sub-actions, etc.).
+     */
+    public function getWebroot(): string
+    {
+        return $this->webroot;
+    }
+
+    /**
+     * Build URL for a named default view (mybugs, search, etc.).
+     *
+     * Consolidates the redirectToDefault() pattern duplicated across
+     * controllers: resolve the preference, then call this method.
+     */
+    public function defaultViewUrl(string $viewName = 'mybugs'): string
+    {
+        return $this->webroot . '/' . $viewName;
+    }
 }
