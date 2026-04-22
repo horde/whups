@@ -60,7 +60,7 @@
             "lib/"
         ],
         "psr-4": {
-            "Horde\\Whups\\": "/src"
+            "Horde\\Whups\\": "src/"
         }
     },
     "autoload-dev": {
