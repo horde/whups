@@ -64,12 +64,11 @@ class DeleteController implements RequestHandlerInterface
         $id = $route['id'] ?? $request->getQueryParams()['id'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         try {
@@ -77,13 +76,13 @@ class DeleteController implements RequestHandlerInterface
             $ticket = new Whups_Ticket($id, $details);
         } catch (Whups_Exception $e) {
             $this->notification->push($e->getMessage(), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         // Permission check: DELETE required.
         if (!$this->permissions->hasQueuePermission($details['queue'], Horde_Perms::DELETE)) {
             $this->notification->push(_("Permission Denied"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         // RSS feed link.
@@ -113,7 +112,7 @@ class DeleteController implements RequestHandlerInterface
                         sprintf(_("Ticket %d has been deleted."), $id),
                         'horde.success',
                     );
-                    return $this->redirectToDefault($webroot, $uid);
+                    return $this->redirectToDefault($uid);
                 } catch (Whups_Exception $e) {
                     $this->notification->push(
                         _("There was an error deleting the ticket:") . ' ' . $e->getMessage(),
@@ -128,7 +127,8 @@ class DeleteController implements RequestHandlerInterface
         }
 
         // Prev/next navigation.
-        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $ticketList = $this->session->getScoped('whups', 'tickets');
+        $ticketList = is_array($ticketList) ? $ticketList : [];
         $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView((int) $id, $ticketList, $lastSearch, $this->urlGenerator);
 
@@ -142,7 +142,6 @@ class DeleteController implements RequestHandlerInterface
             $deleteForm,
             $prevNext,
             $tabs,
-            $webroot,
             $id,
         ) {
             // Topbar search.
@@ -159,7 +158,7 @@ class DeleteController implements RequestHandlerInterface
 
             // Delete confirmation form.
             $renderer = new HtmlRenderer();
-            echo $renderer->render($deleteForm, $webroot . '/ticket/' . $id . '/delete', 'post');
+            echo $renderer->render($deleteForm, $this->urlGenerator->urlFor('TicketDelete', ['id' => (int) $id]), 'post');
             echo '<br />';
 
             // Ticket details (inactive).
@@ -175,9 +174,9 @@ class DeleteController implements RequestHandlerInterface
         return $this->htmlResponse($html);
     }
 
-    private function redirectToDefault(string $webroot, string $uid): ResponseInterface
+    private function redirectToDefault(string $uid): ResponseInterface
     {
         $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-        return $this->redirect($webroot . '/' . $defaultView);
+        return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
     }
 }

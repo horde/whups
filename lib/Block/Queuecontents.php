@@ -26,10 +26,14 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
     {
         $qParams = [];
         $qDefault = null;
-        $qParams = Whups::permissionsFilter(
-            $GLOBALS['whups_driver']->getQueues(),
-            'queue',
-            Horde_Perms::READ
+        $permissionChecker = $GLOBALS['injector']->getInstance(
+            Horde\Whups\Service\PermissionChecker::class,
+        );
+        $queueRepo = $GLOBALS['injector']->getInstance(
+            Horde\Whups\Domain\QueueRepositoryInterface::class,
+        );
+        $qParams = $permissionChecker->filterQueues(
+            $queueRepo->listQueues(),
         );
         if (!$qParams) {
             $qDefault = _("No queues available.");
@@ -55,7 +59,7 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
     protected function _title()
     {
         if ($queue = $this->_getQueue()) {
-            return sprintf(_("Open Tickets in %s"), htmlspecialchars($queue['name'] ?? ''));
+            return sprintf(_("Open Tickets in %s"), htmlspecialchars($queue->name ?? ''));
         }
 
         return $this->getName();
@@ -69,9 +73,10 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
             return '<p class="horde-content"><em>' . _("No tickets in queue.") . '</em></p>';
         }
 
-        $info = ['queue' => $this->_params['queue'],
-            'nores' => true];
-        $tickets = $GLOBALS['whups_driver']->getTicketsByProperties($info);
+        $queryService = $GLOBALS['injector']->getInstance(
+            Horde\Whups\Service\TicketQueryService::class,
+        );
+        $tickets = $queryService->getQueueTickets((int) $this->_params['queue']);
         if (!$tickets) {
             return '<p class="horde-content"><em>' . _("No tickets in queue.") . '</em></p>';
         }
@@ -86,12 +91,19 @@ class Whups_Block_Queuecontents extends Whups_Block_Tickets
         if (empty($this->_params['queue'])) {
             return false;
         }
-        if (!Whups::permissionsFilter([$this->_params['queue'] => true], 'queue', Horde_Perms::READ)) {
+
+        $permissionChecker = $GLOBALS['injector']->getInstance(
+            Horde\Whups\Service\PermissionChecker::class,
+        );
+        if (!$permissionChecker->filterQueueIds([$this->_params['queue']])) {
             return false;
         }
 
         try {
-            return $GLOBALS['whups_driver']->getQueue($this->_params['queue']);
+            $queueRepo = $GLOBALS['injector']->getInstance(
+                Horde\Whups\Domain\QueueRepositoryInterface::class,
+            );
+            return $queueRepo->getQueue((int) $this->_params['queue']);
         } catch (Whups_Exception $e) {
             return false;
         }

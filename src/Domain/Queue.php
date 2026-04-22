@@ -22,7 +22,7 @@ final readonly class Queue
         public bool $versioned,
         public string $slug,
         public string $email,
-        public bool $readonly,
+        public bool $readonly = false,
     ) {}
 
     /**

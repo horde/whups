@@ -22,6 +22,7 @@ use Horde\Util\Util;
 use Horde\Whups\Form\SearchForm;
 use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\TopbarSearch;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
@@ -51,12 +52,12 @@ class SearchController implements RequestHandlerInterface
         private readonly HordeSession $session,
         private readonly TicketSorter $sorter,
         private readonly TopbarSearch $topbarSearch,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $webroot = $this->registry->get('webroot', 'whups');
-        $searchUrl = $webroot . '/search';
+        $searchUrl = $this->urlGenerator->urlFor('Search');
 
         // Pre-load domain data for the form.
         $queues = Whups::permissionsFilter(
@@ -83,7 +84,7 @@ class SearchController implements RequestHandlerInterface
 
             // "Save as Query" button.
             if ($form->getClickedButton() === _("Save as Query")) {
-                return $this->saveAsQuery($info, $params, $webroot);
+                return $this->saveAsQuery($info, $params);
             }
 
             // Execute search.
@@ -251,7 +252,7 @@ class SearchController implements RequestHandlerInterface
     /**
      * Build the "Save as Query" query object and redirect to the query builder.
      */
-    private function saveAsQuery(array $info, array $params, string $webroot): ResponseInterface
+    private function saveAsQuery(array $info, array $params): ResponseInterface
     {
         $qManager = new Whups_Query_Manager();
         $whups_query = $qManager->newQuery();
@@ -331,7 +332,7 @@ class SearchController implements RequestHandlerInterface
         $this->session->setScoped('whups', 'query', $whups_query);
 
         return $this->redirect(
-            (new Horde_Url($webroot . '/query/builder', true))
+            (new Horde_Url($this->urlGenerator->urlFor('QueryBuilder'), true))
                 ->add('action', 'save')
                 ->toString(),
         );

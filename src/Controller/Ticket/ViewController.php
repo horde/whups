@@ -29,7 +29,6 @@ use Horde_PageOutput;
 use Horde_Perms;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
-use Horde_Url;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
@@ -68,13 +67,12 @@ class ViewController implements RequestHandlerInterface
         $id = $route['id'] ?? $queryParams['id'] ?? $queryParams['searchfield'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         try {
@@ -87,7 +85,7 @@ class ViewController implements RequestHandlerInterface
                 $this->notification->push($e->getMessage(), 'horde.error');
             }
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         $vars = Horde_Variables::getDefaultVariables();
@@ -109,7 +107,8 @@ class ViewController implements RequestHandlerInterface
         $commentSortDir = (int) $this->prefs->getValue($uid, 'whups', 'comment_sort_dir');
 
         // Prev/next navigation data from session.
-        $ticketList = $this->session->getScoped('whups', 'tickets') ?? [];
+        $ticketList = $this->session->getScoped('whups', 'tickets');
+        $ticketList = is_array($ticketList) ? $ticketList : [];
         $lastSearch = (string) ($this->session->getScoped('whups', 'last_search') ?? '');
         $prevNext = new PrevNextView(
             (int) $ticket->getId(),
@@ -130,7 +129,6 @@ class ViewController implements RequestHandlerInterface
             $commentSortDir,
             $prevNext,
             $tabs,
-            $webroot,
         ) {
             // Feed links.
             $rssUrl = $this->urlGenerator->absoluteUrlFor('TicketRss', ['id' => (int) $ticket->getId()]);
@@ -139,12 +137,12 @@ class ViewController implements RequestHandlerInterface
                 'title' => $title,
             ]);
 
-            $openSearchUrl = (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false);
+            $openSearchUrl = $this->urlGenerator->absoluteUrlFor('OpenSearch');
             $this->pageOutput->addLinkTag([
                 'href' => $openSearchUrl,
                 'rel' => 'search',
                 'type' => 'application/opensearchdescription+xml',
-                'title' => $this->registry->get('name') . ' (' . (new Horde_Url($webroot, true))->toString(true, false) . ')',
+                'title' => $this->registry->get('name') . ' (' . $this->urlGenerator->getWebroot() . ')',
             ]);
 
             // Topbar search.

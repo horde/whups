@@ -26,7 +26,7 @@ class Whups_Scheduler extends Horde_Scheduler
         }
 
         $reminderSender = $GLOBALS['injector']->getInstance(
-            \Horde\Whups\Service\ReminderSender::class
+            Horde\Whups\Service\ReminderSender::class
         );
 
         foreach ($this->_reminders as $reminder) {

@@ -21,6 +21,7 @@ use Horde;
 use Horde\Core\Service\PrefsService;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\UrlGenerator;
 use Horde_Notification_Handler;
 use Horde_Perms;
 use Horde_Registry;
@@ -41,6 +42,7 @@ class DeleteAttachmentController implements RequestHandlerInterface
         private readonly Horde_Registry $registry,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -49,7 +51,6 @@ class DeleteAttachmentController implements RequestHandlerInterface
         $id = (int) ($route['id'] ?? 0);
         $queryParams = $request->getQueryParams();
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         $details = $this->driver->getTicketDetails($id);
@@ -57,7 +58,7 @@ class DeleteAttachmentController implements RequestHandlerInterface
 
         if (!$this->permissions->hasQueuePermission($ticket->get('queue'), Horde_Perms::DELETE)) {
             $this->notification->push(_("Permission Denied"), 'horde.error');
-            return $this->redirectToDefault($webroot, $uid);
+            return $this->redirectToDefault($uid);
         }
 
         $file = basename($queryParams['file'] ?? '');
@@ -86,12 +87,12 @@ class DeleteAttachmentController implements RequestHandlerInterface
             return $this->redirect($returnUrl);
         }
 
-        return $this->redirectToDefault($webroot, $uid);
+        return $this->redirectToDefault($uid);
     }
 
-    private function redirectToDefault(string $webroot, string $uid): ResponseInterface
+    private function redirectToDefault(string $uid): ResponseInterface
     {
         $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-        return $this->redirect($webroot . '/' . $defaultView);
+        return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
     }
 }

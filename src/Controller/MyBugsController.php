@@ -20,13 +20,14 @@ namespace Horde\Whups\Controller;
 use Horde\Core\Service\PrefsService;
 use Horde_Browser;
 use Horde_Core_Block_Layout_View;
-use Horde_Core_Factory_BlockCollection;
 use Horde_Notification_Handler;
 use Horde_PageOutput;
+use Horde_Perms;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Url;
 use Horde\Whups\Service\TopbarSearch;
+use Horde\Whups\Service\UrlGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -37,50 +38,63 @@ class MyBugsController implements RequestHandlerInterface
 
     public function __construct(
         private readonly Horde_Browser $browser,
-        private readonly Horde_Core_Factory_BlockCollection $blockFactory,
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
         private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
         $title = sprintf(_("My %s"), $this->registry->get('name'));
+
+        if (!$this->registry->hasPermission('whups', Horde_Perms::READ)) {
+            $this->notification->push(_("You are not authorized for this page."), 'horde.error');
+            $html = $this->renderChrome($title, function () {});
+
+            return $this->htmlResponse($html);
+        }
 
         // Meta refresh for non-XHR browsers.
         $refreshTime = (int) $this->prefs->getValue($uid, 'horde', 'summary_refresh_time');
         if ($refreshTime && !$this->browser->hasFeature('xmlhttpreq')) {
-            $this->pageOutput->metaRefresh($refreshTime, new Horde_Url($webroot . '/mybugs'));
+            $this->pageOutput->metaRefresh($refreshTime, new Horde_Url($this->urlGenerator->urlFor('MyBugs')));
         }
 
         // Ensure a default block layout exists.
         $this->ensureDefaultLayout($uid);
 
+        // Read layout directly via PrefsService (bypasses $GLOBALS['prefs'] scope).
+        $layoutData = @unserialize(
+            $this->prefs->getValue($uid, 'whups', 'mybugs_layout') ?: ''
+        );
+        if (!is_array($layoutData) || !$layoutData) {
+            $layoutData = [];
+        }
+
         // Build the block layout view.
-        $collection = $this->blockFactory->create(['whups'], 'mybugs_layout');
         $layout = new Horde_Core_Block_Layout_View(
-            $collection->getLayout(),
-            new Horde_Url($webroot . '/mybugs/edit'),
-            new Horde_Url($webroot . '/mybugs', true),
+            $layoutData,
+            new Horde_Url($this->urlGenerator->urlFor('MyBugsEdit')),
+            new Horde_Url($this->urlGenerator->urlFor('MyBugs'), true),
         );
         $layoutHtml = $layout->toHtml();
 
-        $html = $this->renderChrome($title, function () use ($webroot, $layoutHtml) {
+        $html = $this->renderChrome($title, function () use ($layoutHtml) {
             // Topbar search.
             $this->topbarSearch->apply();
 
             // OpenSearch link.
             $this->pageOutput->addLinkTag([
-                'href' => (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false),
+                'href' => $this->urlGenerator->absoluteUrlFor('OpenSearch'),
                 'rel' => 'search',
                 'type' => 'application/opensearchdescription+xml',
                 'title' => $this->registry->get('name')
-                    . ' (' . (new Horde_Url($webroot, true))->toString(true, false) . ')',
+                    . ' (' . $this->urlGenerator->getWebroot() . ')',
             ]);
 
             // Notifications.

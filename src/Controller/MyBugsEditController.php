@@ -25,6 +25,7 @@ use Horde_PageOutput;
 use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Url;
+use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,11 +43,11 @@ class MyBugsEditController implements RequestHandlerInterface
         private readonly HordeSession $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
+        private readonly UrlGenerator $urlGenerator,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         // Read form data from PSR-7 request.
@@ -75,7 +76,7 @@ class MyBugsEditController implements RequestHandlerInterface
         // Render the editor page.
         $title = sprintf(_("My %s :: Add Content"), $this->registry->get('name'));
 
-        $html = $this->renderChrome($title, function () use ($webroot, $layout) {
+        $html = $this->renderChrome($title, function () use ($layout) {
             // Topbar search.
             $this->topbarSearch->apply();
 

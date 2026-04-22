@@ -20,10 +20,8 @@ namespace Horde\Whups\Controller\Rss;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Service\TicketSorter;
 use Horde\Whups\Service\UrlGenerator;
-use Horde_Registry;
 use Horde_String;
 use Horde_Themes;
-use Horde_Url;
 use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +35,6 @@ class QueueRssController implements RequestHandlerInterface
 
     public function __construct(
         private readonly Whups_Driver $driver,
-        private readonly Horde_Registry $registry,
         private readonly TicketSorter $sorter,
         private readonly UrlGenerator $urlGenerator,
     ) {}
@@ -118,14 +115,13 @@ class QueueRssController implements RequestHandlerInterface
             ? sprintf(_("Open tickets in %s"), $queueName)
             : _("Open tickets in all queues.");
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $view = new Horde_View(['templatePath' => WHUPS_TEMPLATES . '/rss']);
         $view->xsl = Horde_Themes::getFeedXsl();
         $view->pubDate = htmlspecialchars(date('r'));
         $view->title = htmlspecialchars($title);
         $view->items = $items;
-        $view->url = (new Horde_Url($webroot . '/queue/', true))->add('id', $id);
-        $view->rss_url = (new Horde_Url($webroot . '/queue/rss', true))->add('id', $id);
+        $view->url = $this->urlGenerator->absoluteUrlFor('QueueView', ['slug' => (string) $id]);
+        $view->rss_url = $this->urlGenerator->absoluteUrlFor('QueueRss', ['slug' => (string) $id]);
         $view->description = htmlspecialchars($description);
 
         return $this->xmlResponse($view->render('items.rss'));

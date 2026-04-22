@@ -74,13 +74,12 @@ class AttachmentsController implements RequestHandlerInterface
         $id = $route['id'] ?? $request->getQueryParams()['id'] ?? null;
         $id = preg_replace('|\D|', '', (string) ($id ?? ''));
 
-        $webroot = $this->registry->get('webroot', 'whups');
         $uid = $this->registry->getAuth() ?: '';
 
         if (!$id) {
             $this->notification->push(_("Invalid Ticket Id"), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         try {
@@ -89,7 +88,7 @@ class AttachmentsController implements RequestHandlerInterface
         } catch (Whups_Exception $e) {
             $this->notification->push($e->getMessage(), 'horde.error');
             $defaultView = $this->prefs->getValue($uid, 'whups', 'whups_default_view') ?: 'mybugs';
-            return $this->redirect($webroot . '/' . $defaultView);
+            return $this->redirect($this->urlGenerator->defaultViewUrl($defaultView));
         }
 
         $vars = Horde_Variables::getDefaultVariables();
@@ -118,7 +117,6 @@ class AttachmentsController implements RequestHandlerInterface
                         (int) $id,
                         $vfsAttachments[$file['value']],
                         $queue,
-                        $webroot,
                         $canDelete,
                     )
                     : ['view' => '', 'download' => '', 'delete' => ''];
@@ -154,7 +152,6 @@ class AttachmentsController implements RequestHandlerInterface
             $vars,
             $view,
             $tabs,
-            $webroot,
             $id,
         ) {
             // Topbar search.
@@ -165,10 +162,10 @@ class AttachmentsController implements RequestHandlerInterface
             $this->pageOutput->addLinkTag(['href' => $rssUrl, 'title' => '[#' . $id . '] ' . $ticket->get('summary')]);
 
             $this->pageOutput->addLinkTag([
-                'href' => (new Horde_Url($webroot . '/opensearch.php', true))->toString(true, false),
+                'href' => $this->urlGenerator->absoluteUrlFor('OpenSearch'),
                 'rel' => 'search',
                 'type' => 'application/opensearchdescription+xml',
-                'title' => $this->registry->get('name') . ' (' . (new Horde_Url($webroot, true))->toString(true, false) . ')',
+                'title' => $this->registry->get('name') . ' (' . $this->urlGenerator->getWebroot() . ')',
             ]);
 
             $this->pageOutput->addScriptFile('tables.js', 'horde');
@@ -220,7 +217,6 @@ class AttachmentsController implements RequestHandlerInterface
         int $ticketId,
         array $file,
         int $queue,
-        string $webroot,
         bool $canDelete,
     ): array {
         $links = [];
@@ -231,7 +227,7 @@ class AttachmentsController implements RequestHandlerInterface
         $viewer = $this->mimeViewerFactory->create($mimePart);
 
         if ($viewer && !($viewer instanceof Horde_Mime_Viewer_Default)) {
-            $links['view'] = (new Horde_Url($webroot . '/view.php'))
+            $links['view'] = (new Horde_Url($this->urlGenerator->urlFor('ViewAttachment')))
                 ->add([
                     'actionID' => 'view_file',
                     'type' => $file['type'],
@@ -254,7 +250,7 @@ class AttachmentsController implements RequestHandlerInterface
 
         // Delete link (permission required).
         if ($canDelete) {
-            $links['delete'] = (new Horde_Url($webroot . '/ticket/' . $ticketId . '/delete-attachment'))
+            $links['delete'] = (new Horde_Url($this->urlGenerator->urlFor('TicketDeleteAttachment', ['id' => $ticketId])))
                 ->add([
                     'file' => $file['name'],
                     'id' => $ticketId,

@@ -19,10 +19,10 @@ final readonly class AttributeDefinition
         public int $id,
         public string $name,
         public string $description,
-        public string $type,
-        public array $params,
-        public bool $required,
-        public bool $readonly,
+        public string $type = 'text',
+        public array $params = [],
+        public bool $required = false,
+        public bool $readonly = false,
     ) {}
 
     /**
