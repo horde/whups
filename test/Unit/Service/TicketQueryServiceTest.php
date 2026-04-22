@@ -181,6 +181,102 @@ class TicketQueryServiceTest extends TestCase
         $this->assertSame([], $service->getQueueSummary());
     }
 
+    public function testGetUnassignedTicketsBuildsCriteria(): void
+    {
+        $tickets = $this->createMock(TicketRepositoryInterface::class);
+        $queues = $this->createMock(QueueRepositoryInterface::class);
+        $permissions = $this->createMock(PermissionChecker::class);
+
+        $this->mockQueuesAndPermissions($queues, $permissions, [1 => 'Q1', 2 => 'Q2'], [1 => 'Q1', 2 => 'Q2']);
+
+        $tickets->expects($this->once())
+            ->method('findByProperties')
+            ->with([
+                'notowner' => true,
+                'nores' => true,
+                'queue' => [1, 2],
+            ])
+            ->willReturn([['id' => 55]]);
+
+        $service = $this->buildService($tickets, $queues, $permissions);
+        $result = $service->getUnassignedTickets();
+
+        $this->assertSame([['id' => 55]], $result);
+    }
+
+    public function testGetUnassignedTicketsReturnsEmptyWhenNoReadableQueues(): void
+    {
+        $tickets = $this->createMock(TicketRepositoryInterface::class);
+        $queues = $this->createMock(QueueRepositoryInterface::class);
+        $permissions = $this->createMock(PermissionChecker::class);
+
+        $this->mockQueuesAndPermissions($queues, $permissions, [1 => 'Q1'], []);
+
+        $tickets->expects($this->never())->method('findByProperties');
+
+        $service = $this->buildService($tickets, $queues, $permissions);
+
+        $this->assertSame([], $service->getUnassignedTickets());
+    }
+
+    public function testGetQueueTicketsReturnTicketsForReadableQueue(): void
+    {
+        $tickets = $this->createMock(TicketRepositoryInterface::class);
+        $queues = $this->createMock(QueueRepositoryInterface::class);
+        $permissions = $this->createMock(PermissionChecker::class);
+
+        $this->mockQueuesAndPermissions($queues, $permissions, [1 => 'Q1', 2 => 'Q2'], [1 => 'Q1', 2 => 'Q2']);
+
+        $tickets->expects($this->once())
+            ->method('findByProperties')
+            ->with([
+                'queue' => 1,
+                'nores' => true,
+            ])
+            ->willReturn([['id' => 10], ['id' => 11]]);
+
+        $service = $this->buildService($tickets, $queues, $permissions);
+        $result = $service->getQueueTickets(1);
+
+        $this->assertSame([['id' => 10], ['id' => 11]], $result);
+    }
+
+    public function testGetQueueTicketsReturnsEmptyForUnreadableQueue(): void
+    {
+        $tickets = $this->createMock(TicketRepositoryInterface::class);
+        $queues = $this->createMock(QueueRepositoryInterface::class);
+        $permissions = $this->createMock(PermissionChecker::class);
+
+        $this->mockQueuesAndPermissions($queues, $permissions, [1 => 'Q1', 2 => 'Q2'], [1 => 'Q1']);
+
+        $tickets->expects($this->never())->method('findByProperties');
+
+        $service = $this->buildService($tickets, $queues, $permissions);
+        $result = $service->getQueueTickets(2);
+
+        $this->assertSame([], $result);
+    }
+
+    public function testGetOwnerCriteriaIncludesGroupIds(): void
+    {
+        $groups = $this->createMock(Horde_Group_Base::class);
+        $groups->method('listGroups')->with('alice')->willReturn([5 => 'Devs', 9 => 'Ops']);
+
+        $service = $this->buildService(groups: $groups);
+
+        $this->assertSame(['user:alice', 'group:5', 'group:9'], $service->getOwnerCriteria('alice'));
+    }
+
+    public function testGetOwnerCriteriaFallsBackOnGroupException(): void
+    {
+        $groups = $this->createMock(Horde_Group_Base::class);
+        $groups->method('listGroups')->willThrowException(new Horde_Group_Exception('No backend'));
+
+        $service = $this->buildService(groups: $groups);
+
+        $this->assertSame(['user:alice'], $service->getOwnerCriteria('alice'));
+    }
+
     public function testOwnerCriteriaHandlesGroupException(): void
     {
         $tickets = $this->createMock(TicketRepositoryInterface::class);

@@ -6,6 +6,8 @@ namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
 use Horde\Http\ServerRequest;
 use Horde\Whups\Controller\Ticket\RssController;
+use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\Test\Fixtures\HordeGlobalsMockTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +19,8 @@ class RssControllerTest extends TestCase
 {
     use HordeGlobalsMockTrait;
     private Whups_Driver_Sql $driver;
+    private PermissionChecker $permissions;
+    private UrlGenerator $urlGenerator;
     private mixed $originalDriver;
 
     protected function setUp(): void
@@ -24,6 +28,9 @@ class RssControllerTest extends TestCase
         $this->setUpHordeGlobals();
         $this->originalDriver = $GLOBALS['whups_driver'] ?? null;
         $this->driver = $this->createMock(Whups_Driver_Sql::class);
+        $this->permissions = $this->createMock(PermissionChecker::class);
+        $this->urlGenerator = $this->createMock(UrlGenerator::class);
+        $this->urlGenerator->method('absoluteUrlFor')->willReturn('http://localhost/whups/ticket/1/rss');
         $GLOBALS['whups_driver'] = $this->driver;
     }
 
@@ -39,11 +46,10 @@ class RssControllerTest extends TestCase
 
     private function createController(): RssController
     {
-        // Use a non-existent template path; tests that don't render templates
-        // won't hit it. Tests that need rendering are in the contract stubs.
         return new RssController(
             $this->driver,
-            '/dev/null',
+            $this->permissions,
+            $this->urlGenerator,
         );
     }
 

@@ -58,7 +58,7 @@ class DeleteVersionFormTest extends TestCase
         $form = new DeleteVersionForm([], '2.0', 'desc');
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
 
         $this->assertContains('yesno', $names);
     }

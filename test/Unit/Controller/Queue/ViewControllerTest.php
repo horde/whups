@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Queue;
 
+use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\HordeSession;
 use Horde\Http\ServerRequest;
 use Horde\Whups\Controller\Queue\ViewController;
@@ -32,6 +33,7 @@ class ViewControllerTest extends TestCase
     private TicketSorter $sorter;
     private TopbarSearch $topbarSearch;
     private UrlGenerator $urlGenerator;
+    private PrefsService $prefs;
     private mixed $originalDriver;
 
     protected function setUp(): void
@@ -46,11 +48,18 @@ class ViewControllerTest extends TestCase
             ['name', null, 'Whups'],
             ['webroot', 'whups', '/whups'],
         ]);
+        $this->registry->method('getAuth')->willReturn('test_user');
         $this->session = $this->createMock(HordeSession::class);
         $this->sorter = $this->createMock(TicketSorter::class);
         $this->topbarSearch = $this->createMock(TopbarSearch::class);
         $this->urlGenerator = $this->createMock(UrlGenerator::class);
         $this->urlGenerator->method('urlFor')->willReturn('/whups/queue/test');
+        $this->urlGenerator->method('absoluteUrlFor')->willReturn('http://localhost/whups/opensearch');
+        $this->urlGenerator->method('getWebroot')->willReturn('/whups');
+        $this->urlGenerator->method('defaultViewUrl')->willReturnCallback(
+            fn(string $view) => '/whups/' . $view,
+        );
+        $this->prefs = $this->createMock(PrefsService::class);
         $GLOBALS['whups_driver'] = $this->driver;
 
         if (!defined('WHUPS_TEMPLATES')) {
@@ -70,8 +79,8 @@ class ViewControllerTest extends TestCase
 
     private function createController(
         string $defaultView = 'mybugs',
-        string $webroot = '/whups',
     ): ViewController {
+        $this->prefs->method('getValue')->willReturn($defaultView);
         return new ViewController(
             $this->driver,
             $this->notification,
@@ -81,8 +90,7 @@ class ViewControllerTest extends TestCase
             $this->sorter,
             $this->topbarSearch,
             $this->urlGenerator,
-            $defaultView,
-            $webroot,
+            $this->prefs,
         );
     }
 
@@ -124,10 +132,33 @@ class ViewControllerTest extends TestCase
 
     public function testUsesWebrootInRedirectUrl(): void
     {
+        $urlGenerator = $this->createMock(UrlGenerator::class);
+        $urlGenerator->method('urlFor')->willReturn('/custom-whups/queue/test');
+        $urlGenerator->method('absoluteUrlFor')->willReturn('http://localhost/custom-whups/opensearch');
+        $urlGenerator->method('getWebroot')->willReturn('/custom-whups');
+        $urlGenerator->method('defaultViewUrl')->willReturnCallback(
+            fn(string $view) => '/custom-whups/' . $view,
+        );
+
+        $prefs = $this->createMock(PrefsService::class);
+        $prefs->method('getValue')->willReturn('mybugs');
+
+        $controller = new ViewController(
+            $this->driver,
+            $this->notification,
+            $this->pageOutput,
+            $this->registry,
+            $this->session,
+            $this->sorter,
+            $this->topbarSearch,
+            $urlGenerator,
+            $prefs,
+        );
+
         $request = (new ServerRequest('GET', '/custom-whups/queue/'))
             ->withAttribute('route', []);
 
-        $response = $this->createController(webroot: '/custom-whups')->handle($request);
+        $response = $controller->handle($request);
 
         $this->assertStringStartsWith('/custom-whups/', $response->getHeaderLine('Location'));
     }

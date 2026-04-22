@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Query;
 
+use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\HordeSession;
 use Horde\Http\ServerRequest;
 use Horde\Routes\Mapper;
@@ -27,6 +28,7 @@ use stdClass;
 use Whups_Driver_Sql;
 use Whups_Query;
 use Whups_Query_Manager;
+use Horde_Browser;
 
 #[CoversClass(RunController::class)]
 class RunControllerTest extends TestCase
@@ -40,6 +42,7 @@ class RunControllerTest extends TestCase
     private TopbarSearch $topbarSearch;
     private UrlGenerator $urlGenerator;
     private Whups_Query_Manager $queryManager;
+    private PrefsService $prefs;
     private array $savedGlobals = [];
 
     protected function setUp(): void
@@ -96,7 +99,7 @@ class RunControllerTest extends TestCase
         $GLOBALS['conf'] = ['tickets' => ['search_results' => []], 'share' => []];
 
         // Browser mock needed by Horde_Core_Ui_Tabs::render().
-        $browser = $this->createMock(\Horde_Browser::class);
+        $browser = $this->createMock(Horde_Browser::class);
         $browser->method('hasFeature')->willReturn(false);
         $GLOBALS['browser'] = $browser;
 
@@ -113,7 +116,12 @@ class RunControllerTest extends TestCase
         $this->urlGenerator = $this->createMock(UrlGenerator::class);
         $this->urlGenerator->method('urlFor')->willReturn('/whups/query/test');
         $this->urlGenerator->method('absoluteUrlFor')->willReturn('http://localhost/whups/query/test/rss');
+        $this->urlGenerator->method('getWebroot')->willReturn('/whups');
+        $this->urlGenerator->method('defaultViewUrl')->willReturnCallback(
+            fn(string $view) => '/whups/' . $view,
+        );
         $this->queryManager = $this->createMock(Whups_Query_Manager::class);
+        $this->prefs = $this->createMock(PrefsService::class);
 
         if (!defined('WHUPS_TEMPLATES')) {
             define('WHUPS_TEMPLATES', dirname(__DIR__, 4) . '/templates');
@@ -134,8 +142,8 @@ class RunControllerTest extends TestCase
 
     private function createController(
         string $defaultView = 'mybugs',
-        string $webroot = '/whups',
     ): RunController {
+        $this->prefs->method('getValue')->willReturn($defaultView);
         return new RunController(
             $this->driver,
             $this->notification,
@@ -146,8 +154,7 @@ class RunControllerTest extends TestCase
             $this->topbarSearch,
             $this->urlGenerator,
             $this->queryManager,
-            $defaultView,
-            $webroot,
+            $this->prefs,
         );
     }
 
@@ -221,10 +228,34 @@ class RunControllerTest extends TestCase
     {
         $this->session->method('getScoped')->willReturn(null);
 
+        $urlGenerator = $this->createMock(UrlGenerator::class);
+        $urlGenerator->method('urlFor')->willReturn('/custom-whups/query/test');
+        $urlGenerator->method('absoluteUrlFor')->willReturn('http://localhost/custom-whups/opensearch');
+        $urlGenerator->method('getWebroot')->willReturn('/custom-whups');
+        $urlGenerator->method('defaultViewUrl')->willReturnCallback(
+            fn(string $view) => '/custom-whups/' . $view,
+        );
+
+        $prefs = $this->createMock(PrefsService::class);
+        $prefs->method('getValue')->willReturn('mybugs');
+
+        $controller = new RunController(
+            $this->driver,
+            $this->notification,
+            $this->pageOutput,
+            $this->registry,
+            $this->session,
+            $this->sorter,
+            $this->topbarSearch,
+            $urlGenerator,
+            $this->queryManager,
+            $prefs,
+        );
+
         $request = (new ServerRequest('GET', '/custom-whups/query/'))
             ->withAttribute('route', []);
 
-        $response = $this->createController(webroot: '/custom-whups')->handle($request);
+        $response = $controller->handle($request);
 
         $this->assertStringStartsWith('/custom-whups/', $response->getHeaderLine('Location'));
     }

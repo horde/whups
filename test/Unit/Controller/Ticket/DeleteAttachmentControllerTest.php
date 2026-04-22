@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use Horde\Core\Service\PrefsService;
 use Horde\Http\ServerRequest;
 use Horde\Whups\Controller\Ticket\DeleteAttachmentController;
+use Horde\Whups\Service\PermissionChecker;
+use Horde\Whups\Service\UrlGenerator;
 use Horde\Whups\Test\Fixtures\HordeGlobalsMockTrait;
 use Horde_Notification_Handler;
+use Horde_Registry;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -19,6 +23,10 @@ class DeleteAttachmentControllerTest extends TestCase
     use HordeGlobalsMockTrait;
     private Whups_Driver_Sql $driver;
     private Horde_Notification_Handler $notification;
+    private Horde_Registry $registry;
+    private PrefsService $prefs;
+    private PermissionChecker $permissions;
+    private UrlGenerator $urlGenerator;
     private mixed $originalDriver;
 
     protected function setUp(): void
@@ -27,6 +35,17 @@ class DeleteAttachmentControllerTest extends TestCase
         $this->originalDriver = $GLOBALS['whups_driver'] ?? null;
         $this->driver = $this->createMock(Whups_Driver_Sql::class);
         $this->notification = $this->createMock(Horde_Notification_Handler::class);
+        $this->registry = $this->createMock(Horde_Registry::class);
+        $this->registry->method('getAuth')->willReturn('test_user');
+        $this->prefs = $this->createMock(PrefsService::class);
+        $this->prefs->method('getValue')->willReturn('mybugs');
+        $this->permissions = $this->createMock(PermissionChecker::class);
+        $this->urlGenerator = $this->createMock(UrlGenerator::class);
+        $this->urlGenerator->method('urlFor')->willReturn('/whups/ticket/5');
+        $this->urlGenerator->method('getWebroot')->willReturn('/whups');
+        $this->urlGenerator->method('defaultViewUrl')->willReturnCallback(
+            fn(string $view) => '/whups/' . $view,
+        );
         $GLOBALS['whups_driver'] = $this->driver;
     }
 
@@ -45,8 +64,10 @@ class DeleteAttachmentControllerTest extends TestCase
         return new DeleteAttachmentController(
             $this->driver,
             $this->notification,
-            'mybugs',
-            '/whups',
+            $this->registry,
+            $this->prefs,
+            $this->permissions,
+            $this->urlGenerator,
         );
     }
 
@@ -99,11 +120,23 @@ class DeleteAttachmentControllerTest extends TestCase
 
     public function testUsesWebrootInRedirectUrl(): void
     {
+        $urlGenerator = $this->createMock(UrlGenerator::class);
+        $urlGenerator->method('urlFor')->willReturn('/custom-whups/ticket/1');
+        $urlGenerator->method('getWebroot')->willReturn('/custom-whups');
+        $urlGenerator->method('defaultViewUrl')->willReturnCallback(
+            fn(string $view) => '/custom-whups/' . $view,
+        );
+
+        $prefs = $this->createMock(PrefsService::class);
+        $prefs->method('getValue')->willReturn('search');
+
         $controller = new DeleteAttachmentController(
             $this->driver,
             $this->notification,
-            'search',
-            '/custom-whups',
+            $this->registry,
+            $prefs,
+            $this->permissions,
+            $urlGenerator,
         );
 
         $this->driver->method('getTicketDetails')

@@ -16,7 +16,7 @@ class AddVersionFormTest extends TestCase
         $form = new AddVersionForm([]);
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
 
         $this->assertContains('name', $names);
         $this->assertContains('description', $names);

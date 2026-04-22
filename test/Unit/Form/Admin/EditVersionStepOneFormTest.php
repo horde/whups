@@ -19,7 +19,7 @@ class EditVersionStepOneFormTest extends TestCase
         $form = new EditVersionStepOneForm([], $this->versions);
 
         $vars = $form->getVariables(flat: true);
-        $names = array_map(fn ($v) => $v->getVarName(), $vars);
+        $names = array_map(fn($v) => $v->getVarName(), $vars);
 
         $this->assertContains('version', $names);
     }
