@@ -162,13 +162,11 @@ abstract class Whups_Driver
                                     /* Attribute is from a different type, create
                                      * the form field manually. */
                                     $detail = $attributeDetails[$attribute];
-                                    $field = new Horde_Form_Variable(
+                                    $field = new Horde_Form::createVariable(
                                         $detail['human_name'],
                                         $type,
-                                        Horde_Form_Type::create(
-                                            $detail['type'],
-                                            $detail['params']
-                                        ),
+                                        $detail['type'],
+                                        $detail['params'],
                                         $detail['required'],
                                         $detail['readonly'],
                                         $detail['desc']
