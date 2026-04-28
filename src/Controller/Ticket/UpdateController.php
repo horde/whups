@@ -39,6 +39,7 @@ use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Text_Flowed;
 use Horde_Variables;
+use Horde\Util\Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -240,7 +241,7 @@ class UpdateController implements RequestHandlerInterface
      *
      * @return array<string,array>
      */
-    private function buildFieldData(Horde_Variables $vars, Whups_Ticket $ticket): array
+    private function buildFieldData(Horde_Variables|Variables $vars, Whups_Ticket $ticket): array
     {
         $type = $vars->get('type');
         $queue = $vars->get('queue');
@@ -465,7 +466,7 @@ class UpdateController implements RequestHandlerInterface
     /**
      * Apply form reply selection: append reply text to comment.
      */
-    private function applyFormReply(array &$formVars, Horde_Variables $vars): void
+    private function applyFormReply(array &$formVars, Horde_Variables|Variables $vars): void
     {
         $reply = $formVars['reply'] ?? $vars->get('reply');
         if (!$reply) {
@@ -499,7 +500,7 @@ class UpdateController implements RequestHandlerInterface
      * If a transaction ID is given, pre-fill the comment with the quoted
      * original and default group restriction to match the original comment.
      */
-    private function prefillQuotedComment(array &$formVars, Horde_Variables $vars, Whups_Ticket $ticket): void
+    private function prefillQuotedComment(array &$formVars, Horde_Variables|Variables $vars, Whups_Ticket $ticket): void
     {
         $tid = $formVars['transaction'] ?? $vars->get('transaction');
         if (!$tid) {

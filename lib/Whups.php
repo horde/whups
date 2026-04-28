@@ -20,6 +20,7 @@
  */
 use Horde\Date\Format as DateFormat;
 use Horde\Util\Util;
+use Horde\Util\Variables;
 
 class Whups
 {
@@ -938,7 +939,7 @@ class Whups
     /**
      * Sends reminders, one email per user.
      *
-     * @param Horde_Variables $vars  The selection criteria:
+     * @param Horde_Variables|Variables $vars  The selection criteria:
      *                               - 'id' (integer) for individual tickets
      *                               - 'queue' (integer) for tickets of a queue.
      *                                 - 'category' (array) for ticket

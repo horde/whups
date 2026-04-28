@@ -745,7 +745,7 @@ class Whups_Ticket
      * Sets all properties of the ticket necessary to display the
      * TicketDetailsForm.
      *
-     * @param Horde_Variables $vars  The form variables object to set info in.
+     * @param Horde_Variables|Variables $vars  The form variables object to set info in.
      * @param bool $split_owners     This has to be set if you want to use the
      *                               $vars var for saving later or otherwise
      *                               $form->validate() will fail

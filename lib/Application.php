@@ -360,7 +360,7 @@ class Whups_Application extends Horde_Registry_Application
     /**
      * Provides download data for an attachment or original message.
      *
-     * @param Horde_Variables $vars  Submitted form/URL data.
+     * @param Horde_Variables|Variables $vars  Submitted form/URL data.
      *
      * @throws Whups_Exception
      */
@@ -422,7 +422,7 @@ class Whups_Application extends Horde_Registry_Application
     /**
      * Provides download data for an HTML version of an ticket.
      *
-     * @param Horde_Variables $vars  Submitted form/URL data.
+     * @param Horde_Variables|Variables $vars  Submitted form/URL data.
      *
      * @throws Whups_Exception
      */
@@ -556,7 +556,7 @@ class Whups_Application extends Horde_Registry_Application
     /**
      * Provides download data for a report.
      *
-     * @param Horde_Variables $vars  Submitted form/URL data.
+     * @param Horde_Variables|Variables $vars  Submitted form/URL data.
      *
      * @throws Whups_Exception
      */

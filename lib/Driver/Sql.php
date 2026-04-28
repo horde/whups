@@ -13,6 +13,8 @@
  * @author  Chuck Hagenbuch <chuck@horde.org>
  * @package Whups
  */
+use Horde\Util\Variables;
+
 class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedReporting
 {
     /**
@@ -711,7 +713,7 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
      * Executes a query.
      *
      * @param Whups_Query $query     A query object.
-     * @param Horde_Variables $vars  Request variables.
+     * @param Horde_Variables|Variables $vars  Request variables.
      * @param boolean $get_details   Whether to return all ticket details.
      * @param boolean $munge         @TODO (?)
      *

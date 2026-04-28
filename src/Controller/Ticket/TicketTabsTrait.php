@@ -25,6 +25,7 @@ namespace Horde\Whups\Controller\Ticket;
 use Horde_Core_Ui_Tabs;
 use Horde_Perms;
 use Horde_Variables;
+use Horde\Util\Variables;
 use Whups_Ticket;
 
 trait TicketTabsTrait
@@ -32,7 +33,7 @@ trait TicketTabsTrait
     /**
      * Build ticket action tabs using injected services.
      */
-    private function buildTicketTabs(Horde_Variables $vars, Whups_Ticket $ticket): Horde_Core_Ui_Tabs
+    private function buildTicketTabs(Horde_Variables|Variables $vars, Whups_Ticket $ticket): Horde_Core_Ui_Tabs
     {
         $tabs = new Horde_Core_Ui_Tabs(null, $vars);
         $id = $ticket->getId();

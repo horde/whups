@@ -261,7 +261,7 @@ class Whups_Query
     /**
      * Path to form
      *
-     * @param Horde_Variables $vars
+     * @param Horde_Variables|Variables $vars
      *
      * @return string
      * @throws Whups_Exception
