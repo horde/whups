@@ -34,6 +34,7 @@ use Horde_Registry;
 use Horde\Core\Session\HordeSession;
 use Horde_Text_Flowed;
 use Horde_Variables;
+use Horde\Util\Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -211,7 +212,7 @@ class CommentController implements RequestHandlerInterface
      * If a transaction ID is given, pre-fill the comment with the quoted
      * original (respecting private comment permissions).
      */
-    private function prefillQuotedComment(array &$formVars, Horde_Variables $vars, Whups_Ticket $ticket): void
+    private function prefillQuotedComment(array &$formVars, Horde_Variables|Variables $vars, Whups_Ticket $ticket): void
     {
         $tid = $formVars['transaction'] ?? $vars->get('transaction');
         if (!$tid) {
