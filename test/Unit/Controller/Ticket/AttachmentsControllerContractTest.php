@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/attachments.php
  * Purpose: List and display all attachments associated with a ticket
  * Route: /whups/ticket/{id}/attachments
- * @coversNothing
  */
+#[CoversNothing]
 class AttachmentsControllerContractTest extends TestCase
 {
     public function testListsAttachments(): void

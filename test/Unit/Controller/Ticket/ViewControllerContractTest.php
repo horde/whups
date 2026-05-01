@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/index.php
  * Purpose: Display a single ticket with details, comments, history, attachments
  * Route: /whups/ticket/{id}
- * @coversNothing
  */
+#[CoversNothing]
 class ViewControllerContractTest extends TestCase
 {
     public function testDisplaysTicketDetails(): void

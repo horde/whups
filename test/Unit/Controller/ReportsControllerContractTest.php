@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: reports.php
  * Purpose: Generate and display statistical reports about tickets
  * Route: /whups/reports
- * @coversNothing
  */
+#[CoversNothing]
 class ReportsControllerContractTest extends TestCase
 {
     public function testDisplaysReportPage(): void

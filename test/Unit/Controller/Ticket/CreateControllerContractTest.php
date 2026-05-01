@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/create.php
  * Purpose: Multi-step form for creating new tickets (select queue/type, fill details)
  * Route: /whups/ticket/create
- * @coversNothing
  */
+#[CoversNothing]
 class CreateControllerContractTest extends TestCase
 {
     public function testDisplaysQueueTypeSelectionForm(): void

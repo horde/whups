@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Horde\Whups\Test\Unit\Controller;
 
 use Horde\Whups\Controller\ResponseTrait;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * @coversNothing
  */
+#[CoversNothing]
 class ResponseTraitTest extends TestCase
 {
     private object $traitUser;

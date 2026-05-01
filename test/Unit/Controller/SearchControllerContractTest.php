@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: search.php
  * Purpose: Display search form and handle ticket searching with filters
  * Route: /whups/search
- * @coversNothing
  */
+#[CoversNothing]
 class SearchControllerContractTest extends TestCase
 {
     public function testDisplaysSearchForm(): void

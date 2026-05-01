@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/delete.php
  * Purpose: Display confirmation form and handle permanent deletion of a ticket
  * Route: /whups/ticket/{id}/delete
- * @coversNothing
  */
+#[CoversNothing]
 class DeleteControllerContractTest extends TestCase
 {
     public function testDisplaysConfirmationForm(): void

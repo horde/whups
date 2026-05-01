@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/queue.php
  * Purpose: Display form and handle moving a ticket to a different queue
  * Route: /whups/ticket/{id}/queue
- * @coversNothing
  */
+#[CoversNothing]
 class QueueChangeControllerContractTest extends TestCase
 {
     public function testDisplaysQueueChangeForm(): void
