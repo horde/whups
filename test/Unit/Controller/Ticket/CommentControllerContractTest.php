@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/comment.php
  * Purpose: Display form and handle adding comments/transactions to a ticket
  * Route: /whups/ticket/{id}/comment
- * @coversNothing
  */
+#[CoversNothing]
 class CommentControllerContractTest extends TestCase
 {
     public function testDisplaysCommentForm(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: view.php
  * Purpose: Redirect to the canonical ticket URL (handles legacy URLs)
  * Route: /whups/view.php?id={id}
- * @coversNothing
  */
+#[CoversNothing]
 class ViewControllerContractTest extends TestCase
 {
     public function testRedirectsToTicketUrl(): void

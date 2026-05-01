@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: mybugs_edit.php
  * Purpose: Handle layout editing for the mybugs dashboard
  * Route: /whups/mybugs/edit
- * @coversNothing
  */
+#[CoversNothing]
 class MyBugsEditControllerContractTest extends TestCase
 {
     public function testDisplaysEditForm(): void
