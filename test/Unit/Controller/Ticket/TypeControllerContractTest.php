@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/type.php
  * Purpose: Display form and handle changing the ticket type
  * Route: /whups/ticket/{id}/type
- * @coversNothing
  */
+#[CoversNothing]
 class TypeControllerContractTest extends TestCase
 {
     public function testDisplaysTypeChangeForm(): void

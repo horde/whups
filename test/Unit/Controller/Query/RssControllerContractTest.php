@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Query;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: query/rss.php
  * Purpose: Generate RSS feed for a saved query's ticket results
  * Route: /whups/query/{slug}/rss
- * @coversNothing
  */
+#[CoversNothing]
 class RssControllerContractTest extends TestCase
 {
     public function testReturnsXmlContentType(): void

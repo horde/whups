@@ -53,7 +53,11 @@
         "ext-gettext": "*",
         "ext-json": "*"
     },
-    "require-dev": {},
+    "require-dev": {
+        "horde/routes": "^3.0@dev"
+        "horde/rdo": "^3.0@dev",
+        "phpunit/phpunit": "^11"
+    },
     "suggest": {},
     "autoload": {
         "classmap": [
@@ -88,5 +92,6 @@
         "branch-alias": {
             "dev-FRAMEWORK_6_0": "4.x-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }

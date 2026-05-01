@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: mybugs.php
  * Purpose: Display user's personal ticket dashboard with query blocks
  * Route: /whups/mybugs
- * @coversNothing
  */
+#[CoversNothing]
 class MyBugsControllerContractTest extends TestCase
 {
     public function testDisplaysDashboard(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/update.php
  * Purpose: Display form and handle updating ticket properties
  * Route: /whups/ticket/{id}/update
- * @coversNothing
  */
+#[CoversNothing]
 class UpdateControllerContractTest extends TestCase
 {
     public function testDisplaysUpdateForm(): void

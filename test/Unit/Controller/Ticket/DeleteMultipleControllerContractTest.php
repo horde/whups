@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/delete_multiple.php
  * Purpose: Handle bulk deletion of multiple tickets
  * Route: /whups/ticket/delete-multiple
- * @coversNothing
  */
+#[CoversNothing]
 class DeleteMultipleControllerContractTest extends TestCase
 {
     public function testDisplaysConfirmationWithTicketList(): void

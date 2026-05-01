@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Query;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: query/index.php
  * Purpose: List saved queries and provide query management/editing interface
  * Route: /whups/query
- * @coversNothing
  */
+#[CoversNothing]
 class BuilderControllerContractTest extends TestCase
 {
     public function testListsSavedQueries(): void

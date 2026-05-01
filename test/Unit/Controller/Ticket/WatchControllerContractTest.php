@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Test\Unit\Controller\Ticket;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,8 @@ use PHPUnit\Framework\TestCase;
  * Entrypoint: ticket/watch.php
  * Purpose: Subscribe/unsubscribe to ticket update notifications
  * Route: /whups/ticket/{id}/watch
- * @coversNothing
  */
+#[CoversNothing]
 class WatchControllerContractTest extends TestCase
 {
     public function testAddWatchRedirects(): void
