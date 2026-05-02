@@ -1,4 +1,42 @@
 ---
+4.0.0-beta6:
+  api: 4.0.0-beta6
+  state:
+    release: beta
+    api: beta
+  date: 2026-05-02
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: |-
+    Fix phpunit deprecations and other testing issues
+    docs: icon license
+    style: Changed CSS and icon assets to Lucide Icons with proper attribution
+    refactor: Accept Horde\Util\Variables in most places which accept Horde_Variables
+    fix: Cannot use new with a static function
+    fix: Use Horde_Form::createVariable() instead of new Horde_Form_Variable()
+    chore(metadata): Fix autoloading rules
+    test: Cover modern forms and RDO Backend
+    feat: feature switch to use whups_driver or Rdo based backend
+    feat: Migrate to controllers and service architecture
+    test: Cover DDD objects with tests
+    refactor: Rewire routes to use individual controllers rather than WhupsUi
+    refactor: Delete many endpoints, we rely on rampage now
+    refactor: Delete many old style Horde_Forms obsoleted by refactor.
+    feat: Implement a DDD domain for whups
+    refactor: Factor out ticket sorting into an injectable TicketSorter
+    fix: DI of ticket controllers failed due to Horde_Group binding
+    refactor: Replace old Horde_Session usage in remaining controllers with HordeSession
+    refactor: Use urlgenerator directly instead of static method
+    refactor: ReportsController now actually uses the permissions service rather than the static
+    refactor(controllers): Consistently use the new topbar service
+    feat: Provide a reusable TopbarService
+    refactor(ResponseTrait): Remove dependency on static addTopbarSearch
+    refactor(QueueViewController, TicketCreateController): Inject topbar directly rather than using static helper
+    refactor(reports): use modern HordeSession and DI rather than globals.
+    refactor: Reports controller
+    style: php-cs-fixer
+    refactor: Support whups as the entrypoint script
 4.0.0-beta5:
   api: 4.0.0-beta5
   state:
