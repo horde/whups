@@ -20,7 +20,7 @@
         "tickets",
         "helpdesk"
     ],
-    "time": "2026-04-13",
+    "time": "2026-05-02",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -53,11 +53,7 @@
         "ext-gettext": "*",
         "ext-json": "*"
     },
-    "require-dev": {
-        "horde/routes": "^3.0@dev"
-        "horde/rdo": "^3.0@dev",
-        "phpunit/phpunit": "^11"
-    },
+    "require-dev": {},
     "suggest": {},
     "autoload": {
         "classmap": [
@@ -92,6 +88,5 @@
         "branch-alias": {
             "dev-FRAMEWORK_6_0": "4.x-dev"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
