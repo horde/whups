@@ -45,7 +45,7 @@ class PermissionChecker
         string|int $permission,
         ?string $user = null,
     ): bool {
-        $user ??= $this->registry->getAuth();
+        $user ??= $this->registry->getAuth() ?: '';
 
         $adminPerm = match ($permission) {
             'update', 'assign', 'requester' => Horde_Perms::EDIT,
@@ -101,7 +101,7 @@ class PermissionChecker
         ?string $user = null,
         ?string $creator = null,
     ): array {
-        $user ??= $this->registry->getAuth();
+        $user ??= $this->registry->getAuth() ?: '';
 
         if ($this->isAdmin($permission, $user)) {
             return $queues;
@@ -137,7 +137,7 @@ class PermissionChecker
         ?string $user = null,
         ?string $creator = null,
     ): array {
-        $user ??= $this->registry->getAuth();
+        $user ??= $this->registry->getAuth() ?: '';
 
         if ($this->isAdmin($permission, $user)) {
             return $queueIds;
@@ -171,7 +171,7 @@ class PermissionChecker
         ?string $user = null,
         ?string $creator = null,
     ): array {
-        $user ??= $this->registry->getAuth();
+        $user ??= $this->registry->getAuth() ?: '';
 
         if ($this->isAdmin($permission, $user)) {
             return $replies;
@@ -211,7 +211,7 @@ class PermissionChecker
         ?string $user = null,
         ?string $creator = null,
     ): array {
-        $user ??= $this->registry->getAuth();
+        $user ??= $this->registry->getAuth() ?: '';
         $admin = $this->isAdmin($permission, $user);
         $out = [];
 
