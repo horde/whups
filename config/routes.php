@@ -4,18 +4,11 @@
 
 namespace Horde\Whups;
 
+use Horde\Core\Middleware\DefaultStack;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-// Fat middleware stack for routes that need full Horde framework + auth
-$fatStack = [
-    // \Horde\Core\Middleware\RampageLogError::class,
-    //    \Horde\Core\Middleware\InitHordeFramework::class,
-    //    \Horde\Core\Middleware\AppBootstrap::class,
-    \Horde\Core\Middleware\ErrorFilter::class,
-    \Horde\Core\Middleware\AuthHordeSession::class,
-    \Horde\Core\Middleware\RedirectToLogin::class,
-];
+$fatStack = DefaultStack::get();
 
 // Webhook receiver for Github
 $mapper->connect(
