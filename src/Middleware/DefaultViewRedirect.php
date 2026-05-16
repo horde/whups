@@ -53,6 +53,15 @@ class DefaultViewRedirect implements MiddlewareInterface
         $uid = $this->registry->getAuth() ?: '';
         $prefValue = $this->prefs->getValue($uid, 'whups', 'whups_default_view');
         $routeName = self::PREF_TO_ROUTE[$prefValue] ?? self::FALLBACK_ROUTE;
+
+        // Verify route exists before generating — urlFor treats unknown names as raw URLs
+        if (!isset($this->mapper->routeNames[$routeName])) {
+            $routeName = self::FALLBACK_ROUTE;
+        }
+        if (!isset($this->mapper->routeNames[$routeName])) {
+            return $handler->handle($request);
+        }
+
         $url = $this->mapper->utils->urlFor($routeName);
 
         return $this->responseFactory
