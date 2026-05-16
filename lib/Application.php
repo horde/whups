@@ -57,7 +57,7 @@ class Whups_Application extends Horde_Registry_Application
 {
     /**
      */
-    public $version = '4.0.0-beta6';
+    public $version = '4.0.0-beta7';
 
     /**
      * Register PSR-4 services in the injector.

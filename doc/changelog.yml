@@ -1,4 +1,17 @@
 ---
+4.0.0-beta7:
+  api: 4.0.0-beta7
+  state:
+    release: beta
+    api: beta
+  date: 2026-05-16
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: |-
+    fix: Don't redirect to non-existing routes
+    fix(routes): use DefaultStack::get() instead of custom fatStack
+    fix: getAuth may return false on not authenticated but contract demands a string
 4.0.0-beta6:
   api: 4.0.0-beta6
   state:
