@@ -295,6 +295,17 @@
     [jan] Add option to not obfuscate email addresses (horde@iotti.biz, Request #13848).
     [jan] Allow to set new due date through API (Karim Geiger <me@karim-geiger.de>).
     [jan] Add ticket_create hook.
+4.0.0-RC1:
+  api: 4.0.0-RC1
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-19
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: |-
+    fix: filter criterion for RdoTicketRepository
 3.0.13:
   api: 3.0.0
   state:
