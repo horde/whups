@@ -146,11 +146,10 @@ final class RdoTicketRepository implements TicketRepositoryInterface
 
     private function addRequesterFilter(array &$where, array &$params, array $criteria): void
     {
-        if (!isset($criteria['user_id_requester'])) {
+        $value = $criteria['requester'] ?? $criteria['user_id_requester'] ?? null;
+        if ($value === null) {
             return;
         }
-
-        $value = $criteria['user_id_requester'];
         if (is_array($value)) {
             $placeholders = implode(', ', array_fill(0, count($value), '?'));
             $where[] = 'whups_tickets.user_id_requester IN (' . $placeholders . ')';

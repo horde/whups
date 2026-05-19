@@ -76,7 +76,7 @@ class MyBugsEditController implements RequestHandlerInterface
         // Render the editor page.
         $title = sprintf(_("My %s :: Add Content"), $this->registry->get('name'));
 
-        $html = $this->renderChrome($title, function () use ($layout) {
+        $html = $this->renderChrome($title, function () use ($layout, $blocks) {
             // Topbar search.
             $this->topbarSearch->apply();
 
