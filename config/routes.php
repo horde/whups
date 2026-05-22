@@ -11,14 +11,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 $fatStack = DefaultStack::get();
 
 // Webhook receiver for Github
-$mapper->connect(
-    'GithubWebhook',
-    '/webhook/github',
-    [
-        'controller' => Webhook\Github::class,
-        'HordeAuthType' => 'NONE',
-    ]
-);
+$mapper->buildRoute(uri: '/webhook/github', name: 'GithubWebhook')
+    ->withController(Webhook\Github::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware($fatStack)
+    ->add();
 
 // Home / default view — redirects to user's preferred view
 $mapper->buildRoute(uri: '/', name: 'WhupsHome')
