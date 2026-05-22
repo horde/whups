@@ -1,5 +1,7 @@
 <?php
 
+use Horde\Compress\CompressFactory;
+use Horde\Compress\Driver\Zip as CompressZip;
 use Horde\Util\Util;
 
 /**
@@ -40,22 +42,23 @@ class Whups_Mime_Viewer_zip extends Horde_Mime_Viewer_Zip
         $data = $this->_mimepart->getContents();
 
         if (!($zip = $this->getConfigParam('zip'))) {
-            $zip = Horde_Compress::factory('zip');
+            $zip = (new CompressFactory())->create('zip');
             $this->setConfigParam('zip', $zip);
         }
 
         $fileKey = $zip_atc - 1;
         $zipInfo = $zip->decompress($data, [
-            'action' => Horde_Compress_Zip::ZIP_LIST,
+            'action' => CompressZip::ZIP_LIST,
         ]);
 
         /* Verify that the requested file exists. */
         if (isset($zipInfo[$fileKey])) {
-            $text = $zip->decompress($data, [
-                'action' => Horde_Compress_Zip::ZIP_DATA,
+            $result = $zip->decompress($data, [
+                'action' => CompressZip::ZIP_DATA,
                 'info' => &$zipInfo,
                 'key' => $fileKey,
             ]);
+            $text = is_array($result) ? $result['data'] : $result;
             if (!empty($text)) {
                 return [
                     $this->_mimepart->getMimeId() => [
