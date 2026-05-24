@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Injectable URL generator wrapping Horde\Routes\Utils.
+ * Injectable URL generator wrapping RoutesProvider.
  *
  * Provides named-route URL generation for Whups controllers, replacing
  * direct Whups::urlFor() static calls.
@@ -20,26 +20,15 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Service;
 
-use Horde\Routes\Mapper;
-use Horde\Routes\Utils;
+use Horde\Core\Uri\RoutesProvider;
 
-/**
- * NOTE: New code should use Horde\Core\Uri\RouteUrlWriter instead.
- * RouteUrlWriter consumes the RoutesProvider interface and works in both
- * Rampage (without legacy bootstrap) and legacy flows. This class remains
- * for existing callers wired through _bootstrap() in Application.php.
- */
 class UrlGenerator
 {
-    private Utils $utils;
-
     public function __construct(
-        private readonly Mapper $mapper,
+        private readonly RoutesProvider $provider,
         private readonly string $webroot,
-    ) {
-        $this->mapper->environ['SCRIPT_NAME'] = rtrim($webroot, '/');
-        $this->utils = new Utils($this->mapper);
-    }
+        private readonly array $environ = [],
+    ) {}
 
     /**
      * Generate a relative URL for a named route.
@@ -49,7 +38,7 @@ class UrlGenerator
      */
     public function urlFor(string $routeName, array $params = []): string
     {
-        return $this->utils->urlFor($routeName, $params);
+        return $this->provider->generateNamedPath($routeName, $params) ?? '';
     }
 
     /**
@@ -57,15 +46,24 @@ class UrlGenerator
      */
     public function absoluteUrlFor(string $routeName, array $params = []): string
     {
-        $params['qualified'] = true;
+        $path = $this->provider->generateNamedPath($routeName, $params);
+        if ($path === null) {
+            return '';
+        }
 
-        return $this->utils->urlFor($routeName, $params);
+        $host = $this->environ['HTTP_HOST']
+            ?? $this->environ['SERVER_NAME']
+            ?? 'localhost';
+
+        $scheme = (!empty($this->environ['HTTPS']) && $this->environ['HTTPS'] !== 'off')
+            ? 'https'
+            : 'http';
+
+        return $scheme . '://' . $host . $path;
     }
 
     /**
      * Return the application webroot (e.g. "/whups").
-     *
-     * For edge cases where no named route exists (admin sub-actions, etc.).
      */
     public function getWebroot(): string
     {
@@ -74,9 +72,6 @@ class UrlGenerator
 
     /**
      * Build URL for a named default view (mybugs, search, etc.).
-     *
-     * Consolidates the redirectToDefault() pattern duplicated across
-     * controllers: resolve the preference, then call this method.
      */
     public function defaultViewUrl(string $viewName = 'mybugs'): string
     {

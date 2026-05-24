@@ -83,15 +83,12 @@ class Whups_Application extends Horde_Registry_Application
         $injector->bindClosure(
             UrlGenerator::class,
             function ($injector) {
-                $mapper = new Horde\Routes\Mapper();
-                require WHUPS_BASE . '/config/routes.php';
-                if (file_exists(WHUPS_BASE . '/config/routes.local.php')) {
-                    include WHUPS_BASE . '/config/routes.local.php';
-                }
+                $provider = $injector->getInstance(Horde\Core\Uri\RoutesProvider::class);
                 $registry = $injector->getInstance('Horde_Registry');
                 $webroot = $registry->get('webroot', 'whups');
+                $runtimeProvider = $injector->getInstance(Horde\Core\RuntimeRoutesProvider::class);
 
-                return new UrlGenerator($mapper, $webroot);
+                return new UrlGenerator($provider, $webroot, $runtimeProvider->environ);
             },
         );
 

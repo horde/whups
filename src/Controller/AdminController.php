@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller;
 
 use Horde\Form\V3\HtmlRenderer;
+use Horde\Core\PageOutput\AssetCollector;
+use Horde\Core\PageOutput\PageOutputAssetManager;
 use Horde\Whups\Form\Admin\AddAttributeForm;
 use Horde\Whups\Form\Admin\AddPriorityForm;
 use Horde\Whups\Form\Admin\AddQueueForm;
@@ -90,6 +92,7 @@ class AdminController implements RequestHandlerInterface
         private readonly ReminderSender $reminderSender,
         private readonly UrlGenerator $urlGenerator,
         private readonly Horde_Auth_Base $auth,
+        private readonly AssetCollector $assetCollector,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -101,7 +104,8 @@ class AdminController implements RequestHandlerInterface
 
         $action = $request->getQueryParams()['action'] ?? 'queue';
         $adminUrl = $this->urlGenerator->getWebroot() . '/admin/';
-        $renderer = new HtmlRenderer();
+        $assetManager = new PageOutputAssetManager($this->assetCollector);
+        $renderer = new HtmlRenderer(assetManager: $assetManager);
 
         $formHtml = match ($action) {
             'queue' => $this->handleQueueSubmission($request, $adminUrl, $renderer),

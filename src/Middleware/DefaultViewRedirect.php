@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Horde\Whups\Middleware;
 
 use Horde\Core\Service\PrefsService;
-use Horde\Routes\Mapper;
+use Horde\Core\Uri\RoutesProvider;
 use Horde_Registry;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -42,7 +42,7 @@ class DefaultViewRedirect implements MiddlewareInterface
     public function __construct(
         private readonly PrefsService $prefs,
         private readonly Horde_Registry $registry,
-        private readonly Mapper $mapper,
+        private readonly RoutesProvider $provider,
         private readonly ResponseFactoryInterface $responseFactory,
     ) {}
 
@@ -54,15 +54,13 @@ class DefaultViewRedirect implements MiddlewareInterface
         $prefValue = $this->prefs->getValue($uid, 'whups', 'whups_default_view');
         $routeName = self::PREF_TO_ROUTE[$prefValue] ?? self::FALLBACK_ROUTE;
 
-        // Verify route exists before generating — urlFor treats unknown names as raw URLs
-        if (!isset($this->mapper->routeNames[$routeName])) {
-            $routeName = self::FALLBACK_ROUTE;
+        $url = $this->provider->generateNamedPath($routeName);
+        if ($url === null) {
+            $url = $this->provider->generateNamedPath(self::FALLBACK_ROUTE);
         }
-        if (!isset($this->mapper->routeNames[$routeName])) {
+        if ($url === null) {
             return $handler->handle($request);
         }
-
-        $url = $this->mapper->utils->urlFor($routeName);
 
         return $this->responseFactory
             ->createResponse(302)
