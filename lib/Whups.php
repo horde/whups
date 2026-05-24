@@ -85,48 +85,48 @@ class Whups
         $full = false,
         $append_session = 0
     ) {
-        $mapper = $GLOBALS['injector']->getInstance('Horde\Routes\Mapper');
+        $provider = $GLOBALS['injector']->getInstance('Horde\Core\Uri\RoutesProvider');
 
         switch ($controller) {
             case 'ticket':
-                $url = $mapper->utils->urlFor('TicketView', ['id' => (int) $data]);
+                $url = $provider->generateNamedPath('TicketView', ['id' => (int) $data]);
                 break;
 
             case 'ticket_rss':
-                $url = $mapper->utils->urlFor('TicketRss', ['id' => (int) $data]);
+                $url = $provider->generateNamedPath('TicketRss', ['id' => (int) $data]);
                 break;
 
             case 'ticket_action':
                 [$action, $id] = $data;
-                $url = $mapper->utils->urlFor('TicketAction', ['id' => (int) $id, 'action' => $action]);
+                $url = $provider->generateNamedPath('TicketAction', ['id' => (int) $id, 'action' => $action]);
                 break;
 
             case 'queue':
                 $slug = is_array($data)
                     ? ($data['slug'] ?? (int) $data['id'])
                     : (int) $data;
-                $url = $mapper->utils->urlFor('QueueView', ['slug' => $slug]);
+                $url = $provider->generateNamedPath('QueueView', ['slug' => $slug]);
                 break;
 
             case 'query':
                 $slug = is_array($data)
                     ? ($data['slug'] ?? $data['id'])
                     : (int) $data;
-                $url = $mapper->utils->urlFor('QueryRun', ['slug' => $slug]);
+                $url = $provider->generateNamedPath('QueryRun', ['slug' => $slug]);
                 break;
 
             case 'query_rss':
                 $slug = is_array($data)
                     ? ($data['slug'] ?? $data['id'])
                     : (int) $data;
-                $url = $mapper->utils->urlFor('QueryRss', ['slug' => $slug]);
+                $url = $provider->generateNamedPath('QueryRss', ['slug' => $slug]);
                 break;
 
             default:
                 return new Horde_Url('');
         }
 
-        return new Horde_Url($url, $full);
+        return new Horde_Url($url ?? '', $full);
     }
 
     /**
