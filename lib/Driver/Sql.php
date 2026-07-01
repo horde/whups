@@ -1543,6 +1543,16 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
      */
     public function getQueueSummary($queue_ids)
     {
+        // Cache key based on queue IDs to handle different queue combinations
+        $cache_key = 'whups.queuesummary.' . md5(serialize($queue_ids));
+
+        // Check cache first
+        $cached = $this->_cacheGet($cache_key);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        // If not cached, execute the expensive query
         $qstring = implode(', ', array_map('intval', $queue_ids));
 
         $sql = 'SELECT q.queue_id AS id, q.queue_slug AS slug, '
@@ -1563,7 +1573,12 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
             throw new Whups_Exception($e);
         }
 
-        return $this->_fromBackend($queues);
+        $result = $this->_fromBackend($queues);
+
+        // Cache for 2 minutes (120 seconds)
+        $this->_cacheSet($cache_key, $result, 120);
+
+        return $result;
     }
 
     /**
