@@ -37,14 +37,7 @@ $request = $request->withAttribute('route', [
     'slug' => $slug ?: $id,
 ]);
 
-$controller = new ViewController(
-    $whups_driver,
-    $notification,
-    $page_output,
-    $session,
-    $prefs->getValue('whups_default_view'),
-    $registry->get('webroot', 'whups'),
-);
+$controller = $injector->getInstance(ViewController::class);
 
 $response = $controller->handle($request);
 (new ResponseWriterWeb())->writeResponse($response);
