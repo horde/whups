@@ -10,6 +10,7 @@ use Horde_Compress;
 use Horde_Compress_Zip;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Whups_Mime_Viewer_zip;
 
 /**
  * Tests the ZIP compress/decompress cycle as used by the Whups MIME viewer.
@@ -21,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  *
  * This test asserts that contract is fulfilled by the PSR-4 CompressFactory.
  */
-#[CoversClass(\Whups_Mime_Viewer_zip::class)]
+#[CoversClass(Whups_Mime_Viewer_zip::class)]
 class MimeViewerZipTest extends TestCase
 {
     public function testDecompressZipDataReturnsRawString(): void
