@@ -20,7 +20,7 @@
         "tickets",
         "helpdesk"
     ],
-    "time": "2026-05-19",
+    "time": "2026-07-08",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",

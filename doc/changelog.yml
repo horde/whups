@@ -1,300 +1,14 @@
 ---
-4.0.0-beta7:
-  api: 4.0.0-beta7
+4.0.0-RC2:
+  api: 4.0.0-RC2
   state:
-    release: beta
-    api: beta
-  date: 2026-05-16
+    release: RC
+    api: RC
+  date: 2026-07-08
   license:
     identifier: BSD-2-Clause
     uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: Don't redirect to non-existing routes
-    fix(routes): use DefaultStack::get() instead of custom fatStack
-    fix: getAuth may return false on not authenticated but contract demands a string
-4.0.0-beta6:
-  api: 4.0.0-beta6
-  state:
-    release: beta
-    api: beta
-  date: 2026-05-02
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    Fix phpunit deprecations and other testing issues
-    docs: icon license
-    style: Changed CSS and icon assets to Lucide Icons with proper attribution
-    refactor: Accept Horde\Util\Variables in most places which accept Horde_Variables
-    fix: Cannot use new with a static function
-    fix: Use Horde_Form::createVariable() instead of new Horde_Form_Variable()
-    chore(metadata): Fix autoloading rules
-    test: Cover modern forms and RDO Backend
-    feat: feature switch to use whups_driver or Rdo based backend
-    feat: Migrate to controllers and service architecture
-    test: Cover DDD objects with tests
-    refactor: Rewire routes to use individual controllers rather than WhupsUi
-    refactor: Delete many endpoints, we rely on rampage now
-    refactor: Delete many old style Horde_Forms obsoleted by refactor.
-    feat: Implement a DDD domain for whups
-    refactor: Factor out ticket sorting into an injectable TicketSorter
-    fix: DI of ticket controllers failed due to Horde_Group binding
-    refactor: Replace old Horde_Session usage in remaining controllers with HordeSession
-    refactor: Use urlgenerator directly instead of static method
-    refactor: ReportsController now actually uses the permissions service rather than the static
-    refactor(controllers): Consistently use the new topbar service
-    feat: Provide a reusable TopbarService
-    refactor(ResponseTrait): Remove dependency on static addTopbarSearch
-    refactor(QueueViewController, TicketCreateController): Inject topbar directly rather than using static helper
-    refactor(reports): use modern HordeSession and DI rather than globals.
-    refactor: Reports controller
-    style: php-cs-fixer
-    refactor: Support whups as the entrypoint script
-4.0.0-beta5:
-  api: 4.0.0-beta5
-  state:
-    release: beta
-    api: beta
-  date: 2026-04-13
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: Match classic file paths
-    docs: create/update conf.php.dist
-    fix: guard convertCharset() against null getContents() for PHP 8.1+
-    refactor: Convert prototypejs to vanilla js
-4.0.0-beta4:
-  api: 4.0.0-beta4
-  state:
-    release: beta
-    api: beta
-  date: 2026-04-10
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: Type hint against the interface, not the base class
-4.0.0-beta3:
-  api: 4.0.0-beta3
-  state:
-    release: beta
-    api: beta
-  date: 2026-04-10
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    test: upgrade unit test suite and add contract tests for some pages
-    refactor: Replace Horde::url with explicit calls to registry and Horde_Url or use router
-    refactor: turn some endpoints into thin shims around controllers
-    feat: Begin refactoring opensearch, queue view and rss endpoints into controllers
-    refactor: Use horde routes mapper and always prefer the pretty route
-    feat: Onboard all routes of whups to the routes file
-4.0.0-beta2:
-  api: 4.0.0-beta2
-  state:
-    release: beta
-    api: beta
-  date: 2026-04-09
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: Multiple architecture violations with Horde:: or Horde_Deprecated:: calls
-    fix: Various strftime architecture violations.
-    fix: We want to skip to the next ticket, not to the end of the switch
-    feat: Offload some expensive parts of report generation to driver
-    feat: Cache generated reports.
-    chore(hordeyml): Whups now depends on horde/cache and PSR cache interfaces
-    style: php-cs-fixer
-    feat: Cache for metadata which only changes on admin actions
-    Merge pull request #6 from horde/feat/replace-horde-template
-    feat: Replace Horde_Template with Horde_View
-    fix: More defensive code when trying to drop tables
-    docs: Clarify where to put local overrides
-    chore: Use named params for clarity
-    fix: Accept both types of variables
-    fix(ticket/attachements.php): use ticket->getId() instead of undefined $id variable
-4.0.0-beta1:
-  api: 4.0.0-beta1
-  state:
-    release: beta
-    api: beta
-  date: 2026-03-17
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: necessary alpha phase BC break in forms library
-    chore: commit metadata after release
-    fix: Don't make webhook related configs mandatory in whups config screen
-4.0.0-alpha11:
-  api: 4.0.0-alpha11
-  state:
-    release: alpha
-    api: alpha
-  date: 2026-03-07
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: handle Whups_Query object in session comparison
-    Merge pull request #3 from amulet1/fix_hook_class
-    Revert "fix: Make example hook only load if not yet loaded. Users should follow this example"
-    Merge pull request #2 from amulet1/autoload_renderer
-    fix: Modify VarRenderer class name to facilitate autoloading
-    Merge pull request #1 from jcdelepine/FRAMEWORK_6_0
-    Update whups.po
-    feat: update French translation and POT file for Whups
-    feat: Use routes framework for index.php and create a stub for a webhook receiver.
-    f
-    fix: Don't break form if no queues are configured
-    fix: Remove undefined $info parameter
-4.0.0-alpha10:
-  api: 4.0.0-alpha10
-  state:
-    release: alpha
-    api: alpha
-  date: 2026-03-07
-  license:
-    identifier: BSD-2-Clause
-    uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    Merge pull request #3 from amulet1/fix_hook_class
-    Revert "fix: Make example hook only load if not yet loaded. Users should follow this example"
-    Merge pull request #2 from amulet1/autoload_renderer
-    fix: Modify VarRenderer class name to facilitate autoloading
-    Merge pull request #1 from jcdelepine/FRAMEWORK_6_0
-    Update whups.po
-    feat: update French translation and POT file for Whups
-    feat: Use routes framework for index.php and create a stub for a webhook receiver.
-    f
-    fix: Don't break form if no queues are configured
-    fix: Remove undefined $info parameter
-4.0.0-alpha9:
-  api: 4.0.0-alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2025-06-04
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    feat: Stub of custom config form
-    style: Apply php-cs-fixer php 8.3 ruleset
-4.0.0-alpha8:
-  api: 4.0.0-alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2025-05-29
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    ci: Update php-cs-fixer rules
-    fix: Signature of getInfo method in Search form.
-4.0.0-alpha7:
-  api: 4.0.0-alpha1
-  state:
-    release: true
-    api: true
-  date: 2025-05-21
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    fix: Make example hook only load if not yet loaded. Users should follow this example
-    fix: Use return value rather than pass-by-reference
-    fix: Bug #15187 https://bugs.horde.org/ticket/15187 Whups 'Edit Types' fails due to static/non-static clash
-    fix: Remove reference from signatures.
-4.0.0-alpha6:
-  api: 4.0.0-alpha1
-  state:
-    release: true
-    api: true
-  date: 2025-05-12
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    fix: Use classmap autoloader. Whups is not strictly PSR-0
-4.0.0-alpha5:
-  api: 4.0.0alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2024-01-10
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 4.0.0alpha5
-    [rla] Fix multiple incompatibilities with PHP 8.2.
-    |+
-4.0.0-alpha4:
-  api: 4.0.0alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2024-01-10
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 4.0.0alpha4
-    [rla] Mark compatible with PHP 8.
-    |+
-4.0.0-alpha3:
-  api: 4.0.0alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2021-03-13
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |-
-    Original version string was 4.0.0alpha3
-    |+
-4.0.0-alpha2:
-  api: 4.0.0alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2021-02-24
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |-
-    Original version string was 4.0.0alpha2
-    |+
-4.0.0-alpha1:
-  api: 4.0.0alpha1
-  state:
-    release: beta
-    api: beta
-  date: 2021-02-24
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 4.0.0alpha1
-    [jan] Don't send ticket notifications if the original message was a bulk message.
-    [jan] Add download of ticket history to an HTML file.
-    [jan] Add saved queries to sidebar menu.
-    [jan] Store incoming email messages separately from attachments.
-    [jan] Return due dates in API methods.
-    [jan] Add batch-deletion of tickets from result lists.
-    [jan] Use confirm buttons instead of dropdown when deleting tickets.
-    [jan] Display ticket listeners to authenticated users.
-    [jan] Add Cc: addresses as listeners when creating tickets from emails.
-    [jan] Show users' full names in responsible user lists.
-    [jan] Add option to not obfuscate email addresses (horde@iotti.biz, Request #13848).
-    [jan] Allow to set new due date through API (Karim Geiger <me@karim-geiger.de>).
-    [jan] Add ticket_create hook.
+  notes: "style: use \"use\" statement\nfix(queue): resolve queue ViewController via injector to match new signature\nperf: cache getQueueSummary() results for 2 minutes\nrefactor(routes): migrate Whups::urlFor() from legacy Mapper to RoutesProvider\nrefactor(routes): replace Mapper with RoutesProvider in UrlGenerator and DefaultViewRedirect\ndocs(UrlGenerator): comment future migration to RouteUrlWriter\nrefactor: use PSR-4 version of compress\nrefactor: Use builder pattern for routes\nchore: Update workflow dependency"
 4.0.0-RC1:
   api: 4.0.0-RC1
   state:
@@ -304,8 +18,187 @@
   license:
     identifier: BSD-2-Clause
     uri: https://spdx.org/licenses/BSD-2-Clause.html
-  notes: |-
-    fix: filter criterion for RdoTicketRepository
+  notes: 'fix: filter criterion for RdoTicketRepository'
+4.0.0-beta7:
+  api: 4.0.0-beta7
+  state:
+    release: beta
+    api: beta
+  date: 2026-05-16
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "fix: Don't redirect to non-existing routes\nfix(routes): use DefaultStack::get() instead of custom fatStack\nfix: getAuth may return false on not authenticated but contract demands a string"
+4.0.0-beta6:
+  api: 4.0.0-beta6
+  state:
+    release: beta
+    api: beta
+  date: 2026-05-02
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "Fix phpunit deprecations and other testing issues\ndocs: icon license\nstyle: Changed CSS and icon assets to Lucide Icons with proper attribution\nrefactor: Accept Horde\\Util\\Variables in most places which accept Horde_Variables\nfix: Cannot use new with a static function\nfix: Use Horde_Form::createVariable() instead of new Horde_Form_Variable()\nchore(metadata): Fix autoloading rules\ntest: Cover modern forms and RDO Backend\nfeat: feature switch to use whups_driver or Rdo based backend\nfeat: Migrate to controllers and service architecture\ntest: Cover DDD objects with tests\nrefactor: Rewire routes to use individual controllers rather than WhupsUi\nrefactor: Delete many endpoints, we rely on rampage now\nrefactor: Delete many old style Horde_Forms obsoleted by refactor.\nfeat: Implement a DDD domain for whups\nrefactor: Factor out ticket sorting into an injectable TicketSorter\nfix: DI of ticket controllers failed due to Horde_Group binding\nrefactor: Replace old Horde_Session usage in remaining controllers with HordeSession\nrefactor: Use urlgenerator directly instead of static method\nrefactor: ReportsController now actually uses the permissions service rather than the static\nrefactor(controllers): Consistently use the new topbar service\nfeat: Provide a reusable TopbarService\nrefactor(ResponseTrait): Remove dependency on static addTopbarSearch\nrefactor(QueueViewController, TicketCreateController): Inject topbar directly rather than using static helper\nrefactor(reports): use modern HordeSession and DI rather than globals.\nrefactor: Reports controller\nstyle: php-cs-fixer\nrefactor: Support whups as the entrypoint script"
+4.0.0-beta5:
+  api: 4.0.0-beta5
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-13
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "fix: Match classic file paths\ndocs: create/update conf.php.dist\nfix: guard convertCharset() against null getContents() for PHP 8.1+\nrefactor: Convert prototypejs to vanilla js"
+4.0.0-beta4:
+  api: 4.0.0-beta4
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-10
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: 'fix: Type hint against the interface, not the base class'
+4.0.0-beta3:
+  api: 4.0.0-beta3
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-10
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "test: upgrade unit test suite and add contract tests for some pages\nrefactor: Replace Horde::url with explicit calls to registry and Horde_Url or use router\nrefactor: turn some endpoints into thin shims around controllers\nfeat: Begin refactoring opensearch, queue view and rss endpoints into controllers\nrefactor: Use horde routes mapper and always prefer the pretty route\nfeat: Onboard all routes of whups to the routes file"
+4.0.0-beta2:
+  api: 4.0.0-beta2
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-09
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "fix: Multiple architecture violations with Horde:: or Horde_Deprecated:: calls\nfix: Various strftime architecture violations.\nfix: We want to skip to the next ticket, not to the end of the switch\nfeat: Offload some expensive parts of report generation to driver\nfeat: Cache generated reports.\nchore(hordeyml): Whups now depends on horde/cache and PSR cache interfaces\nstyle: php-cs-fixer\nfeat: Cache for metadata which only changes on admin actions\nMerge pull request #6 from horde/feat/replace-horde-template\nfeat: Replace Horde_Template with Horde_View\nfix: More defensive code when trying to drop tables\ndocs: Clarify where to put local overrides\nchore: Use named params for clarity\nfix: Accept both types of variables\nfix(ticket/attachements.php): use ticket->getId() instead of undefined $id variable"
+4.0.0-beta1:
+  api: 4.0.0-beta1
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-17
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "fix: necessary alpha phase BC break in forms library\nchore: commit metadata after release\nfix: Don't make webhook related configs mandatory in whups config screen"
+4.0.0-alpha11:
+  api: 4.0.0-alpha11
+  state:
+    release: alpha
+    api: alpha
+  date: 2026-03-07
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "fix: handle Whups_Query object in session comparison\nMerge pull request #3 from amulet1/fix_hook_class\nRevert \"fix: Make example hook only load if not yet loaded. Users should follow this example\"\nMerge pull request #2 from amulet1/autoload_renderer\nfix: Modify VarRenderer class name to facilitate autoloading\nMerge pull request #1 from jcdelepine/FRAMEWORK_6_0\nUpdate whups.po\nfeat: update French translation and POT file for Whups\nfeat: Use routes framework for index.php and create a stub for a webhook receiver.\nf\nfix: Don't break form if no queues are configured\nfix: Remove undefined $info parameter"
+4.0.0-alpha10:
+  api: 4.0.0-alpha10
+  state:
+    release: alpha
+    api: alpha
+  date: 2026-03-07
+  license:
+    identifier: BSD-2-Clause
+    uri: https://spdx.org/licenses/BSD-2-Clause.html
+  notes: "Merge pull request #3 from amulet1/fix_hook_class\nRevert \"fix: Make example hook only load if not yet loaded. Users should follow this example\"\nMerge pull request #2 from amulet1/autoload_renderer\nfix: Modify VarRenderer class name to facilitate autoloading\nMerge pull request #1 from jcdelepine/FRAMEWORK_6_0\nUpdate whups.po\nfeat: update French translation and POT file for Whups\nfeat: Use routes framework for index.php and create a stub for a webhook receiver.\nf\nfix: Don't break form if no queues are configured\nfix: Remove undefined $info parameter"
+4.0.0-alpha9:
+  api: 4.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-06-04
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "feat: Stub of custom config form\nstyle: Apply php-cs-fixer php 8.3 ruleset\n"
+4.0.0-alpha8:
+  api: 4.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-05-29
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "ci: Update php-cs-fixer rules\nfix: Signature of getInfo method in Search form.\n"
+4.0.0-alpha7:
+  api: 4.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-21
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "fix: Make example hook only load if not yet loaded. Users should follow this example\nfix: Use return value rather than pass-by-reference\nfix: Bug #15187 https://bugs.horde.org/ticket/15187 Whups 'Edit Types' fails due to static/non-static clash\nfix: Remove reference from signatures.\n"
+4.0.0-alpha6:
+  api: 4.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-12
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "fix: Use classmap autoloader. Whups is not strictly PSR-0\n"
+4.0.0-alpha5:
+  api: 4.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2024-01-10
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 4.0.0alpha5\n[rla] Fix multiple incompatibilities with PHP 8.2.\n|+\n"
+4.0.0-alpha4:
+  api: 4.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2024-01-10
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 4.0.0alpha4\n[rla] Mark compatible with PHP 8.\n|+\n"
+4.0.0-alpha3:
+  api: 4.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-03-13
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 4.0.0alpha3\n|+"
+4.0.0-alpha2:
+  api: 4.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-02-24
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 4.0.0alpha2\n|+"
+4.0.0-alpha1:
+  api: 4.0.0alpha1
+  state:
+    release: beta
+    api: beta
+  date: 2021-02-24
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 4.0.0alpha1\n[jan] Don't send ticket notifications if the original message was a bulk message.\n[jan] Add download of ticket history to an HTML file.\n[jan] Add saved queries to sidebar menu.\n[jan] Store incoming email messages separately from attachments.\n[jan] Return due dates in API methods.\n[jan] Add batch-deletion of tickets from result lists.\n[jan] Use confirm buttons instead of dropdown when deleting tickets.\n[jan] Display ticket listeners to authenticated users.\n[jan] Add Cc: addresses as listeners when creating tickets from emails.\n[jan] Show users' full names in responsible user lists.\n[jan] Add option to not obfuscate email addresses (horde@iotti.biz, Request #13848).\n[jan] Allow to set new due date through API (Karim Geiger <me@karim-geiger.de>).\n[jan] Add ticket_create hook.\n"
 3.0.13:
   api: 3.0.0
   state:
@@ -315,7 +208,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: ~
+  notes: null
 3.0.12:
   api: 3.0.0
   state:
@@ -325,8 +218,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Officially support PHP 7.
+  notes: "[jan] Officially support PHP 7.\n"
 3.0.11:
   api: 3.0.0
   state:
@@ -336,11 +228,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] SECURITY: Fix open redirects.
-    [jan] Fix decoding serialized attributes loaded from the backend.
-    [jan] Don't allow to add unsported image attributes (Bug #14659).
-    [jan] Fix deleting attributes from ticket types (Bug 14111).
+  notes: "[jan] SECURITY: Fix open redirects.\n[jan] Fix decoding serialized attributes loaded from the backend.\n[jan] Don't allow to add unsported image attributes (Bug #14659).\n[jan] Fix deleting attributes from ticket types (Bug 14111).\n"
 3.0.10:
   api: 3.0.0
   state:
@@ -350,8 +238,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] SECURITY: Fix permission check when downloading reports.
+  notes: "[jan] SECURITY: Fix permission check when downloading reports.\n"
 3.0.9:
   api: 3.0.0
   state:
@@ -361,8 +248,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Update German translation.
+  notes: "[jan] Update German translation.\n"
 3.0.8:
   api: 3.0.0
   state:
@@ -372,9 +258,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Update Portuguese translation.
-    [mjr] Fix decoding custom attributes for display (Bug #14326).
+  notes: "[jan] Update Portuguese translation.\n[mjr] Fix decoding custom attributes for display (Bug #14326).\n"
 3.0.7:
   api: 3.0.0
   state:
@@ -384,9 +268,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix displaying ticket creators with names when creating tickets from emails.
-    [jan] If set, use Reply-To: address for the ticket creator when creating tickets from emails.
+  notes: "[jan] Fix displaying ticket creators with names when creating tickets from emails.\n[jan] If set, use Reply-To: address for the ticket creator when creating tickets from emails.\n"
 3.0.6:
   api: 3.0.0
   state:
@@ -396,11 +278,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Use access rules compatible with both Apache 2.2 and 2.4.
-    [jan] Fix updating tickets with owners via the API (Neal Thomas Oakey <oakey@b1-systems.de>).
-    [mjr] Fix incorrect casting of numeric strings to integers (Bug #14146).
-    [mjr] Allow due date to be changed via the API (Neal Thomas Oakey <oakey@b1-systems.de>).
+  notes: "[jan] Use access rules compatible with both Apache 2.2 and 2.4.\n[jan] Fix updating tickets with owners via the API (Neal Thomas Oakey <oakey@b1-systems.de>).\n[mjr] Fix incorrect casting of numeric strings to integers (Bug #14146).\n[mjr] Allow due date to be changed via the API (Neal Thomas Oakey <oakey@b1-systems.de>).\n"
 3.0.5:
   api: 3.0.0
   state:
@@ -410,9 +288,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [mjr] Fix some issues with adding tickets via the API.
-    [jan] Update Italian translation.
+  notes: "[mjr] Fix some issues with adding tickets via the API.\n[jan] Update Italian translation.\n"
 3.0.4:
   api: 3.0.0
   state:
@@ -422,10 +298,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Update Italian translation.
-    [jan] Update Czech translation.
-    [mjr] Fix validation of email field failing for valide RFC822 email lists (Bug #14063).
+  notes: "[jan] Update Italian translation.\n[jan] Update Czech translation.\n[mjr] Fix validation of email field failing for valide RFC822 email lists (Bug #14063).\n"
 3.0.3:
   api: 3.0.0
   state:
@@ -435,10 +308,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [mjr] Fix error reporting if listing of users failed (Bug #13944).
-    [jan] Don't make attribute description a required field.
-    [jan] Fix fatal error when assigning a ticket in certain use cases (Bug #13731).
+  notes: "[mjr] Fix error reporting if listing of users failed (Bug #13944).\n[jan] Don't make attribute description a required field.\n[jan] Fix fatal error when assigning a ticket in certain use cases (Bug #13731).\n"
 3.0.2:
   api: 3.0.0
   state:
@@ -448,9 +318,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix uploading attachments when assigning in step 4 (Bug #13621).
-    [jan] Fix sending reminders (Bug #12867).
+  notes: "[jan] Fix uploading attachments when assigning in step 4 (Bug #13621).\n[jan] Fix sending reminders (Bug #12867).\n"
 3.0.1:
   api: 3.0.0
   state:
@@ -460,75 +328,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix CSS styling of comment text.
-    [jan] Prefix ticket number exported via tasks API.
-    [mms] Fix whups-mail-filter binary.
-3.0.0-beta1:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-06-19
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 3.0.0beta1
-    [jan] Fix deleting attributes.
-    [jan] Add configuration option to include raw processed message.
-    [jan] Add due date to ticket columns (Request #10986).
-    [jan] Make columns of portal block configurable (Request #10986).
-3.0.0-RC3:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-11-19
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 3.0.0RC3
-    [jan] Fix empty notifications for assignees on ticket creation (Bug #12683).
-    [jan] Fix displaying of ticket tabs (Bug #12744).
-    [mjr] Fix sourceselect preference handling (Bug #12718).
-    [jan] Hide citings in comments by default.
-    [jan] Move attachments list to separate ticket tab.
-3.0.0-RC2:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-08-22
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 3.0.0RC2
-    [jan] Fix sorting tickets by date.
-    [jan] Fix setting ticket sort order.
-    [jan] Fix autocompletion for requester field.
-    [jan] Fix table header of query results.
-3.0.0-RC1:
-  api: 3.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2013-07-17
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 3.0.0RC1
-    [jan] Set assign and update dates when creating new tickets (Bug #12414).
-    [jan] Fix counting of responsible users (Bug #12406).
-    [jan] Never send empty messages.
-    [jan] Don't send reply messages to guests if disabled in preferences.
-    [jan] Fix downloading of attachments.
-    [jan] Add more tests to filter out bounces and auto-replies in the mail parser.
-    [jan] Hide topbar and sidebar when displaying attachments.
-    [jan] Fix displaying of multiple owners (Bug #12051).
+  notes: "[jan] Fix CSS styling of comment text.\n[jan] Prefix ticket number exported via tasks API.\n[mms] Fix whups-mail-filter binary.\n"
 3.0.0:
   api: 3.0.0
   state:
@@ -538,11 +338,47 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix updateTicket() API method (Bug #13011).
-    [jan] Add Swedish translation (Arne Nordmark <nordmark@mech.kth.se>).
-    [jan] Make shares table compatible with Oracle.
-    [jan] Add "show" API link.
+  notes: "[jan] Fix updateTicket() API method (Bug #13011).\n[jan] Add Swedish translation (Arne Nordmark <nordmark@mech.kth.se>).\n[jan] Make shares table compatible with Oracle.\n[jan] Add \"show\" API link.\n"
+3.0.0-RC3:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-11-19
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 3.0.0RC3\n[jan] Fix empty notifications for assignees on ticket creation (Bug #12683).\n[jan] Fix displaying of ticket tabs (Bug #12744).\n[mjr] Fix sourceselect preference handling (Bug #12718).\n[jan] Hide citings in comments by default.\n[jan] Move attachments list to separate ticket tab.\n"
+3.0.0-RC2:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-08-22
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 3.0.0RC2\n[jan] Fix sorting tickets by date.\n[jan] Fix setting ticket sort order.\n[jan] Fix autocompletion for requester field.\n[jan] Fix table header of query results.\n"
+3.0.0-RC1:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-07-17
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 3.0.0RC1\n[jan] Set assign and update dates when creating new tickets (Bug #12414).\n[jan] Fix counting of responsible users (Bug #12406).\n[jan] Never send empty messages.\n[jan] Don't send reply messages to guests if disabled in preferences.\n[jan] Fix downloading of attachments.\n[jan] Add more tests to filter out bounces and auto-replies in the mail parser.\n[jan] Hide topbar and sidebar when displaying attachments.\n[jan] Fix displaying of multiple owners (Bug #12051).\n"
+3.0.0-beta1:
+  api: 3.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2013-06-19
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 3.0.0beta1\n[jan] Fix deleting attributes.\n[jan] Add configuration option to include raw processed message.\n[jan] Add due date to ticket columns (Request #10986).\n[jan] Make columns of portal block configurable (Request #10986).\n"
 2.0.3:
   api: 2.0.0
   state:
@@ -552,13 +388,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix converting searches in individual queues to queries (Bug #11819).
-    [jan] Fix editing single attribute and text criteria in query editor.
-    [jan] Fix setting active tabs in query editor.
-    [jan] Group active and inactive versions in queue adminstration.
-    [jan] Fix auto-submitting of tickets if using groups (Bug #10654).
-    [jan] Improve error reporting in whups-mail-filter.
+  notes: "[jan] Fix converting searches in individual queues to queries (Bug #11819).\n[jan] Fix editing single attribute and text criteria in query editor.\n[jan] Fix setting active tabs in query editor.\n[jan] Group active and inactive versions in queue adminstration.\n[jan] Fix auto-submitting of tickets if using groups (Bug #10654).\n[jan] Improve error reporting in whups-mail-filter.\n"
 2.0.2:
   api: 2.0.0
   state:
@@ -568,10 +398,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix saving portal blocks.
-    [jan] Fix deleting queries (Bug #10985).
-    [jan] Fix encoding of auto-completion results (Bug #10945).
+  notes: "[jan] Fix saving portal blocks.\n[jan] Fix deleting queries (Bug #10985).\n[jan] Fix encoding of auto-completion results (Bug #10945).\n"
 2.0.1:
   api: 2.0.0
   state:
@@ -581,73 +408,7 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix some CLI scripts if run from a PEAR installation (Bug #10839).
-    [jan] Automatically create parent permissions when adding the first restricted comment.
-    [jan] Ignore messages from postmaster too when processing mails.
-    [jan] Add setting to use different addresses for Return-Path: and From: headers.
-    [jan] Fix whups-reminders script (Bug #10783).
-    [jan] Add Latvian translation (Jānis Eisaks).
-2.0.0-alpha1:
-  api: 2.0.0alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2011-09-27
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 2.0.0alpha1
-    First alpha release for Horde 4.
-    [jan] Fix automatic linking of bug numbers inside URLs (Bug #7081).
-    [jan] Don't search for all states if no states have been selected.
-    [jan] Add templates for delete and reminder notifications.
-    [jan] Add message template variable for recipient role.
-    [jan] Convert notification message templates to Horde_View.
-    [jan] Send notification when deleting tickets.
-    [jan] Fix determining whether to send updates without comments.
-    [jan] Send uploaded attachments with notification messages (Request #7615).
-    [mjr] Correctly set ticket version when changing queues (Bug #9645).
-    [jan] Add listSlugs API method.
-    [jan] Convert HTML messages to plain text when processing mail messages.
-    [jan] Fix creating temporary files with open_basedir restrictions.
-    [jan] Provide default configuration files instead of .dist versions.
-2.0.0-RC2:
-  api: 2.0.0RC2
-  state:
-    release: beta
-    api: beta
-  date: 2011-10-18
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 2.0.0RC2
-    [jan] Support more complex attributes types (Bug #9947).
-    [jan] Fix displaying form errors from updating tickets.
-    [jan] Allow to create private comments during ticket creation (Request #8312).
-    [jan] Fix addTicket API method.
-    [jan] Add missing default value for whups_priorities.priority_default column (Bug #10631).
-2.0.0-RC1:
-  api: 2.0.0RC1
-  state:
-    release: beta
-    api: beta
-  date: 2011-10-11
-  license:
-    identifier: BSD-2-Clause
-    uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    Original version string was 2.0.0RC1
-    [jan] Don't create stray update and assign permission (Bug #10624).
-    [jan] Add script to convert backends to UTF-8.
-    [jan] Fix executing queries on non-UTF-8 backends.
-    [jan] Add index to whups_attributes table.
-    [jan] Fix using custom SQL configurations.
-    [jan] Fix fatal error when updating address book preferences (Bug #10567).
-    [jan] Don't access protected properties in the addTicket/updateTicket API methods (Bug #10566).
-    [jan] Fix adding comments as a guest (Bug #10559).
+  notes: "[jan] Fix some CLI scripts if run from a PEAR installation (Bug #10839).\n[jan] Automatically create parent permissions when adding the first restricted comment.\n[jan] Ignore messages from postmaster too when processing mails.\n[jan] Add setting to use different addresses for Return-Path: and From: headers.\n[jan] Fix whups-reminders script (Bug #10783).\n[jan] Add Latvian translation (Jānis Eisaks).\n"
 2.0.0:
   api: 2.0.0
   state:
@@ -657,248 +418,42 @@
   license:
     identifier: BSD-2-Clause
     uri: http://www.horde.org/licenses/bsdl.php
-  notes: |
-    [jan] Fix rendering of attributes if a ticket's type has changed.
+  notes: "[jan] Fix rendering of attributes if a ticket's type has changed.\n"
+2.0.0-RC2:
+  api: 2.0.0RC2
+  state:
+    release: beta
+    api: beta
+  date: 2011-10-18
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 2.0.0RC2\n[jan] Support more complex attributes types (Bug #9947).\n[jan] Fix displaying form errors from updating tickets.\n[jan] Allow to create private comments during ticket creation (Request #8312).\n[jan] Fix addTicket API method.\n[jan] Add missing default value for whups_priorities.priority_default column (Bug #10631).\n"
+2.0.0-RC1:
+  api: 2.0.0RC1
+  state:
+    release: beta
+    api: beta
+  date: 2011-10-11
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 2.0.0RC1\n[jan] Don't create stray update and assign permission (Bug #10624).\n[jan] Add script to convert backends to UTF-8.\n[jan] Fix executing queries on non-UTF-8 backends.\n[jan] Add index to whups_attributes table.\n[jan] Fix using custom SQL configurations.\n[jan] Fix fatal error when updating address book preferences (Bug #10567).\n[jan] Don't access protected properties in the addTicket/updateTicket API methods (Bug #10566).\n[jan] Fix adding comments as a guest (Bug #10559).\n"
+2.0.0-alpha1:
+  api: 2.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2011-09-27
+  license:
+    identifier: BSD-2-Clause
+    uri: http://www.horde.org/licenses/bsdl.php
+  notes: "Original version string was 2.0.0alpha1\nFirst alpha release for Horde 4.\n[jan] Fix automatic linking of bug numbers inside URLs (Bug #7081).\n[jan] Don't search for all states if no states have been selected.\n[jan] Add templates for delete and reminder notifications.\n[jan] Add message template variable for recipient role.\n[jan] Convert notification message templates to Horde_View.\n[jan] Send notification when deleting tickets.\n[jan] Fix determining whether to send updates without comments.\n[jan] Send uploaded attachments with notification messages (Request #7615).\n[mjr] Correctly set ticket version when changing queues (Bug #9645).\n[jan] Add listSlugs API method.\n[jan] Convert HTML messages to plain text when processing mail messages.\n[jan] Fix creating temporary files with open_basedir restrictions.\n[jan] Provide default configuration files instead of .dist versions.\n"
 1.0.1:
-  notes: |
-    [jan] Fix Oracle SQL scripts.
-    [jan] Render private comments for everyone, but hide the comment text.
-    [jan] Add flag to disable old versions.
-    [jan] Apply simple markup highlighting on comments.
-    [jan] Save queue email addresses when editing queues (horde@hatzidakis.org, Bug #7905).
-    [jan] Fix charset conversion of comments added with mail-filter.php (thomas@gelf.net, Bug #7730).
-    [cjh] Show version changes in the ticket history.
-    [jan] Use all credentials and mailer settings when sending mails.
-    [cjh] Allow changing the queue version from the Update screen.
-    [cjh] Add more date formats to the report_time_format preference (b5b5b5b5@centrum.sk, Request #7793).
-    [jan] Escape SQL wildcards in string queries.
-    [cjh] Enforce queue permissions in ticket-listing blocks (Bug #7614).
-    [cjh] Ensure the DB library is explicitly loaded (Bug #7647).
-    [jan] Add Turkish translation (Akif Dinc <akif@dinc.org>).
-    [jan] Fix linking to queries if URL rewriting is turned off.
-1.0.0-RC2:
-  notes: |
-    Original version string was 1.0.0RC2
-    [jan] Add date search criteria (Duck <duck@obala.net>, Request #7274).
-    [cjh] Add an RSS feed of search results (Duck <duck@obala.net>, Request #7259).
-    [jan] Group statistics by ticket type.
-    [jan] Add Precedence and Auto-Submitted headers to notification messages (Request #7082).
-    [jan] Add In-Reply-To header to notification messages (Request #7103).
-    [jan] Add button to save searches as queries (Request #5921).
-    [jan] Add query slugs and RSS feeds (Request #5924).
-    [jan] Implement editing of query elements.
-    [mjr] Fix saving of queries.
-1.0.0-RC1:
-  notes: |
-    Original version string was 1.0.0RC1
-    [jan] Remove attributes hooks.
-    [jan] Add form replies.
-    [jan] Add support for queue-specific notification messages.
-    [jan] Add email address per queue for ticket notifications.
-    [jan] Use highlightquotes filter for quoted comments.
-    [jan] Send notification messages in flowed text format (requires Horde 3.2.1).
-    [jan] Allow to specify field types and parameters for attributes.
-    [jan] Add a hook that is called if a ticket is being updated, for automatic ticket changes.
-    [jan] Add auto-completion to retrieve requesters from the address book.
-    [jan] Add per-queue permission to manually set the ticket requester.
-    [jan] Deal with queue vs. admin permissions more consistently.
-    [jan] Add configuration option whether to include email headers in comments.
-    [cjh] Improve resource usage in datatree_to_sql share migration script (Bug #6740).
-    [cjh] Add an upgrade script for the new SQL share driver (Request #6109).
-    [jan] Add preference to only receive notifications if a comment has been added.
-    [jan] Send personalized ticket notification messages.
-    [jan] Add addAttachment API method.
-    [jan] Add message templates for email notifications.
-    [jan] Sequentially number comments (Request #4895).
-    [jan] Unset resolved date when un-resolving tickets (Bug #6310).
-    [jan] Add mail sender as requester when using the --default-auth argument with scripts/mail-filter.php.
-    [jan] Notify watchers that have just been added by email.
-    [jan] Add attributes search to query builder.
-    [jan] Rename API methods get_assigned_ticket_ids, get_requested_ticket_ids, get_schema, add_tickets, and set_ticket_attributes.
-    [jan] Add --guess-queue argument to mail-filter.php.
-    [cjh] Use pretty URLs if Horde is configured for them (Request #5922).
-    [jan] Add configuration for default types, states, and priorities.
-    [mjr] Attribute values now show correctly in initial ticket notifications.
-    [jan] Add a hook to customize field grouping in the ticket views.
-    [cjh] Combine Type and Category selects in search form (php@ideacode.com, Request #4928).
-    [jan] Show attribute changes in ticket history.
-    [jan] Allow scripts/mail-filter.php to process attachments.
-    [jan] Add ability to read messages from a mailbox to scripts/mail-filter.php.
-    [cjh] Don't re-use old attachment names even if the attachment has since been deleted (Bug #4472).
-    [cjh] Store the guest user associated with transactions that only add an attachment, with no comment text (Bug #2890).
-    [cjh] Include attribute values in ticket emails, including "diffs" for changes (Bug #1083).
-    [cjh] When creating a ticket, preserve attachments uploaded in step 3 when step 4 is used to assign the ticket (Bug #2514).
-    [cjh] When replying to a restricted comment, default to the same restriction (Request #4902).
-    [cjh] Support split read and write databases (<duck@obala.net>, Request #5926).
-    [jan] Add Lithuanian translation (Vilius Sumskas <vilius@lnk.lt>).
-    [cjh] Add an addComment API method.
-    [jan] Add OpenSearch interface for direct ticket access through browser bars.
-    [jan] Move all Whups-specific hook examples from Horde's config/ directory.
-    [cjh] Rename whups_tickets_listeners to whups_ticket_listeners for consistency.
-    [cjh] Add a tree menu block (Jakob Schroeter <js@camaya.net>).
-    [cjh] On the search screen, only show types that are associated with queues that are available/active (tinu@humbapa.ch, Request #4107).
-    [jan] Add Polish translation (Tadeusz Lesiecki <lesiecki@tmtsystem.pl>, Piotr Tarnowski <drfugazi@drfugazi.eu.org>).
-    [jan] Add Ukrainian translation (Andriy Kopystyansky <anri@polynet.lviv.ua>).
-    [cjh] Ensure that a due date in a prior year doesn't make the EditTicketForm invalid (Bug #4763).
-    [cjh] Remove saved searches (Request #4897).
-    [cjh] Calculate ticket date attributes when they change instead of on every access (php@ideacode.com, Request #4893).
-    [cjh] Queries are now managed as shares, but the serialized bits are stored and managed by Whups in their own dedicated table.
-    [jan] Allow guest access to query page.
-    [cjh] Smarter word wrapping in string representations of tickets (Request #4510).
-    [cjh] Add a Queue Summary block showing queues with the number of open tickets in each (Request #4628).
-    [cjh] Combine the People tab with the Update tab.
-    [cjh] Allow changing ticket queues as long as the user has DELETE permissions on the current queue and EDIT permissions on the new queue (tmerritt@email.arizona.edu, Request #4268).
-    [cjh] Add hours and minutes to due dates.
-    [cjh] Always use Summary for the ticket summary field label.
-    [jan] Add Slovenian translation (Duck <duck@obala.net>).
-    [cjh] Show the requester in search results (rodion (at) nezna (dot) com, Bug #2820).
-    [cjh] Show either the Comment or Update tabs depending on permissions, but not both.
-    [cjh] Report the last-updated date for tickets (Bug #2396).
-    [cjh] Tickets now have an optional due date field.
-    [cjh] New updateTicket API call (Ben Klang <ben@alkaloid.net>, Bug #4101).
-    [cjh] Check permissions when setting ticket attributes through an API call (Ben Klang <ben@alkaloid.net>, Bug #4098).
-    [cjh] If guests can add tickets but not view them, don't tell them adding failed (Bug #3630).
-    [cjh] Add Unassigned Tickets Horde_Block (Request #766).
-    [mas] Fix sorting in summary page to better handle dates. (Bug #2930)
-    [cjh] Add CAPTCHA support to the Add Comment and Create Ticket forms.
-    [cjh] Deliver RSS feeds in a way that supports USM (http://www.kbcafe.com/rss/usm.html, Request #2593).
-    [cjh] processMail() now ignores emails that were generated by Whups (Bug #3398).
-    [ben] Better support for MS-SQL.
-    [jan] Add Norwegian (Bokmal) translation (Torbjorn Grindhaug <grindhaug@gmail.com>).
-    [cjh] "My Bugs" page is now a Horde_Block layout (Request #3202).
-    [cjh] Fix permissions checking for ticket comments when an admin user is the one making the comment (Bug #2673).
-    [cjh] Delete searches by getvars string, not by name (Bug #3197).
-    [jan] Allow to assign tickets to foreign groups (ronny.adsetts@amazinginternet.com, Request #2477).
-    [cjh] Add support for dynamic re-sorting of search results, including saving the sort preferences on any changes.
-    [mas] Protect against HTML tags in the search results summary.
-    [jan] Allow other applications to provide versions.
-    [jan] Simplify UI for query editor and allow to search for versions.
-    [jan] Allow to send notification mails to queue-specific addresses (Marcus Boerger <helly@php.net>).
-    [jan] Allow other applications to provide queues.
-    [cjh] Add *-id arguments for type, priority, state, and queue to mail-filter.php (Bug #2347).
-    [cjh] Add a link to return to the list of search results, along with the previous/next links (Bug #1751).
-    [cjh] Fix the Quicksearch links.
-    [cjh] mail-filter.php now handles replies as well (Bug #280).
-    [cjh] Use the date_format preference for displaying TicketDetailsForm as well (Bug #2151).
-    [jan] Add Russian translation (Illya Belov <belov@iop.irkps.ru>).
-    [mas] Add ability to search by ticket requester.
-    [mas] Change any output of <b> and <i> tags to <strong> and <em> for better accessibility support.
-    [cjh] Add links to Update/Comment from individual transactions, which quote that transaction's comment text (Bug #823).
-    [cjh] Add explicit permissions for assigning and updating tickets (tmerritt@email.arizona.edu, Bug #1955).
-    [jan] Strike-through links to resolved tickets.
-    [jan] Make server name and port in mail-filter.php configurable (Bug #2004).
-    [cjh] Honor creator permissions on tickets (tmerritt@email.arizona.edu, Bug #1945).
-    [cjh] Implement ticket watchers (tmerritt@email.arizona.edu, Bug #867).
-    [cjh] Enforce permissions on queues in reports, let guests see reports if they have permissions (Bug #1812).
-    [cjh] Allow export templates to define a callback function for filtering data. Includes an example for properly quoting CSV data (Bug #1774).
-    [jan] Use bind variables in the SQL driver (Bug #1701).
-    [cjh] Queries are stored as Horde_Share objects with full permissions. (Bug #1481).
-    [cjh] Delete queue permissions when deleting a queue (Bug #1462).
-    [jan] Add MIME viewer for ZIP files.
-    [cjh] Queries can now be deleted (Bug #1193).
-    [cjh] Preserve the current search criteria when re-sorting results (Bug #1024).
-    [cjh] Link to ticket RSS feeds on all ticket display pages.
-    [cjh] Allow administrators to delete attachments (Bug #1252).
-    [cjh] Allow uploading an attachment when initially creating a ticket.
-    [cjh] Fix group-restricted comments (Bug #1225).
-    [jan] Add Brazilian Portuguese translation (Daniel V. Hoisel <daniel@maxlinux.com.br>).
-    [cjh] Whups_Mail::processMail needs to use Whups_Ticket for ticket creation to trigger email notifications, etc (Bug #1134).
-    [cjh] Allow inserting explicit Type filters into Query Builder queries (Bug #434).
-    [cjh] Force users to choose a queue when creating tickets with the goal of cutting down on misfiled tickets (Bug #588).
-    [cjh] Remove the Attachment tab, as it currently serves no purpose beyond the Comment tab (Bug #868).
-    [cjh] Add a numeric log_value_num field for faster logs table comparisons and for compatibility with databases that can't cast strings into integer comparisons (Oracle, etc) (rvs (at) angara (dot) ru).
-    [jan] Add Finnish translation (Leena Heino <liinu@uta.fi>).
-    [jan] Add Spanish translation (Manuel Perez Ayala <mperaya@alcazaba.unex.es>).
-    [cjh] The way ticket histories are stored and retrieved has been completely revamped to be quicker, more robust, and more complete.
-    [cjh] Add a 'summary' search option in the basic search form (Bug #269).
-    [cjh] Queue is now a valid query builder criterion.
-    [cjh] Add previous/next navigation when there's a current list of search results to navigate through.
-    [cjh] Changing a ticket's queue now also allows setting a queue version.
-    [cjh] Group ticket histories by transaction, not by individual change.
-    [cjh] Show users their saved queries as well as saved searches.
-    [jan] Add Simplified Chinese translation (Liaobin <liaobin@jite.net>).
-    [cjh] Add a basic "Update" screen for changing summary, state, priority, and adding attachments/comments, all at once.
-    [cjh] Finish renaming "module" to "queue" throughout the data and SQL.
-    [cjh] Add $conf['mail']['always_copy'] to allow Whups to always copy a specific email address on ticket mail.
-    [cjh] Mail can be configured to come from a single email address now, making it easier to allow Whups to post ticket email to a mailing list, etc.
-    [cjh] Add a "DO NOT REPLY" note to generated emails if Whups isn't configured to handle replies to ticket mail.
-    [cjh] Advertise permissions through the API.
-    [jan] Add Dutch translation (Stefan de Konink <skinkie@xs4all.nl>).
-    [cjh] Make ticket owners available in search results again.
-    [jan] Allow uploading of attachments.
-    [cjh] Allow assigning tickets to groups.
-    [cjh] Add Set Type action to the details page (Bo Daley <bo@tilda.com.au>).
-    [cjh] Allow clearing of all or individual searches (Bo Daley <bo@tilda.com.au>).
-    [cjh] Start of a reminder-sending daemon.
-    [cjh] Allow assignment of a ticket to multiple users.
-    [cjh] Queue/Type matrix is now functional and allows very quick editing of which ticket types are associated with each module.
-    [jan] Add Romanian translation (Eugen Hoanca <eugenh@urban-grafx.ro>).
-    [cjh] Allow much more flexible configuration of who gets email on various actions (Bo Daley <bo@tilda.com.au>).
-    [cjh] Whups can now send out simple reminders.
-    [cjh] By giving users the 'whups:admin' permission, people can administer individual queues in Whups, or just Whups as opposed to all of Horde.
-    [cjh] Allow multiple levels of sorting (first by date, then type, etc).
-    [cjh] Phrases in ticket comments can now be linked to the ticket in question automatically (Mike Baptiste <mike@msbnetworks.net>).
-    [cjh] Use Horde_Template to generate configurable reports from search result sets.
-    [cjh] Add a New Ticket link in the summary screen (Brian Keifer <brian@valinor.net>).
-    [cjh] Add a preference for not showing requested tickets in the summary screen (Brian Keifer <brian@valinor.net>).
-    [cjh] Prevent guest users from assigning tickets and make them enter the ticket password to change state/priority.
-    [cjh] Guest users can now add tickets and add comments to tickets when they have permissions to do so.
-    [cjh] We can now retrieve much more flexible datasets, such as the average time it takes to resolve a ticket by developer, requester, module, etc.
-    [cjh] Add a flexible set of stats, such as the average time a ticket is unresolved.
-    [cjh] Add a much more flexible set of graphs, and a "My Bugs" section for ticket summaries.
-    [cjh] Search results can now specify the results title header.
-    [cjh] Reports currently lacks pretty graphs, but now shows more useful information - all assigned and requested tickets.
-    [cjh] Fix usage of Variables:: class.
-    [jan] Add Traditional Chinese translation (David Chang <david@thbuo.gov.tw>).
-    [jan] Add Bulgarian translation (Miroslav Pendev <miro@cybershade.us>).
-    [cjh] Better enforcement of permissions on modules, especially during searches.
-    [cjh] Add options for how many comments are sent in bug emails, and in what order.
-    [cjh] Make sure that comments mailed to users don't include private comments they aren't authorized to see.
-    [cjh] Clean up the format of generated emails to be much clearer.
-    [cjh] All email notification triggers now work.
-    [cjh] Add a standard Horde menu.
-    [cjh] Add an Options screen.
-    [cjh] Fix the Query Builder.
-    [cjh] Whups now uses the Horde FormSprocket:: API for all form handling.
-    [cjh] Ticket search results are now fully sortable, and a user preference.
-    [jan] Add French translation (Thierry Thomas).
-    [cjh] Use users' identities for showing names of requester, owner, etc.
-    [cjh] Include assigned and resolved dates in the search results view.
-    [cjh] Include date created, assigned, and resolved in the details view.
-    [cjh] Don't show resolved tickets in the summary.
-    [cjh] Require permission (whups:hiddenComments, at level Edit) to make comments specific to a group.
-    [cjh] Display comments which are restricted differently.
-    [cjh] Add the ability to restrict viewing of a comment to a Group.
-    [cjh] Improve the reporting data that gets saved by a lot.
-    [jan] Add Czech translation.
-    [cjh] Fix some non-portable SQL.
-    [cjh] Add the option to keep track of different versions for a module.
-    [cjh] Fix problems when there are no types associated with a module.
-    [cjh] Default select lists which have only one value to that value. In some cases this allows for auto-filling of forms (creating tickets).
-    [cjh] Include session ID in forms/links.
-    [cjh] Only show users queues which they have permissions for.
-    [cjh] Add a link from the edit queue section to edit the permissions on that module.
-    [cjh] Add managing of which users can have tickets assigned to them, on a per-module basis.
-    [cjh] Remove the sample data, as it poses sequence problems and isn't needed now that the administration interface works.
-    [cjh] Don't create the sequence tables in whups.sql; PEAR needs to create them itself to get implementation-specific details right.
-    [cjh] Administration interface - adding, deleting, and editing of modules, types, states, and priorities all work now.
-    [jon] Adapt to the new Horde::img() syntax.
-    [cjh] Types can now map to multiple modules, instead of either one or global. This is a much more flexible setup, and actually allows re-use of types.
-    [cjh] Added a SetType for collections of on/off values (a checkbox set).
-    [cjh] Use $registry->get() in place of other $registry->get functions.
-    [cjh] Use WHUPS_TEMPLATES for template paths.
-    [jon] Enable the "portability" option in the SQL driver.
-    [jan] Remove the standard value for the language preference. The language to fall back to should be set Horde wide in lang.php instead.
-    [cjh] Add API method and implementation for adding modules.
-    [rec] Add query builder, many UI improvements, more horde-style design.
-    [cjh] Apply patches from Alex L. for assignment, users, etc.
-    [avsm] Replace $conf['paths'] with the $registry equivalents.
-    [cjh] Convert short tags (<?) to <?php.
-    [cjh] Make all copyright notices refer to BSD license.
-    [cjh] Added initial CHANGES file.
+  notes: "[jan] Fix Oracle SQL scripts.\n[jan] Render private comments for everyone, but hide the comment text.\n[jan] Add flag to disable old versions.\n[jan] Apply simple markup highlighting on comments.\n[jan] Save queue email addresses when editing queues (horde@hatzidakis.org, Bug #7905).\n[jan] Fix charset conversion of comments added with mail-filter.php (thomas@gelf.net, Bug #7730).\n[cjh] Show version changes in the ticket history.\n[jan] Use all credentials and mailer settings when sending mails.\n[cjh] Allow changing the queue version from the Update screen.\n[cjh] Add more date formats to the report_time_format preference (b5b5b5b5@centrum.sk, Request #7793).\n[jan] Escape SQL wildcards in string queries.\n[cjh] Enforce queue permissions in ticket-listing blocks (Bug #7614).\n[cjh] Ensure the DB library is explicitly loaded (Bug #7647).\n[jan] Add Turkish translation (Akif Dinc <akif@dinc.org>).\n[jan] Fix linking to queries if URL rewriting is turned off.\n"
 1.0.0:
-  notes: |
-    [jan] Change group field in shares table to work with LDAP groups (Bug #6883).
-    [jan] Fix rendering attribute criteria in the query tree.
-    [jan] Generate a valid Message-ID.
-    [mjr] Fix an issue with searching on installations with a single queue that was causing all existing tickets in the queue to be displayed on entering the search page.
+  notes: "[jan] Change group field in shares table to work with LDAP groups (Bug #6883).\n[jan] Fix rendering attribute criteria in the query tree.\n[jan] Generate a valid Message-ID.\n[mjr] Fix an issue with searching on installations with a single queue that was causing all existing tickets in the queue to be displayed on entering the search page.\n"
+1.0.0-RC2:
+  notes: "Original version string was 1.0.0RC2\n[jan] Add date search criteria (Duck <duck@obala.net>, Request #7274).\n[cjh] Add an RSS feed of search results (Duck <duck@obala.net>, Request #7259).\n[jan] Group statistics by ticket type.\n[jan] Add Precedence and Auto-Submitted headers to notification messages (Request #7082).\n[jan] Add In-Reply-To header to notification messages (Request #7103).\n[jan] Add button to save searches as queries (Request #5921).\n[jan] Add query slugs and RSS feeds (Request #5924).\n[jan] Implement editing of query elements.\n[mjr] Fix saving of queries.\n"
+1.0.0-RC1:
+  notes: "Original version string was 1.0.0RC1\n[jan] Remove attributes hooks.\n[jan] Add form replies.\n[jan] Add support for queue-specific notification messages.\n[jan] Add email address per queue for ticket notifications.\n[jan] Use highlightquotes filter for quoted comments.\n[jan] Send notification messages in flowed text format (requires Horde 3.2.1).\n[jan] Allow to specify field types and parameters for attributes.\n[jan] Add a hook that is called if a ticket is being updated, for automatic ticket changes.\n[jan] Add auto-completion to retrieve requesters from the address book.\n[jan] Add per-queue permission to manually set the ticket requester.\n[jan] Deal with queue vs. admin permissions more consistently.\n[jan] Add configuration option whether to include email headers in comments.\n[cjh] Improve resource usage in datatree_to_sql share migration script (Bug #6740).\n[cjh] Add an upgrade script for the new SQL share driver (Request #6109).\n[jan] Add preference to only receive notifications if a comment has been added.\n[jan] Send personalized ticket notification messages.\n[jan] Add addAttachment API method.\n[jan] Add message templates for email notifications.\n[jan] Sequentially number comments (Request #4895).\n[jan] Unset resolved date when un-resolving tickets (Bug #6310).\n[jan] Add mail sender as requester when using the --default-auth argument with scripts/mail-filter.php.\n[jan] Notify watchers that have just been added by email.\n[jan] Add attributes search to query builder.\n[jan] Rename API methods get_assigned_ticket_ids, get_requested_ticket_ids, get_schema, add_tickets, and set_ticket_attributes.\n[jan] Add --guess-queue argument to mail-filter.php.\n[cjh] Use pretty URLs if Horde is configured for them (Request #5922).\n[jan] Add configuration for default types, states, and priorities.\n[mjr] Attribute values now show correctly in initial ticket notifications.\n[jan] Add a hook to customize field grouping in the ticket views.\n[cjh] Combine Type and Category selects in search form (php@ideacode.com, Request #4928).\n[jan] Show attribute changes in ticket history.\n[jan] Allow scripts/mail-filter.php to process attachments.\n[jan] Add ability to read messages from a mailbox to scripts/mail-filter.php.\n[cjh] Don't re-use old attachment names even if the attachment has since been deleted (Bug #4472).\n[cjh] Store the guest user associated with transactions that only add an attachment, with no comment text (Bug #2890).\n[cjh] Include attribute values in ticket emails, including \"diffs\" for changes (Bug #1083).\n[cjh] When creating a ticket, preserve attachments uploaded in step 3 when step 4 is used to assign the ticket (Bug #2514).\n[cjh] When replying to a restricted comment, default to the same restriction (Request #4902).\n[cjh] Support split read and write databases (<duck@obala.net>, Request #5926).\n[jan] Add Lithuanian translation (Vilius Sumskas <vilius@lnk.lt>).\n[cjh] Add an addComment API method.\n[jan] Add OpenSearch interface for direct ticket access through browser bars.\n[jan] Move all Whups-specific hook examples from Horde's config/ directory.\n[cjh] Rename whups_tickets_listeners to whups_ticket_listeners for consistency.\n[cjh] Add a tree menu block (Jakob Schroeter <js@camaya.net>).\n[cjh] On the search screen, only show types that are associated with queues that are available/active (tinu@humbapa.ch, Request #4107).\n[jan] Add Polish translation (Tadeusz Lesiecki <lesiecki@tmtsystem.pl>, Piotr Tarnowski <drfugazi@drfugazi.eu.org>).\n[jan] Add Ukrainian translation (Andriy Kopystyansky <anri@polynet.lviv.ua>).\n[cjh] Ensure that a due date in a prior year doesn't make the EditTicketForm invalid (Bug #4763).\n[cjh] Remove saved searches (Request #4897).\n[cjh] Calculate ticket date attributes when they change instead of on every access (php@ideacode.com, Request #4893).\n[cjh] Queries are now managed as shares, but the serialized bits are stored and managed by Whups in their own dedicated table.\n[jan] Allow guest access to query page.\n[cjh] Smarter word wrapping in string representations of tickets (Request #4510).\n[cjh] Add a Queue Summary block showing queues with the number of open tickets in each (Request #4628).\n[cjh] Combine the People tab with the Update tab.\n[cjh] Allow changing ticket queues as long as the user has DELETE permissions on the current queue and EDIT permissions on the new queue (tmerritt@email.arizona.edu, Request #4268).\n[cjh] Add hours and minutes to due dates.\n[cjh] Always use Summary for the ticket summary field label.\n[jan] Add Slovenian translation (Duck <duck@obala.net>).\n[cjh] Show the requester in search results (rodion (at) nezna (dot) com, Bug #2820).\n[cjh] Show either the Comment or Update tabs depending on permissions, but not both.\n[cjh] Report the last-updated date for tickets (Bug #2396).\n[cjh] Tickets now have an optional due date field.\n[cjh] New updateTicket API call (Ben Klang <ben@alkaloid.net>, Bug #4101).\n[cjh] Check permissions when setting ticket attributes through an API call (Ben Klang <ben@alkaloid.net>, Bug #4098).\n[cjh] If guests can add tickets but not view them, don't tell them adding failed (Bug #3630).\n[cjh] Add Unassigned Tickets Horde_Block (Request #766).\n[mas] Fix sorting in summary page to better handle dates. (Bug #2930)\n[cjh] Add CAPTCHA support to the Add Comment and Create Ticket forms.\n[cjh] Deliver RSS feeds in a way that supports USM (http://www.kbcafe.com/rss/usm.html, Request #2593).\n[cjh] processMail() now ignores emails that were generated by Whups (Bug #3398).\n[ben] Better support for MS-SQL.\n[jan] Add Norwegian (Bokmal) translation (Torbjorn Grindhaug <grindhaug@gmail.com>).\n[cjh] \"My Bugs\" page is now a Horde_Block layout (Request #3202).\n[cjh] Fix permissions checking for ticket comments when an admin user is the one making the comment (Bug #2673).\n[cjh] Delete searches by getvars string, not by name (Bug #3197).\n[jan] Allow to assign tickets to foreign groups (ronny.adsetts@amazinginternet.com, Request #2477).\n[cjh] Add support for dynamic re-sorting of search results, including saving the sort preferences on any changes.\n[mas] Protect against HTML tags in the search results summary.\n[jan] Allow other applications to provide versions.\n[jan] Simplify UI for query editor and allow to search for versions.\n[jan] Allow to send notification mails to queue-specific addresses (Marcus Boerger <helly@php.net>).\n[jan] Allow other applications to provide queues.\n[cjh] Add *-id arguments for type, priority, state, and queue to mail-filter.php (Bug #2347).\n[cjh] Add a link to return to the list of search results, along with the previous/next links (Bug #1751).\n[cjh] Fix the Quicksearch links.\n[cjh] mail-filter.php now handles replies as well (Bug #280).\n[cjh] Use the date_format preference for displaying TicketDetailsForm as well (Bug #2151).\n[jan] Add Russian translation (Illya Belov <belov@iop.irkps.ru>).\n[mas] Add ability to search by ticket requester.\n[mas] Change any output of <b> and <i> tags to <strong> and <em> for better accessibility support.\n[cjh] Add links to Update/Comment from individual transactions, which quote that transaction's comment text (Bug #823).\n[cjh] Add explicit permissions for assigning and updating tickets (tmerritt@email.arizona.edu, Bug #1955).\n[jan] Strike-through links to resolved tickets.\n[jan] Make server name and port in mail-filter.php configurable (Bug #2004).\n[cjh] Honor creator permissions on tickets (tmerritt@email.arizona.edu, Bug #1945).\n[cjh] Implement ticket watchers (tmerritt@email.arizona.edu, Bug #867).\n[cjh] Enforce permissions on queues in reports, let guests see reports if they have permissions (Bug #1812).\n[cjh] Allow export templates to define a callback function for filtering data. Includes an example for properly quoting CSV data (Bug #1774).\n[jan] Use bind variables in the SQL driver (Bug #1701).\n[cjh] Queries are stored as Horde_Share objects with full permissions. (Bug #1481).\n[cjh] Delete queue permissions when deleting a queue (Bug #1462).\n[jan] Add MIME viewer for ZIP files.\n[cjh] Queries can now be deleted (Bug #1193).\n[cjh] Preserve the current search criteria when re-sorting results (Bug #1024).\n[cjh] Link to ticket RSS feeds on all ticket display pages.\n[cjh] Allow administrators to delete attachments (Bug #1252).\n[cjh] Allow uploading an attachment when initially creating a ticket.\n[cjh] Fix group-restricted comments (Bug #1225).\n[jan] Add Brazilian Portuguese translation (Daniel V. Hoisel <daniel@maxlinux.com.br>).\n[cjh] Whups_Mail::processMail needs to use Whups_Ticket for ticket creation to trigger email notifications, etc (Bug #1134).\n[cjh] Allow inserting explicit Type filters into Query Builder queries (Bug #434).\n[cjh] Force users to choose a queue when creating tickets with the goal of cutting down on misfiled tickets (Bug #588).\n[cjh] Remove the Attachment tab, as it currently serves no purpose beyond the Comment tab (Bug #868).\n[cjh] Add a numeric log_value_num field for faster logs table comparisons and for compatibility with databases that can't cast strings into integer comparisons (Oracle, etc) (rvs (at) angara (dot) ru).\n[jan] Add Finnish translation (Leena Heino <liinu@uta.fi>).\n[jan] Add Spanish translation (Manuel Perez Ayala <mperaya@alcazaba.unex.es>).\n[cjh] The way ticket histories are stored and retrieved has been completely revamped to be quicker, more robust, and more complete.\n[cjh] Add a 'summary' search option in the basic search form (Bug #269).\n[cjh] Queue is now a valid query builder criterion.\n[cjh] Add previous/next navigation when there's a current list of search results to navigate through.\n[cjh] Changing a ticket's queue now also allows setting a queue version.\n[cjh] Group ticket histories by transaction, not by individual change.\n[cjh] Show users their saved queries as well as saved searches.\n[jan] Add Simplified Chinese translation (Liaobin <liaobin@jite.net>).\n[cjh] Add a basic \"Update\" screen for changing summary, state, priority, and adding attachments/comments, all at once.\n[cjh] Finish renaming \"module\" to \"queue\" throughout the data and SQL.\n[cjh] Add $conf['mail']['always_copy'] to allow Whups to always copy a specific email address on ticket mail.\n[cjh] Mail can be configured to come from a single email address now, making it easier to allow Whups to post ticket email to a mailing list, etc.\n[cjh] Add a \"DO NOT REPLY\" note to generated emails if Whups isn't configured to handle replies to ticket mail.\n[cjh] Advertise permissions through the API.\n[jan] Add Dutch translation (Stefan de Konink <skinkie@xs4all.nl>).\n[cjh] Make ticket owners available in search results again.\n[jan] Allow uploading of attachments.\n[cjh] Allow assigning tickets to groups.\n[cjh] Add Set Type action to the details page (Bo Daley <bo@tilda.com.au>).\n[cjh] Allow clearing of all or individual searches (Bo Daley <bo@tilda.com.au>).\n[cjh] Start of a reminder-sending daemon.\n[cjh] Allow assignment of a ticket to multiple users.\n[cjh] Queue/Type matrix is now functional and allows very quick editing of which ticket types are associated with each module.\n[jan] Add Romanian translation (Eugen Hoanca <eugenh@urban-grafx.ro>).\n[cjh] Allow much more flexible configuration of who gets email on various actions (Bo Daley <bo@tilda.com.au>).\n[cjh] Whups can now send out simple reminders.\n[cjh] By giving users the 'whups:admin' permission, people can administer individual queues in Whups, or just Whups as opposed to all of Horde.\n[cjh] Allow multiple levels of sorting (first by date, then type, etc).\n[cjh] Phrases in ticket comments can now be linked to the ticket in question automatically (Mike Baptiste <mike@msbnetworks.net>).\n[cjh] Use Horde_Template to generate configurable reports from search result sets.\n[cjh] Add a New Ticket link in the summary screen (Brian Keifer <brian@valinor.net>).\n[cjh] Add a preference for not showing requested tickets in the summary screen (Brian Keifer <brian@valinor.net>).\n[cjh] Prevent guest users from assigning tickets and make them enter the ticket password to change state/priority.\n[cjh] Guest users can now add tickets and add comments to tickets when they have permissions to do so.\n[cjh] We can now retrieve much more flexible datasets, such as the average time it takes to resolve a ticket by developer, requester, module, etc.\n[cjh] Add a flexible set of stats, such as the average time a ticket is unresolved.\n[cjh] Add a much more flexible set of graphs, and a \"My Bugs\" section for ticket summaries.\n[cjh] Search results can now specify the results title header.\n[cjh] Reports currently lacks pretty graphs, but now shows more useful information - all assigned and requested tickets.\n[cjh] Fix usage of Variables:: class.\n[jan] Add Traditional Chinese translation (David Chang <david@thbuo.gov.tw>).\n[jan] Add Bulgarian translation (Miroslav Pendev <miro@cybershade.us>).\n[cjh] Better enforcement of permissions on modules, especially during searches.\n[cjh] Add options for how many comments are sent in bug emails, and in what order.\n[cjh] Make sure that comments mailed to users don't include private comments they aren't authorized to see.\n[cjh] Clean up the format of generated emails to be much clearer.\n[cjh] All email notification triggers now work.\n[cjh] Add a standard Horde menu.\n[cjh] Add an Options screen.\n[cjh] Fix the Query Builder.\n[cjh] Whups now uses the Horde FormSprocket:: API for all form handling.\n[cjh] Ticket search results are now fully sortable, and a user preference.\n[jan] Add French translation (Thierry Thomas).\n[cjh] Use users' identities for showing names of requester, owner, etc.\n[cjh] Include assigned and resolved dates in the search results view.\n[cjh] Include date created, assigned, and resolved in the details view.\n[cjh] Don't show resolved tickets in the summary.\n[cjh] Require permission (whups:hiddenComments, at level Edit) to make comments specific to a group.\n[cjh] Display comments which are restricted differently.\n[cjh] Add the ability to restrict viewing of a comment to a Group.\n[cjh] Improve the reporting data that gets saved by a lot.\n[jan] Add Czech translation.\n[cjh] Fix some non-portable SQL.\n[cjh] Add the option to keep track of different versions for a module.\n[cjh] Fix problems when there are no types associated with a module.\n[cjh] Default select lists which have only one value to that value. In some cases this allows for auto-filling of forms (creating tickets).\n[cjh] Include session ID in forms/links.\n[cjh] Only show users queues which they have permissions for.\n[cjh] Add a link from the edit queue section to edit the permissions on that module.\n[cjh] Add managing of which users can have tickets assigned to them, on a per-module basis.\n[cjh] Remove the sample data, as it poses sequence problems and isn't needed now that the administration interface works.\n[cjh] Don't create the sequence tables in whups.sql; PEAR needs to create them itself to get implementation-specific details right.\n[cjh] Administration interface - adding, deleting, and editing of modules, types, states, and priorities all work now.\n[jon] Adapt to the new Horde::img() syntax.\n[cjh] Types can now map to multiple modules, instead of either one or global. This is a much more flexible setup, and actually allows re-use of types.\n[cjh] Added a SetType for collections of on/off values (a checkbox set).\n[cjh] Use $registry->get() in place of other $registry->get functions.\n[cjh] Use WHUPS_TEMPLATES for template paths.\n[jon] Enable the \"portability\" option in the SQL driver.\n[jan] Remove the standard value for the language preference. The language to fall back to should be set Horde wide in lang.php instead.\n[cjh] Add API method and implementation for adding modules.\n[rec] Add query builder, many UI improvements, more horde-style design.\n[cjh] Apply patches from Alex L. for assignment, users, etc.\n[avsm] Replace $conf['paths'] with the $registry equivalents.\n[cjh] Convert short tags (<?) to <?php.\n[cjh] Make all copyright notices refer to BSD license.\n[cjh] Added initial CHANGES file.\n"
