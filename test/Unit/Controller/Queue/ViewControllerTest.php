@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Horde\Whups\Test\Unit\Controller\Queue;
 
 use Horde\Core\Service\PrefsService;
-use Horde\Core\Session\HordeSession;
+use Horde\Core\Session\SessionAccess;
 use Horde\Http\ServerRequest;
 use Horde\Whups\Controller\Queue\ViewController;
 use Horde\Whups\Service\TicketSorter;
@@ -29,7 +29,7 @@ class ViewControllerTest extends TestCase
     private Horde_Notification_Handler $notification;
     private Horde_PageOutput $pageOutput;
     private Horde_Registry $registry;
-    private HordeSession $session;
+    private SessionAccess $session;
     private TicketSorter $sorter;
     private TopbarSearch $topbarSearch;
     private UrlGenerator $urlGenerator;
@@ -49,7 +49,7 @@ class ViewControllerTest extends TestCase
             ['webroot', 'whups', '/whups'],
         ]);
         $this->registry->method('getAuth')->willReturn('test_user');
-        $this->session = $this->createMock(HordeSession::class);
+        $this->session = $this->createMock(SessionAccess::class);
         $this->sorter = $this->createMock(TicketSorter::class);
         $this->topbarSearch = $this->createMock(TopbarSearch::class);
         $this->urlGenerator = $this->createMock(UrlGenerator::class);

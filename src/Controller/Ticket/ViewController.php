@@ -28,7 +28,7 @@ use Horde_Notification_Handler;
 use Horde_PageOutput;
 use Horde_Perms;
 use Horde_Registry;
-use Horde\Core\Session\HordeSession;
+use Horde\Core\Session\SessionAccess;
 use Horde_Variables;
 use Horde\Whups\Service\TopbarSearch;
 use Psr\Http\Message\ResponseInterface;
@@ -50,7 +50,7 @@ class ViewController implements RequestHandlerInterface
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
-        private readonly HordeSession $session,
+        private readonly SessionAccess $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly PrefsService $prefs,
         private readonly PermissionChecker $permissions,

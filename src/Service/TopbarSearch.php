@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Horde\Whups\Service;
 
-use Horde\Core\Session\HordeSession;
+use Horde\Core\Session\SessionAccess;
 use Horde_Registry;
 use Horde_Url;
 use Horde_View_Topbar;
@@ -31,7 +31,7 @@ class TopbarSearch
 {
     public function __construct(
         private readonly Horde_Registry $registry,
-        private readonly HordeSession $session,
+        private readonly SessionAccess $session,
         private readonly Horde_View_Topbar $topbar,
     ) {}
 
