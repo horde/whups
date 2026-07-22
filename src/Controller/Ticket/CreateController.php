@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Horde\Whups\Controller\Ticket;
 
 use Horde;
-use Horde\Core\Session\HordeSession;
+use Horde\Core\Session\SessionAccess;
 use Horde\Form\V3\HtmlRenderer;
 use Horde\Whups\Controller\ResponseTrait;
 use Horde\Whups\Domain\StateCategory;
@@ -45,7 +45,7 @@ class CreateController implements RequestHandlerInterface
         private readonly Horde_Notification_Handler $notification,
         private readonly Horde_PageOutput $pageOutput,
         private readonly Horde_Registry $registry,
-        private readonly HordeSession $session,
+        private readonly SessionAccess $session,
         private readonly TopbarSearch $topbarSearch,
         private readonly UrlGenerator $urlGenerator,
         private readonly Horde_Group_Base $groupService,
