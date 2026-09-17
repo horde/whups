@@ -517,8 +517,10 @@ class Whups_Application extends Horde_Registry_Application
                     );
                 $time = DateFormat::formatDate(
                     $transaction['timestamp'],
-                    $prefs->getValue('date_format') . ' '
-                        . $prefs->getValue('time_format')
+                    $prefs->getValue('date_format')
+                ) . ' ' . DateFormat::formatDate(
+                    $transaction['timestamp'],
+                    $prefs->getValue('time_format')
                 );
                 echo <<<COMMENT
                     <table width="100%">
