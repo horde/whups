@@ -258,7 +258,7 @@ class Whups_Form_Renderer_Comment extends Horde_Form_Renderer
 <div id="t<?php echo (int) $transaction ?>">
 <table cellspacing="0" width="100%">
  <tr>
-  <td width="20%" class="<?php echo $class ?>_l nowrap" valign="top"><?php echo DateFormat::formatDate($vars->get('timestamp'), $prefs->getValue('date_format') . ' ' . $prefs->getValue('time_format')) ?></td>
+  <td width="20%" class="<?php echo $class ?>_l nowrap" valign="top"><?php echo DateFormat::formatDate($vars->get('timestamp'), $prefs->getValue('date_format')) . ' ' . DateFormat::formatDate($vars->get('timestamp'), $prefs->getValue('time_format')) ?></td>
   <td width="20%" class="<?php echo $class ?>_m" valign="top"><?php echo $vars->get('user_id') ? Whups::formatUser($vars->get('user_id'), false, true, true) : '&nbsp;' ?></td>
   <td width="30%" class="<?php echo $class ?>_m" valign="top"><?php echo implode('<br />', $changes) ?></td>
   <td width="30%" class="<?php echo $class ?>_r rightAlign" valign="top"><?php if ($comment && !$private) {
