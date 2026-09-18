@@ -31,6 +31,7 @@ if (!defined('HORDE_BASE')) {
 
 use Horde\Cache\Cache as HordeCache;
 use Horde\Cache\FileStorage;
+use Horde\Core\LanguageContext;
 use Horde\Date\Format as DateFormat;
 use Horde\Util\Variables;
 use Horde\Whups\Domain\AttributeRepositoryInterface;
@@ -431,6 +432,7 @@ class Whups_Application extends Horde_Registry_Application
         $ticket->setDetails($vars);
         $title = '[#' . $ticket->getId() . '] ' . $ticket->get('summary');
         $filter = $injector->getInstance('Horde_Core_Factory_TextFilter');
+        $locale = $injector->getInstance(LanguageContext::class)->getLocale();
         $obfuscate = $conf['prefs']['obfuscate_email'];
         $conf['prefs']['obfuscate_email'] = false;
 
@@ -517,10 +519,12 @@ class Whups_Application extends Horde_Registry_Application
                     );
                 $time = DateFormat::formatDate(
                     $transaction['timestamp'],
-                    $prefs->getValue('date_format')
+                    $prefs->getValue('date_format'),
+                    $locale
                 ) . ' ' . DateFormat::formatDate(
                     $transaction['timestamp'],
-                    $prefs->getValue('time_format')
+                    $prefs->getValue('time_format'),
+                    $locale
                 );
                 echo <<<COMMENT
                     <table width="100%">
