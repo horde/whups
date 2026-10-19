@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
@@ -802,6 +803,7 @@ class Whups
         $showname = true,
         $html = false
     ) {
+        $config = $injector->get('WhupsConfig');
         if (!is_null($user) && empty($user)) {
             return '';
         }
@@ -818,7 +820,7 @@ class Whups
         }
         if (($showemail || empty($name) || !$showname)
             && !empty($details['email'])) {
-            if ($html && $GLOBALS['conf']['prefs']['obfuscate_email']
+            if ($html && $config->get('prefs.obfuscate_email')
                 && strpos($details['email'], '@') !== false) {
                 $details['email'] = str_replace(
                     ['@', '.'],
@@ -1114,7 +1116,8 @@ class Whups
      */
     public static function getAttachments($ticket, $name = null)
     {
-        if (empty($GLOBALS['conf']['vfs']['type'])) {
+        $config = $injector->get('WhupsConfig');
+        if (empty($config->get('vfs.type'))) {
             return;
         }
 

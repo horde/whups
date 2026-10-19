@@ -14,6 +14,7 @@
  * @package Whups
  */
 use Horde\Util\Variables;
+use Horde\Whups\WhupsConfig;
 
 class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedReporting
 {
@@ -642,6 +643,7 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
      */
     public function deleteTicket($id)
     {
+        $config = $injector->get('WhupsConfig');
         $id = (int) $id;
 
         $tables = [
@@ -651,7 +653,7 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
             'whups_tickets',
             'whups_attributes'];
 
-        if (!empty($GLOBALS['conf']['vfs']['type'])) {
+        if (!empty($config->get('vfs.type'))) {
             try {
                 $vfs = $GLOBALS['injector']
                     ->getInstance('Horde_Core_Factory_Vfs')
@@ -1457,6 +1459,7 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
      */
     public function deleteHistory($transaction)
     {
+        $config = $injector->get('WhupsConfig');
         $transaction = (int) $transaction;
         $this->_db->beginDbTransaction();
 
@@ -1486,7 +1489,7 @@ class Whups_Driver_Sql extends Whups_Driver implements Whups_Driver_DriverBasedR
         }
 
         /* Deleting attachments. */
-        if (isset($GLOBALS['conf']['vfs']['type'])) {
+        if (($config->get('vfs.type') !== null)) {
             try {
                 $attachments = $this->_db->select(
                     'SELECT ticket_id, log_value FROM whups_logs '

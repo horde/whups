@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Whups mail processing library.
@@ -35,6 +36,7 @@ class Whups_Mail
      */
     public static function processMail($text, array $info, $auth_user = null)
     {
+        $config = $injector->get('WhupsConfig');
         global $conf;
 
         $message = Horde_Mime_Part::parseMessage($text);
@@ -90,7 +92,7 @@ class Whups_Mail
 
         // Format the message into a comment.
         $comment = _("Received message:") . "\n\n";
-        if (!empty($GLOBALS['conf']['mail']['include_headers'])) {
+        if (!empty($config->get('mail.include_headers'))) {
             foreach ($headers->toArray(['nowrap' => true]) as $name => $vals) {
                 if (!in_array(strtolower($name), ['subject', 'from', 'to', 'cc', 'date'])) {
                     if (is_array($vals)) {

@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Base class for Whups' storage backend.
@@ -457,6 +458,7 @@ abstract class Whups_Driver
      */
     public function mail(array $opts)
     {
+        $config = $injector->get('WhupsConfig');
         global $conf, $registry, $prefs;
 
         $opts = array_merge(['ticket' => false, 'new' => false], $opts);
@@ -582,7 +584,7 @@ abstract class Whups_Driver
             if ($opts['ticket']) {
                 /* Add attachments. */
                 $attachmentAdded = false;
-                if (empty($GLOBALS['conf']['mail']['link_attach'])) {
+                if (empty($config->get('mail.link_attach'))) {
                     /* We need to remove all attachments because the attachment
                      * list is potentially limited by permissions. */
                     $mail->clearParts();
@@ -694,6 +696,7 @@ abstract class Whups_Driver
      */
     public function formatComments($comments, $ticket)
     {
+        $config = $injector->get('WhupsConfig');
         $text = '';
         foreach ($comments as $comment) {
             if (!empty($comment['comment_text'])) {
@@ -707,7 +710,7 @@ abstract class Whups_Driver
             }
 
             /* Add attachment links. */
-            if (empty($GLOBALS['conf']['mail']['link_attach'])) {
+            if (empty($config->get('mail.link_attach'))) {
                 continue;
             }
             foreach ($comment['changes'] as $change) {

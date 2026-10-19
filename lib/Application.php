@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Whups application API.
@@ -96,6 +97,7 @@ class Whups_Application extends Horde_Registry_Application
         $injector->bindClosure(
             UserFormatter::class,
             function ($injector) {
+        $config = $injector->get('WhupsConfig');
                 $conf = $GLOBALS['conf'] ?? [];
 
                 return new UserFormatter(
@@ -171,15 +173,16 @@ class Whups_Application extends Horde_Registry_Application
      */
     protected function _init()
     {
+        $config = $injector->get('WhupsConfig');
         $GLOBALS['whups_driver'] = $GLOBALS['injector']
             ->getInstance('Whups_Factory_Driver')
             ->create();
         $GLOBALS['injector']->setInstance('Whups_Driver', $GLOBALS['whups_driver']);
 
         /* Inject metadata cache into driver if configured. */
-        $metadataLifetime = (int) ($GLOBALS['conf']['cache']['metadata_lifetime'] ?? 0);
+        $metadataLifetime = (int) ($config->get('cache.metadata_lifetime') ?? 0);
         if ($metadataLifetime > 0) {
-            $cacheDir = $GLOBALS['conf']['cache']['params']['dir'] ?? '';
+            $cacheDir = $config->get('cache.params.dir') ?? '';
             $cache = new HordeCache(
                 new FileStorage(dir: $cacheDir),
                 ['namespace' => 'whups_meta', 'lifetime' => $metadataLifetime],
@@ -188,9 +191,9 @@ class Whups_Application extends Horde_Registry_Application
         }
 
         /* Inject report cache into driver if configured. */
-        $reportLifetime = (int) ($GLOBALS['conf']['cache']['report_lifetime'] ?? 0);
+        $reportLifetime = (int) ($config->get('cache.report_lifetime') ?? 0);
         if ($reportLifetime > 0) {
-            $cacheDir ??= ($GLOBALS['conf']['cache']['params']['dir'] ?? '');
+            $cacheDir ??= ($config->get('cache.params.dir') ?? '');
             $reportCache = new HordeCache(
                 new FileStorage(dir: $cacheDir),
                 ['namespace' => 'whups_reports', 'lifetime' => $reportLifetime],
