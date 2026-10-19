@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Horde_Injector based factory for Kronolith_Driver
@@ -23,8 +24,9 @@ class Whups_Factory_Driver extends Horde_Core_Factory_Base
      */
     public function create($driver = null, $params = [])
     {
+        $config = $injector->get('WhupsConfig');
         if (is_null($driver)) {
-            $driver = $GLOBALS['conf']['tickets']['driver'];
+            $driver = $config->get('tickets.driver');
         }
         if (!empty($this->_instances[$driver])) {
             return $this->_instances[$driver];

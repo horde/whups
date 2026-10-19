@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Basic Ticket Editing form.
@@ -10,6 +11,7 @@ class Whups_Form_Ticket_Edit extends Horde_Form
 {
     public function __construct($vars, $ticket, $title = '')
     {
+        $config = $injector->get('WhupsConfig');
         global $whups_driver;
 
         parent::__construct($vars, $title);
@@ -114,7 +116,7 @@ class Whups_Form_Ticket_Edit extends Horde_Form
                     case 'owner':
                         if (Whups::hasPermission($vars->get('queue'), 'queue', 'assign')) {
                             $groups = $GLOBALS['injector']->getInstance('Horde_Group');
-                            $mygroups = $groups->listAll($GLOBALS['conf']['prefs']['assign_all_groups'] ? null : $GLOBALS['registry']->getAuth());
+                            $mygroups = $groups->listAll($config->get('prefs.assign_all_groups') ? null : $GLOBALS['registry']->getAuth());
                             asort($mygroups);
 
                             $f_users = [];

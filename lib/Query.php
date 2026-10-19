@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * Copyright 2001-2026 Robert E. Coyle <robertecoyle@hotmail.com>
@@ -219,6 +220,7 @@ class Whups_Query
      */
     public function getTabs(Variables|Horde_Variables $vars)
     {
+        $config = $injector->get('WhupsConfig');
         // Create a few variables that are reused.
         $webroot = $GLOBALS['registry']->get('webroot', 'whups');
         $queryurl = new Horde_Url($webroot . '/query/builder');
@@ -230,7 +232,7 @@ class Whups_Query
         if (!$this->id || $edit) {
             $tabs->addTab(_("_Edit Query"), $queryurl, 'edit');
         }
-        if ($this->id && $edit && empty($GLOBALS['conf']['share']['no_sharing'])) {
+        if ($this->id && $edit && empty($config->get('share.no_sharing'))) {
             $GLOBALS['page_output']->addScriptFile('popup.js', 'horde');
 
             $permsurl = (new Horde_Url($GLOBALS['registry']->get('webroot', 'horde') . '/services/shares/edit.php'))->add([

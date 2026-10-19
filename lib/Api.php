@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 use Horde\Util\Util;
 use Horde\Whups\Domain\QueueRepositoryInterface;
@@ -327,6 +328,7 @@ class Whups_Api extends Horde_Registry_Api
      */
     public function addAttachment($ticket_id, $name, $data)
     {
+        $config = $injector->get('WhupsConfig');
         $ticket_id = (int) $ticket_id;
         if (empty($ticket_id)) {
             throw new Whups_Exception(_("Invalid Ticket Id"));
@@ -337,7 +339,7 @@ class Whups_Api extends Horde_Registry_Api
             throw new Whups_Exception(_("Empty attachment"));
         }
 
-        $tmp_name = Util::getTempFile('whups', true, $GLOBALS['conf']['tmpdir']);
+        $tmp_name = Util::getTempFile('whups', true, $config->get('tmpdir'));
         $fp = fopen($tmp_name, 'wb');
         fwrite($fp, $data);
         fclose($fp);

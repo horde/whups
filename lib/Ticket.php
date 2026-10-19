@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * The Whups_Ticket class encapsulates some logic relating to tickets, sending
@@ -478,6 +479,7 @@ class Whups_Ticket
      */
     public function delete()
     {
+        $config = $injector->get('WhupsConfig');
         global $whups_driver;
 
         /* Build message template. */
@@ -502,7 +504,7 @@ class Whups_Ticket
         }
         $message_file = basename($message_file);
 
-        if ($GLOBALS['conf']['mail']['incl_resp']
+        if ($config->get('mail.incl_resp')
             || !count($whups_driver->getOwners($this->_id))) {
             /* Include all responsible.  */
             $listeners = $whups_driver->getListeners(

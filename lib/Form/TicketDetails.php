@@ -1,4 +1,5 @@
 <?php
+use Horde\Whups\WhupsConfig;
 
 /**
  * @package Whups
@@ -11,6 +12,7 @@ class Whups_Form_TicketDetails extends Horde_Form
      */
     public function __construct($vars, $ticket, $title = '')
     {
+        $config = $injector->get('WhupsConfig');
         parent::__construct($vars, $title);
 
         $date_params = [$GLOBALS['prefs']->getValue('date_format')];
@@ -124,7 +126,7 @@ class Whups_Form_TicketDetails extends Horde_Form
                             false,
                             false,
                             null,
-                            [true, $GLOBALS['conf']['prefs']['obfuscate_email']]
+                            [true, $config->get('prefs.obfuscate_email')]
                         );
                         $owner->setDefault(_("Unassigned"));
                         break;
@@ -137,7 +139,7 @@ class Whups_Form_TicketDetails extends Horde_Form
                             false,
                             false,
                             null,
-                            [false, $GLOBALS['conf']['prefs']['obfuscate_email']]
+                            [false, $config->get('prefs.obfuscate_email')]
                         );
                         break;
 
